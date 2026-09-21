@@ -1,0 +1,306 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-21T09:40:29.031Z",
+  "title": "Design System: XRISH CREATIVES",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Gallery Paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.00541 95.10)",
+          "oklch(26.43% 0.00541 95.10)",
+          "oklch(37.86% 0.00541 95.10)",
+          "oklch(49.29% 0.00541 95.10)",
+          "oklch(60.71% 0.00541 95.10)",
+          "oklch(72.14% 0.00541 95.10)",
+          "oklch(83.57% 0.00541 95.10)",
+          "oklch(95.00% 0.00541 95.10)"
+        ]
+      },
+      "ink": {
+        "role": "primary",
+        "displayName": "Gallery Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.00389 106.74)",
+          "oklch(26.43% 0.00389 106.74)",
+          "oklch(37.86% 0.00389 106.74)",
+          "oklch(49.29% 0.00389 106.74)",
+          "oklch(60.71% 0.00389 106.74)",
+          "oklch(72.14% 0.00389 106.74)",
+          "oklch(83.57% 0.00389 106.74)",
+          "oklch(95.00% 0.00389 106.74)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Warm Gray",
+        "tonalRamp": [
+          "oklch(15.00% 0.00941 99.02)",
+          "oklch(26.43% 0.00941 99.02)",
+          "oklch(37.86% 0.00941 99.02)",
+          "oklch(49.29% 0.00941 99.02)",
+          "oklch(60.71% 0.00941 99.02)",
+          "oklch(72.14% 0.00941 99.02)",
+          "oklch(83.57% 0.00941 99.02)",
+          "oklch(95.00% 0.00941 99.02)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Quiet Rule",
+        "tonalRamp": [
+          "oklch(15.00% 0.00961 100.01)",
+          "oklch(26.43% 0.00961 100.01)",
+          "oklch(37.86% 0.00961 100.01)",
+          "oklch(49.29% 0.00961 100.01)",
+          "oklch(60.71% 0.00961 100.01)",
+          "oklch(72.14% 0.00961 100.01)",
+          "oklch(83.57% 0.00961 100.01)",
+          "oklch(95.00% 0.00961 100.01)"
+        ]
+      },
+      "dark": {
+        "role": "neutral",
+        "displayName": "Screening Black",
+        "tonalRamp": [
+          "oklch(15.00% 0.00432 128.73)",
+          "oklch(26.43% 0.00432 128.73)",
+          "oklch(37.86% 0.00432 128.73)",
+          "oklch(49.29% 0.00432 128.73)",
+          "oklch(60.71% 0.00432 128.73)",
+          "oklch(72.14% 0.00432 128.73)",
+          "oklch(83.57% 0.00432 128.73)",
+          "oklch(95.00% 0.00432 128.73)"
+        ]
+      },
+      "contact-surface": {
+        "role": "neutral",
+        "displayName": "Contact Stone",
+        "tonalRamp": [
+          "oklch(15.00% 0.01092 95.17)",
+          "oklch(26.43% 0.01092 95.17)",
+          "oklch(37.86% 0.01092 95.17)",
+          "oklch(49.29% 0.01092 95.17)",
+          "oklch(60.71% 0.01092 95.17)",
+          "oklch(72.14% 0.01092 95.17)",
+          "oklch(83.57% 0.01092 95.17)",
+          "oklch(95.00% 0.01092 95.17)"
+        ]
+      },
+      "image-ground": {
+        "role": "neutral",
+        "displayName": "Image Ground",
+        "tonalRamp": [
+          "oklch(15.00% 0.01263 91.53)",
+          "oklch(26.43% 0.01263 91.53)",
+          "oklch(37.86% 0.01263 91.53)",
+          "oklch(49.29% 0.01263 91.53)",
+          "oklch(60.71% 0.01263 91.53)",
+          "oklch(72.14% 0.01263 91.53)",
+          "oklch(83.57% 0.01263 91.53)",
+          "oklch(95.00% 0.01263 91.53)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Hero Display",
+        "purpose": "Exact XRISH CREATIVES headline above 1100px."
+      },
+      "display-mobile": {
+        "displayName": "Mobile Hero Display",
+        "purpose": "Exact brand headline at 700px and below."
+      },
+      "headline": {
+        "displayName": "Section Headline",
+        "purpose": "Selected stories section heading."
+      },
+      "film-headline": {
+        "displayName": "Film Headline",
+        "purpose": "Large heading on the dark film surface."
+      },
+      "title": {
+        "displayName": "Story Title",
+        "purpose": "Collection names below photographs."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Approach paragraph style; other paragraph roles retain their implemented sizes."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Contact-sheet labels and small tracked editorial identifiers."
+      },
+      "text-link": {
+        "displayName": "Text Link",
+        "purpose": "Underlined actions with directional icons."
+      }
+    },
+    "shadows": [
+      {
+        "name": "mobile-menu",
+        "value": "0 15px 25px #1111110a",
+        "purpose": "Restrained separation beneath expanded mobile navigation."
+      },
+      {
+        "name": "lead-photo-caption",
+        "value": "0 2px 30px #0009",
+        "purpose": "Text shadow protecting the caption over photography."
+      },
+      {
+        "name": "small-photo-caption",
+        "value": "0 1px 5px #000",
+        "purpose": "Text shadow on fallback and about-image labels."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Shared CSS easing for photograph and directional-icon transitions."
+      },
+      {
+        "name": "image-hover",
+        "value": "transform 0.75s var(--ease); scale(1.025)",
+        "purpose": "Subtle story photograph hover zoom; disabled for reduced motion."
+      },
+      {
+        "name": "text-link-arrow",
+        "value": "transform 0.25s var(--ease); translate(3px, -3px)",
+        "purpose": "Directional feedback on underlined links; disabled for reduced motion."
+      },
+      {
+        "name": "viewer-photo",
+        "value": "0.16s",
+        "purpose": "Opacity transition between photographs; reduced-motion opacity stays at 1."
+      },
+      {
+        "name": "shutter-flash",
+        "value": "0.3s; opacity 0.6 to 0",
+        "purpose": "User-triggered shutter response, absent with reduced motion."
+      },
+      {
+        "name": "camera-pointer",
+        "value": "pointerRotation 0.11; damping 4",
+        "purpose": "Damped desktop pointer rotation; no mobile camera mount."
+      },
+      {
+        "name": "camera-scroll",
+        "value": "translateY 0 to 100px; rotate 0 to -9deg",
+        "purpose": "Desktop hero scroll response through Motion; omitted with reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile-max",
+        "value": "700px"
+      },
+      {
+        "name": "camera-mount-min",
+        "value": "701px"
+      },
+      {
+        "name": "compact-desktop-max",
+        "value": "1100px"
+      },
+      {
+        "name": "wide-min",
+        "value": "1700px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Text Action",
+      "kind": "button",
+      "refersTo": "text-link",
+      "description": "Underlined inquiry action with a directional icon.",
+      "html": "<a class=\"ds-text-link\" href=\"https://www.facebook.com/xrishcreatives\" target=\"_blank\" rel=\"noopener noreferrer\">Message Us <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></a>",
+      "css": ".ds-text-link{font-family:var(--font-instrument,\"Instrument Sans\"),sans-serif;color:var(--ink,#171715);display:inline-flex;align-items:center;justify-content:space-between;gap:32px;min-height:44px;border-bottom:1px solid currentColor;font-size:14px;font-weight:500;text-decoration:none}.ds-text-link svg{transition:transform .25s var(--ease,cubic-bezier(.16,1,.3,1))}.ds-text-link:hover svg{transform:translate(3px,-3px)}.ds-text-link:focus-visible{outline:2px solid currentColor;outline-offset:6px}@media(prefers-reduced-motion:reduce){.ds-text-link svg{transition:none}.ds-text-link:hover svg{transform:none}}"
+    },
+    {
+      "name": "Icon Button",
+      "kind": "button",
+      "refersTo": "icon-button",
+      "description": "Circular control used for gallery navigation and close actions.",
+      "html": "<button class=\"ds-icon-button\" aria-label=\"Next photograph\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></button>",
+      "css": ".ds-icon-button{font-family:var(--font-instrument,\"Instrument Sans\"),sans-serif;color:var(--ink,#171715);width:46px;height:46px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:none;cursor:pointer;transition:background .2s}.ds-icon-button:hover{background:color-mix(in srgb,currentColor 10%,transparent)}.ds-icon-button:focus-visible{outline:2px solid currentColor;outline-offset:6px}.ds-icon-button:disabled{opacity:.45;cursor:not-allowed}"
+    },
+    {
+      "name": "Desktop Navigation",
+      "kind": "nav",
+      "refersTo": "site-header",
+      "description": "Quiet text navigation on the gallery-paper ground; mobile replaces it with the menu toggle.",
+      "html": "<nav class=\"ds-navigation\" aria-label=\"Main navigation\"><a href=\"#work\">Work</a><a href=\"#films\">Films</a><a href=\"#about\">About</a></nav>",
+      "css": ".ds-navigation{font-family:var(--font-instrument,\"Instrument Sans\"),sans-serif;color:var(--ink,#171715);display:flex;gap:38px;background:var(--paper,#f5f4f0)}.ds-navigation a{color:inherit;font-size:13px;min-height:44px;display:flex;align-items:center;text-decoration:none;text-underline-offset:5px}.ds-navigation a:hover{text-decoration:underline}.ds-navigation a:focus-visible{outline:2px solid currentColor;outline-offset:6px}"
+    },
+    {
+      "name": "Film Destination",
+      "kind": "button",
+      "refersTo": "play-circle",
+      "description": "Facebook film exploration on the dark screening-room surface.",
+      "html": "<div class=\"ds-film-surface\"><a class=\"ds-film-link\" href=\"https://www.facebook.com/xrishcreatives\" target=\"_blank\" rel=\"noopener noreferrer\"><span class=\"ds-play-circle\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></span><span>Explore films on Facebook</span></a></div>",
+      "css": ".ds-film-surface{background:var(--dark,#111210);color:var(--paper,#f5f4f0)}.ds-film-link{font-family:var(--font-instrument,\"Instrument Sans\"),sans-serif;display:flex;align-items:center;gap:20px;color:inherit;font-size:12px;text-decoration:none}.ds-play-circle{width:60px;height:60px;border:1px solid #d8d8cd;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .25s,color .25s}.ds-play-circle svg{width:28px;height:28px}.ds-film-link:hover .ds-play-circle{background:var(--paper,#f5f4f0);color:var(--ink,#171715)}.ds-film-link:focus-visible{outline:2px solid currentColor;outline-offset:6px}@media(max-width:700px){.ds-play-circle{width:52px;height:52px}.ds-film-link{gap:15px;font-size:11px}}"
+    },
+    {
+      "name": "Story View Action",
+      "kind": "custom",
+      "refersTo": "image-view",
+      "description": "The square, pale action revealed over a story photograph; shown continuously on mobile.",
+      "html": "<button class=\"ds-image-view\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"/></svg>View story</button>",
+      "css": ".ds-image-view{font-family:var(--font-instrument,\"Instrument Sans\"),sans-serif;color:var(--ink,#171715);background:var(--paper,#f5f4f0);border:0;display:flex;align-items:center;gap:12px;padding:13px 18px;font-size:11px;cursor:pointer;transition:opacity .25s,transform .25s}.ds-image-view:hover{opacity:1;transform:none}.ds-image-view:focus-visible{outline:2px solid currentColor;outline-offset:6px}@media(max-width:700px){.ds-image-view{padding:9px 12px;font-size:10px}}"
+    },
+    {
+      "name": "Event Row",
+      "kind": "custom",
+      "description": "Ruled coverage link leading to the confirmed Facebook page.",
+      "html": "<a class=\"ds-event-row\" href=\"https://www.facebook.com/xrishcreatives\" target=\"_blank\" rel=\"noopener noreferrer\"><span>Weddings</span><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></a>",
+      "css": ".ds-event-row{font-family:var(--font-instrument,\"Instrument Sans\"),sans-serif;color:var(--ink,#171715);border-top:1px solid var(--rule,#d1d0c9);border-bottom:1px solid var(--rule,#d1d0c9);display:flex;align-items:center;gap:24px;min-height:81px;font-size:clamp(20px,2.3vw,34px);letter-spacing:-.035em;text-decoration:none;transition:color .25s var(--ease,cubic-bezier(.16,1,.3,1))}.ds-event-row svg{margin-left:auto;width:24px;height:24px}.ds-event-row:hover{color:var(--muted,#65645e)}.ds-event-row:focus-visible{outline:2px solid currentColor;outline-offset:6px}@media(max-width:700px){.ds-event-row{min-height:73px;font-size:22px;gap:18px}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Photographic Gallery",
+    "overview": "Warm gallery white, near-black, precise sans type, open asymmetric spreads and dark screening-room intervals define the implemented world. Photography supplies the vivid color. The interface frames genuine work with quiet rules, generous space and a clear route to a conversation.\n\nThe treatment is editorial, cinematic and human. Large tightly spaced headings establish scale; restrained labels and plain language let the photographs carry the emotional detail. This document records the current implementation and the confirmed brand direction. The homepage composition and story sequence remain in `.impeccable/homepage-brief.md`.",
+    "keyCharacteristics": [
+      "Warm neutral surfaces with near-black text.",
+      "Oversized Instrument Sans headings and discreet supporting labels.",
+      "Straight photographic edges, staggered spreads and open space.",
+      "Dark film presentation with circular action controls.",
+      "Purposeful motion with keyboard, touch and reduced-motion equivalents."
+    ],
+    "rules": [
+      {
+        "name": "The Photography Color Rule",
+        "body": "Let supplied photographs supply vivid color; keep the interface within the observed neutral palette.",
+        "section": "colors"
+      },
+      {
+        "name": "The Exact Name Rule",
+        "body": "Preserve the hero wording XRISH CREATIVES; supporting copy must not replace the brand headline.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Gallery Rule",
+        "body": "Keep photographic surfaces flat; reserve simulated depth for the camera and readability treatments over imagery.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do preserve XRISH CREATIVES as the exact hero headline.",
+      "Do keep inquiry labels as Message Us and point them to the confirmed Facebook page.",
+      "Do use actual supplied photography with accurate alternative text and responsive image sizing.",
+      "Do preserve warm neutral surfaces, straight image edges and staggered editorial spacing.",
+      "Do keep visible keyboard focus, minimum 44px controls and reduced-motion alternatives.",
+      "Do unmount the camera at 700px and below so mobile creates no WebGL and requests no GLB."
+    ],
+    "donts": [
+      "Don't substitute generic rounded card grids for the photographic spreads.",
+      "Don't introduce decorative interface colors that compete with the photographs.",
+      "Don't invent testimonials, awards, statistics, client identities, dates or locations.",
+      "Don't make mobile interactions depend on hover or hide the only path to an action.",
+      "Don't autoplay audio, hijack scrolling or add an automatic shutter flash.",
+      "Don't present a photograph as a working embedded film before an actual film asset is supplied."
+    ]
+  }
+}

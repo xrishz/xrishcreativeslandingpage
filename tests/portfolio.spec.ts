@@ -1,5 +1,54 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { streamPlayerUrl } from "../src/lib/stream";
+
+test("Stream placeholder is honest, makes no player request and lists only the five events", async ({
+  page,
+}) => {
+  const videoRequests: string[] = [];
+  page.on("request", (request) => {
+    if (request.url().includes("cloudflarestream.com"))
+      videoRequests.push(request.url());
+  });
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "Full Pre-debut Film" }),
+  ).toBeVisible();
+  await expect(page.getByText("Coming soon.", { exact: true })).toBeVisible();
+  await expect(page.locator("iframe")).toHaveCount(0);
+  expect(videoRequests).toEqual([]);
+  await expect(page.locator(".event-list a")).toHaveText([
+    "Debut",
+    "Predebut",
+    "Weddings",
+    "Corporate Events",
+    "Graduations",
+  ]);
+});
+
+test("Stream playback URLs accept only valid public identifiers", () => {
+  expect(streamPlayerUrl({ videoId: undefined })).toBeUndefined();
+  expect(
+    streamPlayerUrl({
+      videoId: "invalid",
+      customerCode: "sample123",
+    }),
+  ).toBeUndefined();
+  expect(
+    streamPlayerUrl({
+      videoId: "a".repeat(32),
+      customerCode: "sample123",
+    }),
+  ).toBe(
+    `https://customer-sample123.cloudflarestream.com/${"a".repeat(32)}/iframe`,
+  );
+  expect(
+    streamPlayerUrl({
+      videoId: "a".repeat(32),
+      customerCode: "evil.example/path",
+    }),
+  ).toBeUndefined();
+});
 
 test("real gallery opens, changes photographs, traps focus and restores it", async ({
   page,
@@ -35,8 +84,15 @@ test("all inquiry links use the confirmed Facebook destination", async ({
 test("mobile navigation, contact sheet and narrow layout remain usable", async ({
   page,
 }) => {
+  const modelRequests: string[] = [];
+  page.on("request", (request) => {
+    if (request.url().includes(".glb")) modelRequests.push(request.url());
+  });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
+  await expect(page.locator(".hero-camera")).toHaveCount(0);
+  await expect(page.locator("canvas")).toHaveCount(0);
+  expect(modelRequests).toEqual([]);
   await page.getByRole("button", { name: "Open navigation" }).click();
   await expect(
     page.getByRole("navigation", { name: "Mobile navigation" }),

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     : {}),
   title: "XRISH CREATIVES — Event Photography & Films",
   description:
-    "Photo and film coverage for celebrations worth seeing again. Explore XRISH CREATIVES: debuts, weddings, birthdays, graduations, corporate events and more in the Philippines.",
+    "Photo and film coverage for celebrations worth seeing again. Explore XRISH CREATIVES: debut, predebut, weddings, corporate events and graduations in the Philippines.",
   openGraph: {
     title: "XRISH CREATIVES — Event Photography & Films",
     description:

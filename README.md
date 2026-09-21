@@ -24,7 +24,7 @@ npm start
 - Motion owns DOM scroll motion and photo-viewer transitions; no competing animation library.
 - React Three Fiber, Drei and Three.js power the isolated, lazy-loaded camera.
 - `src/data/site.ts` contains portfolio collections, photograph descriptions, the confirmed contact link, and the film content interface.
-- `src/components/Viewer.tsx` provides a native modal dialog with keyboard photograph navigation, Escape close, focus restoration and an on-demand HTML video player.
+- `src/components/Viewer.tsx` provides a native modal dialog with keyboard photograph navigation, Escape close, focus restoration and an on-demand Cloudflare Stream player.
 - `src/components/camera/` separates model configuration, loading/fallback, model normalization, lighting, quality and rendering.
 - `src/app/globals.css` contains the editorial design system and mobile composition.
 - `PRODUCT.md`, `DESIGN.md`, and `.impeccable/` preserve the design decisions and Impeccable context.
@@ -35,7 +35,20 @@ The web images are real owner-supplied photographs, not stock or generated event
 
 Collection titles are editorial descriptions. No client dates, ages, locations, reviews, awards, pricing or availability have been invented. Khatrina's first name comes from the supplied filenames.
 
-No playable event films or behind-the-scenes team photos were supplied. The film section links explicitly to the confirmed Facebook page. Add approved local MP4 files and optional WebVTT captions to `public/films`, then add entries to `films` in `src/data/site.ts` to enable the built-in accessible film viewer. Replace the About section's portfolio image with an approved team/production image when one becomes available.
+The only event categories are Debut, Predebut, Weddings, Corporate Events, and Graduations, as confirmed by the owner.
+
+The Films section includes a **Full Pre-debut Film** placeholder using a real portfolio photo, labelled **Coming soon**. Cloudflare Stream is the chosen video provider. Until configured, no player is mounted and no request is made to Cloudflare. No video or client identity is fabricated.
+
+To connect the film:
+
+1. Upload the approved film in Cloudflare Stream and wait for it to be ready.
+2. Copy the public customer code and video UID from its Stream embed code.
+3. Set `NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE` and `NEXT_PUBLIC_PREDEBUT_STREAM_VIDEO_ID` in `.env.local` and the hosting environment (see `.env.example`). Use only the customer code, without `customer-` or the domain suffix.
+4. Rebuild. The placeholder automatically becomes **Watch full film** and opens the responsive Stream player in the film viewer.
+
+Video UID and customer code are public playback identifiers, not API keys. Never expose a Cloudflare API token in a `NEXT_PUBLIC_` variable. Playback uses the official customer Stream iframe URL, loaded only after a visitor chooses Watch full film; autoplay is omitted. Configure captions and allowed origins in Stream. Signed/private videos need a server-generated playback token before using this public-portfolio integration.
+
+No paid Cloudflare service or uploaded film has been provisioned by this code change. Replace the About section's portfolio image with an approved team/production image when available.
 
 ## Replace the camera
 
@@ -45,7 +58,7 @@ The shipped camera is an original procedural, unbranded model compressed with Me
 2. Face the lens along local +Z, with the top along +Y.
 3. Adjust the rotation/scale/position in `src/components/camera/camera-config.ts` if needed.
 
-Bounds are normalized automatically. Lighting, pointer damping, responsive framing and scroll behavior remain separate from mesh names. A failed WebGL context or model load falls back to a real photograph; visitors retain all navigation and contact actions. On phones and with reduced motion, rendering uses demand mode. Hidden/offscreen canvases stop continuous rendering.
+Bounds are normalized automatically. Lighting, pointer damping, responsive framing and scroll behavior remain separate from mesh names. A failed WebGL context or model load falls back to a real photograph; visitors retain all navigation and contact actions. At 700px and below, the entire camera is unmounted and its 3D assets are not loaded, as requested. The mobile hero leads directly into a real photograph. Reduced motion uses demand rendering. Hidden/offscreen canvases stop continuous rendering.
 
 Rebuild the original asset with `node scripts/build-camera.mjs`.
 

@@ -21,10 +21,11 @@ for (const [name, width, height] of [
   await page.addStyleTag({
     content: "html { scroll-behavior: auto !important; }",
   });
-  await page
-    .locator("canvas")
-    .waitFor({ timeout: 20000 })
-    .catch(() => {});
+  if (width > 700)
+    await page
+      .locator("canvas")
+      .waitFor({ timeout: 20000 })
+      .catch(() => {});
   await page.waitForTimeout(2000);
   await page.evaluate(async () => {
     for (const image of document.images) image.loading = "eager";
@@ -62,9 +63,12 @@ for (const [name, width, height] of [
     overflow: await page.evaluate(
       () => document.documentElement.scrollWidth > innerWidth,
     ),
-    camera: await page
-      .locator("[data-camera-state]")
-      .getAttribute("data-camera-state"),
+    camera:
+      width > 700
+        ? await page
+            .locator("[data-camera-state]")
+            .getAttribute("data-camera-state")
+        : "not mounted on mobile",
   });
   await page.close();
 }

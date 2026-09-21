@@ -9,7 +9,7 @@ OWN-WORLD: Warm gallery white, near-black, precise sans type, open asymmetric sp
 
 STORY: Experience the camera, see a real portrait, explore collections, discover film and event coverage, message XRISH on Facebook.
 
-FIRST VIEWPORT: Quiet wordmark and navigation across the top. Two lines of oversized left-aligned XRISH CREATIVES type (user correction); a substantial studio-lit camera on the right. Portfolio thumbnail and direct work link below; Message Us remains visible in the header. On touch, camera moves below the headline and the photo becomes full width.
+FIRST VIEWPORT: Quiet wordmark and navigation across the top. Two lines of oversized left-aligned XRISH CREATIVES type (user correction); a substantial studio-lit camera on the right. Portfolio thumbnail and direct work link below; Message Us remains visible in the header. On mobile at 700px and below, the camera is absent and never mounts; the photograph becomes full width. This follows the user's latest explicit correction.
 
 FORM: User-pinned digital photography exhibition, film screening room and interactive camera. Seed fa58c2ea assigned candidate 3; the explicitly pinned brief overrides unrelated catalog worlds. Teletext and barcode motifs rejected for obscuring photography; retain rigorous alignment and decisive light/dark contrast. Code-first explicitly selected by user.
 

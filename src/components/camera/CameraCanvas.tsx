@@ -60,16 +60,16 @@ function CameraLighting() {
       <Environment resolution={128} frames={1}>
         <Lightformer
           form="rect"
-          intensity={4}
+          intensity={1.8}
           position={[0, 4, 3]}
-          scale={[8, 3, 1]}
+          scale={[4, 1.2, 1]}
           rotation={[Math.PI / 4, 0, 0]}
         />
         <Lightformer
           form="rect"
-          intensity={2}
+          intensity={1.3}
           position={[-4, 1, 2]}
-          scale={[2, 6, 1]}
+          scale={[0.8, 4, 1]}
           rotation={[0, Math.PI / 3, 0]}
         />
         <Lightformer

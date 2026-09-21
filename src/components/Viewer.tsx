@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, X, ArrowUpRight } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Photo } from "./Media";
-import { site, type Story, type Film } from "@/data/site";
+import { site, streamPlayerUrl, type Story, type Film } from "@/data/site";
 
 export function Viewer({
   story,
@@ -115,28 +115,31 @@ export function Viewer({
                 Find XRISH on Facebook <ArrowUpRight size={18} />
               </a>
             </div>
-          ) : (
-            <video
-              className="film-player"
-              controls
-              playsInline
-              preload="metadata"
-              poster={film.poster.image.src}
-              onError={() => setVideoError(true)}
-            >
-              <source src={film.src} type="video/mp4" />
-              {film.captions && (
-                <track
-                  kind="captions"
-                  src={film.captions}
-                  srcLang="en"
-                  label="English"
-                  default
+          ) : streamPlayerUrl(film) ? (
+            <>
+              <div className="stream-player">
+                <iframe
+                  src={streamPlayerUrl(film)}
+                  title={`${film.title} — video player`}
+                  allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                  allowFullScreen
+                  onError={() => setVideoError(true)}
                 />
-              )}
-              Your browser doesn’t support this film. Please visit our Facebook
-              page.
-            </video>
+              </div>
+              <p className="stream-help">
+                Having trouble playing?{" "}
+                <a
+                  href={site.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Find XRISH on Facebook
+                </a>
+                .
+              </p>
+            </>
+          ) : (
+            <p className="video-error">This film is coming soon.</p>
           ))}
       </div>
     </dialog>

@@ -52,15 +52,15 @@ const white = new THREE.MeshStandardMaterial({
   roughness: 0.65,
 });
 const glass = new THREE.MeshPhysicalMaterial({
-  color: "#07151d",
-  metalness: 0.1,
-  roughness: 0.035,
-  clearcoat: 1,
-  clearcoatRoughness: 0.03,
+  color: "#849ca6",
+  metalness: 0,
+  roughness: 0.08,
+  clearcoat: 0.15,
+  clearcoatRoughness: 0.09,
   iridescence: 0.22,
-  transmission: 0.32,
-  thickness: 0.2,
-  ior: 1.52,
+  transmission: 0.92,
+  thickness: 0.09,
+  ior: 1.2,
 });
 const inside = new THREE.MeshStandardMaterial({
   color: "#040609",
@@ -121,14 +121,26 @@ cylinder("LensBarrel", 0.74, 1.3, [-0.18, -0.06, 1.19], body);
 cylinder("FocusRing", 0.78, 0.37, [-0.18, -0.06, 1.13], rubber);
 cylinder("ZoomRing", 0.79, 0.33, [-0.18, -0.06, 1.63], rubber);
 cylinder("FrontRim", 0.82, 0.12, [-0.18, -0.06, 1.91], darkMetal);
-cylinder("LensInterior", 0.735, 0.035, [-0.18, -0.06, 1.98], inside);
-cylinder("Aperture", 0.255, 0.022, [-0.18, -0.06, 1.96], inside, 9);
+cylinder("LensInterior", 0.735, 0.035, [-0.18, -0.06, 1.74], inside);
+cylinder(
+  "InnerOpticalElement",
+  0.48,
+  0.025,
+  [-0.18, -0.06, 1.78],
+  new THREE.MeshStandardMaterial({
+    color: "#163238",
+    metalness: 0.6,
+    roughness: 0.28,
+  }),
+);
+cylinder("Aperture", 0.215, 0.022, [-0.18, -0.06, 1.82], inside, 48);
+ring("RecessedOpticalRing", 0.36, 0.018, 1.85, darkMetal);
 const frontGlass = new THREE.Mesh(
   new THREE.SphereGeometry(0.56, 64, 32),
   glass,
 );
 frontGlass.name = "ConvexOpticalGlass";
-frontGlass.scale.z = 0.15;
+frontGlass.scale.z = 0.065;
 frontGlass.position.set(-0.18, -0.06, 1.99);
 model.add(frontGlass);
 ring("FilterThread", 0.77, 0.012, 1.99, metal);

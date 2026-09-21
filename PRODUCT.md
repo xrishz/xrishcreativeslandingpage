@@ -9,7 +9,7 @@ web
 Next.js App Router, React, TypeScript, Tailwind CSS, Motion, React Three Fiber, Three.js and Drei, as requested in the supplied brief. User confirmed building the working site directly.
 
 ## Users
-People and organizations in the Philippines choosing photo and video coverage for debuts, weddings, birthdays, christenings, graduations, corporate events and pre-event sessions.
+People and organizations in the Philippines choosing photo and video coverage for exactly five event categories: Debut, Predebut, Weddings, Corporate Events, and Graduations. The user explicitly narrowed the scope to these categories; do not add others.
 
 ## Product Purpose
 Show XRISH's real work, create interest, and turn that interest into a conversation. The portfolio is the primary evidence.
@@ -21,9 +21,13 @@ XRISH CREATIVES is an event photography and film team led by Elrish John Rull. T
 Visitors explore photos, inspect stories, discover event coverage, and contact the business on Facebook.
 
 ## Capabilities and Constraints
+Cloudflare Stream is the selected video provider. The Films section includes a Full Pre-debut Film placeholder, visibly Coming soon until valid public Stream customer/video identifiers are supplied. No video file or Stream identifier has yet been supplied. Do not imply active playback or create a paid subscription without a specific setup request.
+
 All inquiry calls to action say Message Us and link to https://www.facebook.com/xrishcreatives, explicitly confirmed by the user. No inquiry backend or booking availability claims. Source code must be saved in E:\______XRISH CREATIVES SITE and pushed to xrishz/xrishcreativeslandingpage. GLB camera asset must be replaceable at public/models/xrish-camera.glb. Reduced motion, touch, keyboard and WebGL failure paths are required.
 
 ## Brand Commitments
+The hero headline is exactly XRISH CREATIVES. The camera must not appear on mobile (700px and below); do not mount WebGL or request the model there. These are explicit follow-up corrections from the user.
+
 Editorial, cinematic, warm gallery white and near-black. Photography supplies the color. No generic cards, stock wedding-only identity, fictional testimonials, awards, statistics, dates or locations. Minimal, premium, human copy. User's detailed supplied brief is the visual authority.
 
 ## Evidence on Hand

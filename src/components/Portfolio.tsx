@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import {
   ArrowDown,
   ArrowLeft,
@@ -19,6 +19,7 @@ import {
   contactSheet,
   eventTypes,
   films,
+  streamPlayerUrl,
   site,
   type Story,
   type Film,
@@ -27,7 +28,21 @@ import { Photo } from "./Media";
 import { Viewer } from "./Viewer";
 import { CameraExperience } from "./camera/CameraExperience";
 
+const desktopQuery = "(min-width: 701px)";
+function subscribeViewport(callback: () => void) {
+  const query = window.matchMedia(desktopQuery);
+  query.addEventListener("change", callback);
+  return () => query.removeEventListener("change", callback);
+}
+const getDesktopSnapshot = () => window.matchMedia(desktopQuery).matches;
+const getServerSnapshot = () => false;
+
 export function Portfolio() {
+  const desktop = useSyncExternalStore(
+    subscribeViewport,
+    getDesktopSnapshot,
+    getServerSnapshot,
+  );
   const [selected, setSelected] = useState<Story>();
   const [selectedFilm, setSelectedFilm] = useState<Film>();
   const [shutter, setShutter] = useState(false);
@@ -65,17 +80,19 @@ export function Portfolio() {
             Explore our work <ArrowDown size={18} aria-hidden="true" />
           </a>
         </div>
-        <motion.div
-          className="hero-camera"
-          style={reduced ? undefined : { y: cameraY, rotate: cameraRotate }}
-        >
-          <CameraExperience />
-          <button className="shutter-button" onClick={reveal}>
-            <span className="shutter-dot" />
-            <span>Take a closer look</span>
-            <Plus size={16} aria-hidden="true" />
-          </button>
-        </motion.div>
+        {desktop && (
+          <motion.div
+            className="hero-camera"
+            style={reduced ? undefined : { y: cameraY, rotate: cameraRotate }}
+          >
+            <CameraExperience />
+            <button className="shutter-button" onClick={reveal}>
+              <span className="shutter-dot" />
+              <span>Take a closer look</span>
+              <Plus size={16} aria-hidden="true" />
+            </button>
+          </motion.div>
+        )}
         <div className="hero-bottom">
           <span>
             PHOTOGRAPHY + FILMS
@@ -200,40 +217,46 @@ export function Portfolio() {
             The feeling, all over again.
           </p>
         </div>
-        <div className="film-feature page-pad">
-          <div className="film-photo">
-            <Photo frame={contactSheet[5]} sizes="100vw" />
-            <div className="film-scrim" />
-            <div className="film-caption">
-              <h3>
-                Some stories
-                <br />
-                need sound.
-              </h3>
-              <a
-                className="film-link"
-                href={site.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span className="play-circle">
-                  <ArrowUpRight size={28} aria-hidden="true" />
-                </span>
-                <span>Explore films on Facebook</span>
-              </a>
-            </div>
-          </div>
-        </div>
         {films.map((film) => (
-          <button
-            key={film.src}
-            className="film-entry"
-            onClick={() => setSelectedFilm(film)}
-          >
-            <Play size={20} />
-            {film.title}
-            <span>{film.duration}</span>
-          </button>
+          <article key={film.slug} className="film-feature page-pad">
+            <div className="film-photo">
+              <Photo frame={film.poster} sizes="100vw" />
+              <div className="film-scrim" />
+              <div className="film-caption">
+                <h3>{film.title}</h3>
+                {streamPlayerUrl(film) ? (
+                  <button
+                    className="film-link"
+                    onClick={() => setSelectedFilm(film)}
+                  >
+                    <span className="play-circle">
+                      <Play size={26} aria-hidden="true" />
+                    </span>
+                    <span>
+                      Watch full film
+                      {film.duration ? ` · ${film.duration}` : ""}
+                    </span>
+                  </button>
+                ) : (
+                  <div className="film-coming-soon">
+                    <p>Coming soon.</p>
+                    <span>A story before the celebration.</span>
+                  </div>
+                )}
+                <a
+                  className="film-link"
+                  href={site.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="play-circle">
+                    <ArrowUpRight size={28} aria-hidden="true" />
+                  </span>
+                  <span>More from XRISH on Facebook</span>
+                </a>
+              </div>
+            </div>
+          </article>
         ))}
         <div className="film-foot page-pad">
           <span>EVENT FILMS, MADE TO BE FELT.</span>
@@ -420,7 +443,7 @@ export function Portfolio() {
           Message Us <ArrowUpRight aria-hidden="true" />
         </a>
         <div className="contact-note">
-          <span>Debuts, weddings, and everything worth celebrating.</span>
+          <span>Debut. Predebut. Weddings. Corporate Events. Graduations.</span>
           <span>Let’s talk on Facebook.</span>
         </div>
       </section>
@@ -433,7 +456,7 @@ export function Portfolio() {
       )}
       {selectedFilm && (
         <Viewer
-          key={selectedFilm.src}
+          key={selectedFilm.slug}
           film={selectedFilm}
           close={() => setSelectedFilm(undefined)}
         />

@@ -1,4 +1,5 @@
 import media from "./media.json";
+export { streamPlayerUrl } from "@/lib/stream";
 
 export const site = {
   name: "XRISH CREATIVES",
@@ -112,21 +113,33 @@ export const contactSheet: Frame[] = [
 ];
 
 export const eventTypes = [
-  "Debuts",
+  "Debut",
+  "Predebut",
   "Weddings",
-  "Birthdays & kiddie parties",
-  "Christenings",
+  "Corporate Events",
   "Graduations",
-  "Corporate events",
-  "Pre-event sessions",
 ];
 
-// Add only owner-approved, real film files. The viewer initializes media on demand.
+// Public playback identifiers only. Never put a Cloudflare API token here.
 export type Film = {
+  slug: string;
   title: string;
   poster: Frame;
-  src: string;
-  captions?: string;
+  provider: "cloudflare-stream";
+  videoId?: string;
+  customerCode?: string;
   duration?: string;
 };
-export const films: Film[] = [];
+export const films: Film[] = [
+  {
+    slug: "full-predebut-film",
+    title: "Full Pre-debut Film",
+    provider: "cloudflare-stream",
+    poster: frame(
+      "stn06964",
+      "A portrait beneath golden lights and flowers, used as the upcoming film poster",
+    ),
+    videoId: process.env.NEXT_PUBLIC_PREDEBUT_STREAM_VIDEO_ID,
+    customerCode: process.env.NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE,
+  },
+];
