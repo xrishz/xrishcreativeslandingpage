@@ -120,6 +120,68 @@ export const eventTypes = [
   "Graduations",
 ];
 
+export type Reel = {
+  title: string;
+  category: "Predebut" | "Graduation" | "Debut";
+  url: string;
+  embeddable: boolean;
+};
+
+export const reels: Reel[] = [
+  {
+    title: "Janelle — Pre-debut Film",
+    category: "Predebut",
+    url: "https://www.facebook.com/reel/1062996939839843",
+    embeddable: false,
+  },
+  {
+    title: "Mirielle — Pre-debut Film",
+    category: "Predebut",
+    url: "https://www.facebook.com/reel/1032666439513604",
+    embeddable: true,
+  },
+  {
+    title: "PUP Sto. Tomas — 30th Commencement Exercises",
+    category: "Graduation",
+    url: "https://www.facebook.com/reel/1338311711276190",
+    embeddable: false,
+  },
+  {
+    title: "Angel — Debut Same Day Edit",
+    category: "Debut",
+    url: "https://www.facebook.com/reel/4579322825726121",
+    embeddable: true,
+  },
+  {
+    title: "Cherreille — Debut Same Day Edit",
+    category: "Debut",
+    url: "https://www.facebook.com/reel/1395856652369775",
+    embeddable: false,
+  },
+];
+
+export const testimonials = [
+  {
+    name: "Janelle Angeles",
+    quote: [
+      "Andami pong nagandahan sa sde, including mee. super ganda po huhu thank you so much po",
+    ],
+  },
+  {
+    name: "Cherreille Gonzales",
+    quote: [
+      "Thank you so much po! I had fun filming with you all po and I am glad na kayo po ang pinili kong photo and video",
+    ],
+  },
+  {
+    name: "Lara Jabagat",
+    quote: [
+      "I chose XRISH CREATIVES as my photographer because as I was browsing through my social medias, I saw their works and immediately knew I would love to work with them because their works neatly matched my preferences. I felt light and at ease during the entire shoot because the photographers were nice and very down to earth. They can balance professionalism and humor!",
+      "My favorite part of the experience was working them for about 6-7 hours. Because I got comfortable and able to express myself throughout the shoot (parang nakikipag hangout lang rin ako sa friends ko hihi) I would even recommend them because I really felt comfortable considering they are just few years older than me so I feel like I’m just hanging with my Ate’s and Kuya’s Alongside with that, their works are amazing and it is worth giving a shot!",
+    ],
+  },
+] as const;
+
 // Public playback identifiers only. Never put a Cloudflare API token here.
 export type Film = {
   slug: string;

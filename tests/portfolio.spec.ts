@@ -50,6 +50,41 @@ test("Stream playback URLs accept only valid public identifiers", () => {
   ).toBeUndefined();
 });
 
+test("client notes and five reels appear, with permitted Facebook embeds opening on demand", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.getByText("We’re a photo and video team based in Laguna, Philippines, led by Elrish John Rull.")).toBeVisible();
+  await expect(page.locator(".testimonial")).toHaveCount(3);
+  for (const name of ["Janelle Angeles", "Cherreille Gonzales", "Lara Jabagat"])
+    await expect(page.getByText(name)).toBeVisible();
+  await expect(page.locator(".reel-card")).toHaveCount(5);
+  await expect(page.locator(".reel-card-bottom").first()).toHaveAttribute("target", "_blank");
+  expect(await page.locator(".reel-card-bottom").evaluateAll((links) =>
+    links.map((link) => link.getAttribute("href")),
+  )).toEqual([
+    "https://www.facebook.com/reel/1062996939839843",
+    "https://www.facebook.com/reel/1032666439513604",
+    "https://www.facebook.com/reel/1338311711276190",
+    "https://www.facebook.com/reel/4579322825726121",
+    "https://www.facebook.com/reel/1395856652369775",
+  ]);
+  await expect(page.getByRole("button", { name: /^Play .* here$/ })).toHaveCount(2);
+  await expect(page.locator("iframe")).toHaveCount(0);
+  await page.getByRole("button", { name: "Play Angel — Debut Same Day Edit here" }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.getByTitle("Angel — Debut Same Day Edit — Facebook video player")).toHaveAttribute(
+    "src",
+    /plugins\/video\.php.*4579322825726121/,
+  );
+  await page.getByRole("button", { name: "Close viewer" }).click();
+  await expect(page.locator("iframe")).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Watch Janelle — Pre-debut Film on Facebook" })).toHaveAttribute(
+    "href",
+    "https://www.facebook.com/reel/1062996939839843",
+  );
+});
+
 test("real gallery opens, changes photographs, traps focus and restores it", async ({
   page,
 }) => {
@@ -57,11 +92,11 @@ test("real gallery opens, changes photographs, traps focus and restores it", asy
   const trigger = page.getByRole("button", { name: "View In full bloom." });
   await trigger.click();
   await expect(page.getByRole("dialog")).toBeVisible();
-  await expect(page.getByText("01 / 03")).toBeVisible();
+  await expect(page.getByRole("dialog").getByText("01 / 03")).toBeVisible();
   await page.getByRole("button", { name: "Next photograph" }).click();
-  await expect(page.getByText("02 / 03")).toBeVisible();
+  await expect(page.getByRole("dialog").getByText("02 / 03")).toBeVisible();
   await page.keyboard.press("ArrowLeft");
-  await expect(page.getByText("01 / 03")).toBeVisible();
+  await expect(page.getByRole("dialog").getByText("01 / 03")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(trigger).toBeFocused();

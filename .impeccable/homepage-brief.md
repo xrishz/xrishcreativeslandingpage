@@ -17,4 +17,4 @@ SIGNATURE: A damped pointer-responsive camera, scroll exit and user-triggered sh
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 
-Open content: no video files, testimonials, team photographs or confirmed project metadata. Use genuine supplied photos and descriptive editorial collection titles. Facebook is the confirmed contact destination.
+Open content: no Cloudflare-hosted full film, team photographs or confirmed project dates. The owner later supplied five Facebook reels, three named client testimonials and the Laguna, Philippines location. Two reels permit Facebook iframe playback; three require direct links because Facebook blocks their embeds. Use genuine supplied photos and descriptive editorial collection titles. Facebook is the confirmed contact destination.

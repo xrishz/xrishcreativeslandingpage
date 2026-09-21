@@ -14,11 +14,11 @@ export const metadata: Metadata = {
     : {}),
   title: "XRISH CREATIVES — Event Photography & Films",
   description:
-    "Photo and film coverage for celebrations worth seeing again. Explore XRISH CREATIVES: debut, predebut, weddings, corporate events and graduations in the Philippines.",
+    "Photo and film coverage for celebrations worth seeing again. Explore XRISH CREATIVES: debut, predebut, weddings, corporate events and graduations in Laguna, Philippines.",
   openGraph: {
     title: "XRISH CREATIVES — Event Photography & Films",
     description:
-      "Photography + films for celebrations worth seeing again. Based in the Philippines.",
+      "Photography + films for celebrations worth seeing again. Based in Laguna, Philippines.",
     type: "website",
     locale: "en_PH",
     siteName: "XRISH CREATIVES",
@@ -33,8 +33,13 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: site.name,
-    description: "Event photography and videography in the Philippines",
+    description: "Event photography and videography based in Laguna, Philippines",
     areaServed: "Philippines",
+    address: {
+      "@type": "PostalAddress",
+      addressRegion: "Laguna",
+      addressCountry: "PH",
+    },
     sameAs: [site.facebook],
     ...(site.url ? { url: site.url } : {}),
   };

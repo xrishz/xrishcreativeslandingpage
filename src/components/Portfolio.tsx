@@ -19,10 +19,13 @@ import {
   contactSheet,
   eventTypes,
   films,
+  reels,
+  testimonials,
   streamPlayerUrl,
   site,
   type Story,
   type Film,
+  type Reel,
 } from "@/data/site";
 import { Photo } from "./Media";
 import { Viewer } from "./Viewer";
@@ -45,8 +48,10 @@ export function Portfolio() {
   );
   const [selected, setSelected] = useState<Story>();
   const [selectedFilm, setSelectedFilm] = useState<Film>();
+  const [selectedReel, setSelectedReel] = useState<Reel>();
   const [shutter, setShutter] = useState(false);
   const strip = useRef<HTMLDivElement>(null);
+  const reelStrip = useRef<HTMLDivElement>(null);
   const hero = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll({
@@ -97,7 +102,7 @@ export function Portfolio() {
           <span>
             PHOTOGRAPHY + FILMS
             <br />
-            BASED IN THE PHILIPPINES
+            BASED IN LAGUNA, PHILIPPINES
           </span>
           <a href="#work" className="hero-preview">
             <div className="hero-preview-photo">
@@ -258,6 +263,87 @@ export function Portfolio() {
             </div>
           </article>
         ))}
+        <div className="reel-heading page-pad">
+          <div>
+            <span className="section-eyebrow">FROM THE XRISH ARCHIVE</span>
+            <h3>Watch the moments move.</h3>
+            <p>Five short films from real celebrations, shared on Facebook.</p>
+          </div>
+          <div className="reel-controls">
+            <button
+              className="icon-button"
+              aria-label="Scroll films left"
+              onClick={() =>
+                reelStrip.current?.scrollBy({
+                  left: -360,
+                  behavior: reduced ? "instant" : "smooth",
+                })
+              }
+            >
+              <ArrowLeft aria-hidden="true" />
+            </button>
+            <button
+              className="icon-button"
+              aria-label="Scroll films right"
+              onClick={() =>
+                reelStrip.current?.scrollBy({
+                  left: 360,
+                  behavior: reduced ? "instant" : "smooth",
+                })
+              }
+            >
+              <ArrowRight aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+        <div
+          className="reel-strip"
+          ref={reelStrip}
+          tabIndex={0}
+          aria-label="XRISH film reels, horizontally scrollable"
+        >
+          {reels.map((reel, index) => (
+            <article
+              className="reel-card"
+              key={reel.url}
+            >
+              <span className="reel-card-top">
+                <span>{reel.category}</span>
+                <span>{String(index + 1).padStart(2, "0")} / 05</span>
+              </span>
+              <div className="reel-card-main">
+                {reel.embeddable ? (
+                  <button
+                    className="reel-play"
+                    onClick={() => setSelectedReel(reel)}
+                    aria-label={`Play ${reel.title} here`}
+                  >
+                    <Play size={25} aria-hidden="true" />
+                  </button>
+                ) : (
+                  <a
+                    className="reel-play"
+                    href={reel.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Watch ${reel.title} on Facebook`}
+                  >
+                    <ArrowUpRight size={25} aria-hidden="true" />
+                  </a>
+                )}
+                <strong>{reel.title}</strong>
+              </div>
+              <a
+                className="reel-card-bottom"
+                href={reel.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Watch on Facebook <ArrowUpRight size={18} aria-hidden="true" />
+              </a>
+            </article>
+          ))}
+        </div>
         <div className="film-foot page-pad">
           <span>EVENT FILMS, MADE TO BE FELT.</span>
           <span>PHOTOGRAPHY / CINEMATOGRAPHY</span>
@@ -377,6 +463,42 @@ export function Portfolio() {
       </section>
 
       <section
+        id="testimonials"
+        className="testimonials-section page-pad"
+        aria-labelledby="testimonials-heading"
+      >
+        <div className="testimonials-heading">
+          <div>
+            <span className="section-eyebrow">NOTES FROM OUR CLIENTS</span>
+            <h2 id="testimonials-heading">
+              Kind words.
+              <br />
+              Kept close.
+            </h2>
+          </div>
+          <p>What it felt like, in their own words.</p>
+        </div>
+        <div className="testimonials-grid">
+          {testimonials.map((testimonial, index) => (
+            <figure
+              className={`testimonial testimonial-${index}`}
+              key={testimonial.name}
+            >
+              <span className="testimonial-index">
+                {String(index + 1).padStart(2, "0")} / 03
+              </span>
+              <blockquote>
+                {testimonial.quote.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </blockquote>
+              <figcaption>{testimonial.name} <span>· Client</span></figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      <section
         id="about"
         className="about-section page-pad"
         aria-labelledby="about-heading"
@@ -391,8 +513,8 @@ export function Portfolio() {
         </div>
         <div className="about-copy">
           <p>
-            We’re a photo and video team in the Philippines, led by Elrish John
-            Rull.
+            We’re a photo and video team based in Laguna, Philippines, led by
+            Elrish John Rull.
           </p>
           <p>
             We document celebrations and the people who make them matter. From
@@ -459,6 +581,13 @@ export function Portfolio() {
           key={selectedFilm.slug}
           film={selectedFilm}
           close={() => setSelectedFilm(undefined)}
+        />
+      )}
+      {selectedReel && (
+        <Viewer
+          key={selectedReel.url}
+          reel={selectedReel}
+          close={() => setSelectedReel(undefined)}
         />
       )}
       {shutter && !reduced && (

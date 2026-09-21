@@ -504,6 +504,18 @@ section {
   height: 100%;
   border: 0;
 }
+.reel-player {
+  width: min(100%, 900px);
+  aspect-ratio: 560 / 314;
+  margin: 5svh auto 0;
+  background: #000;
+}
+.reel-player iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
 .stream-help {
   margin-top: 20px;
   font-size: 13px;
@@ -534,6 +546,115 @@ section {
 .film-link:hover .play-circle {
   background: var(--paper);
   color: var(--ink);
+}
+.section-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+.reel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 30px;
+  margin-top: 88px;
+  margin-bottom: 24px;
+}
+.reel-heading h3 {
+  max-width: 12ch;
+  margin-top: 18px;
+  font-size: clamp(36px, 4vw, 62px);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+}
+.reel-heading p {
+  margin-top: 14px;
+  color: #b9bab2;
+  font-size: 13px;
+}
+.reel-controls {
+  display: flex;
+  gap: 8px;
+}
+.reel-controls .icon-button {
+  border: 1px solid #555750;
+}
+.reel-strip {
+  display: flex;
+  gap: 16px;
+  padding: 0 var(--gutter) 12px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: #777970 transparent;
+}
+.reel-card {
+  flex: 0 0 clamp(260px, 29vw, 400px);
+  min-height: 350px;
+  padding: 24px;
+  background: #22241f;
+  border: 1px solid #454840;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  scroll-snap-align: start;
+  transition: background 0.25s var(--ease);
+}
+.reel-card:hover,
+.reel-card:focus-visible {
+  background: #30332c;
+}
+.reel-card:focus-within {
+  background: #30332c;
+}
+.reel-card-top,
+.reel-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #c3c6bc;
+}
+.reel-card-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 30px;
+}
+.reel-card-main strong {
+  max-width: 16ch;
+  font-size: clamp(25px, 2.4vw, 34px);
+  line-height: 1.13;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+}
+.reel-play {
+  width: 56px;
+  height: 56px;
+  border: 1px solid #c3c6bc;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.reel-play:hover {
+  background: var(--paper);
+  color: var(--dark);
+}
+.reel-card-bottom {
+  border-top: 1px solid #454840;
+  padding-top: 17px;
+}
+.reel-card-bottom:hover {
+  color: white;
+  text-decoration: underline;
 }
 .film-foot {
   display: flex;
@@ -667,6 +788,74 @@ section {
 }
 .event-list a:hover {
   color: var(--muted);
+}
+.testimonials-section {
+  padding-top: 95px;
+  padding-bottom: 100px;
+  background: #ebe9e2;
+}
+.testimonials-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 30px;
+  padding-bottom: 55px;
+}
+.testimonials-heading h2 {
+  margin-top: 20px;
+  font-size: clamp(58px, 7vw, 100px);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+  font-weight: 500;
+}
+.testimonials-heading > p {
+  max-width: 170px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  column-gap: 8%;
+}
+.testimonial {
+  border-top: 1px solid #b9b7ae;
+  padding: 24px 0 35px;
+  display: flex;
+  flex-direction: column;
+}
+.testimonial-index {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.testimonial blockquote {
+  margin: 24px 0 32px;
+  font-size: clamp(21px, 2.3vw, 32px);
+  line-height: 1.4;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+}
+.testimonial blockquote p + p {
+  margin-top: 25px;
+}
+.testimonial figcaption {
+  margin-top: auto;
+  font-size: 12px;
+  font-weight: 600;
+}
+.testimonial figcaption span {
+  color: var(--muted);
+  font-weight: 400;
+}
+.testimonial-2 {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+.testimonial-2 blockquote {
+  font-size: clamp(18px, 1.65vw, 24px);
+  line-height: 1.52;
 }
 .about-section {
   border-top: 1px solid var(--rule);
@@ -994,6 +1183,15 @@ section {
     gap: 45px 8%;
   }
 }
+@media (max-width: 900px) {
+  .testimonials-grid {
+    display: block;
+  }
+  .testimonial-2 {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
 @media (max-width: 700px) {
   html {
     scroll-padding-top: 80px;
@@ -1227,6 +1425,35 @@ section {
   .film-foot > span:last-child {
     display: none;
   }
+  .reel-heading {
+    align-items: end;
+    margin-top: 67px;
+  }
+  .reel-heading h3 {
+    font-size: 40px;
+  }
+  .reel-heading p {
+    max-width: 230px;
+    line-height: 1.5;
+  }
+  .reel-controls {
+    gap: 4px;
+  }
+  .reel-controls .icon-button {
+    width: 40px;
+    height: 40px;
+  }
+  .reel-strip {
+    gap: 12px;
+  }
+  .reel-card {
+    flex-basis: min(78vw, 350px);
+    min-height: 350px;
+    padding: 20px;
+  }
+  .reel-card-main strong {
+    font-size: 28px;
+  }
   .approach-section {
     padding-top: 74px;
     padding-bottom: 70px;
@@ -1294,6 +1521,27 @@ section {
     padding-top: 64px;
     padding-bottom: 60px;
     display: block;
+  }
+  .testimonials-section {
+    padding-top: 70px;
+    padding-bottom: 65px;
+  }
+  .testimonials-heading {
+    display: block;
+    padding-bottom: 35px;
+  }
+  .testimonials-heading h2 {
+    font-size: 59px;
+  }
+  .testimonials-heading > p {
+    max-width: none;
+    margin-top: 20px;
+  }
+  .testimonial blockquote {
+    font-size: 23px;
+  }
+  .testimonial-2 blockquote {
+    font-size: 19px;
   }
   .about-title h2 {
     font-size: 63px;

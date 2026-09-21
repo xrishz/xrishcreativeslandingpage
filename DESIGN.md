@@ -202,6 +202,12 @@ Story photographs are buttons with explicit View labels, rather than decorative 
 
 Use the dark surface and pale type for the Full Pre-debut Film feature. The supplied photograph is a poster for a clearly labelled Coming soon placeholder, not a playable film. When the owner provides a Cloudflare Stream video UID and customer code, replace the placeholder action with Watch full film and open the Stream player on demand in the existing viewer. Do not autoplay. Keep the poster visible as the underlying composition while playback is unavailable.
 
+Five owner-supplied reels follow in a horizontal, keyboard-scrollable editorial index. The Facebook iframe loads only after an explicit Play action for the two reels Facebook allows to embed. Every reel retains a direct Facebook link, and the three blocked embeds link out rather than showing a broken player. Keep the Cloudflare full-film placeholder separate from these existing short reels.
+
+### Testimonials
+
+Use an asymmetric editorial grid on warm paper for the three screenshot-supplied client messages. The longer Lara note occupies the larger column on desktop; all three stack in reading order on mobile. Preserve the clients' own wording and names. Do not reproduce unsupported ratings or avatars from the screenshots.
+
 ### Viewer
 
 The photograph viewer is a native modal dialog with a full dark canvas, title, close action, photograph count and directional controls. Opening it locks body scrolling; closing it restores previous focus. Escape closes it, and arrow keys move through photographs. The photo changes with a short (0.16s) opacity transition. Reduced-motion mode suppresses that opacity change. Retain the readable title and visible controls on mobile.
@@ -227,7 +233,7 @@ Reduced motion holds the camera still and disables the scroll transform and flas
 
 - **Don't** substitute generic rounded card grids for the photographic spreads.
 - **Don't** introduce decorative interface colors that compete with the photographs.
-- **Don't** invent testimonials, awards, statistics, client identities, dates or locations.
+- **Don't** invent testimonials, awards, statistics, client identities, dates or locations beyond the owner-supplied Laguna location and named client feedback.
 - **Don't** make mobile interactions depend on hover or hide the only path to an action.
 - **Don't** autoplay audio, hijack scrolling or add an automatic shutter flash.
 - **Don't** present a photograph as a working embedded film before an actual film asset is supplied.

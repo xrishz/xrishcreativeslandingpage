@@ -39,6 +39,10 @@ Collection titles are editorial descriptions. No client dates, ages, locations, 
 
 The only event categories are Debut, Predebut, Weddings, Corporate Events, and Graduations, as confirmed by the owner.
 
+The owner supplied five Facebook reels: two Predebut, one Graduation, and two Debut. The site verifies and presents their actual post titles. Mirielle's Pre-debut Film and Angel's Debut Same Day Edit currently allow Facebook iframe playback, which loads only after a visitor presses Play. Facebook blocks embedding for Janelle, PUP Sto. Tomas and Cherreille, so those reels use direct Facebook links. Every reel has a direct link in case Facebook changes embed availability. The full Pre-debut Film placeholder remains separate from these short reels.
+
+Three named client testimonials were transcribed from the owner's supplied screenshots and displayed without inferred star ratings or reused avatars. The About introduction and location metadata say Laguna, Philippines, as confirmed by the owner.
+
 The Films section includes a **Full Pre-debut Film** placeholder using a real portfolio photo, labelled **Coming soon**. Cloudflare Stream is the chosen future video provider; the owner requested the placeholder for now. Until configured, no player is mounted and no request is made to Cloudflare. No video or client identity is fabricated.
 
 To connect the film:

@@ -10,7 +10,7 @@ export function Footer() {
         <p>
           Photography + Films
           <br />
-          Philippines
+          Laguna, Philippines
         </p>
         <nav aria-label="Footer navigation">
           <a href="#work">Work</a>
