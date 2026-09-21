@@ -4,7 +4,7 @@ export { streamPlayerUrl } from "@/lib/stream";
 export const site = {
   name: "XRISH CREATIVES",
   facebook: "https://www.facebook.com/xrishcreatives",
-  url: process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, ""),
+  url: (process.env.NEXT_PUBLIC_SITE_URL || process.env.URL)?.replace(/\/$/, ""),
 };
 
 export function photo(name: string) {

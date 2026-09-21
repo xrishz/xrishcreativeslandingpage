@@ -76,6 +76,6 @@ Browser tests use an installed Google Chrome. Update the channel in `playwright.
 
 ## Hosting and SEO
 
-This is a standard Next.js deployment. Configure `NEXT_PUBLIC_SITE_URL` to the final HTTPS origin before the production build to enable canonical URLs and a populated sitemap. Without a confirmed domain, the application intentionally emits no invented canonical URL. OpenGraph artwork is a crop of a supplied XRISH photograph. No analytics, forms, database or third-party tracking scripts are included.
+This is a standard Next.js deployment. On Netlify, the build uses Netlify's provided `URL` as the canonical origin. Set `NEXT_PUBLIC_SITE_URL` if a different confirmed public origin is needed. Without a confirmed origin, the application emits no invented canonical URL. OpenGraph artwork is a crop of a supplied XRISH photograph. No analytics, forms, database or third-party tracking scripts are included.
 
 Pushing source to GitHub does not itself configure hosting. Production deployment and domain setup are separate decisions.
