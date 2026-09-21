@@ -2,6 +2,8 @@
 
 A portfolio-first event photography and film website built from the supplied XRISH photographs. All **Message Us** links open the owner's confirmed Facebook page: https://www.facebook.com/xrishcreatives.
 
+Live site: https://xrish-creatives-portfolio.netlify.app/ . The Netlify project is connected to `xrishz/xrishcreativeslandingpage` on `main` for automatic deployments. The earlier `xrishcreatives.netlify.app` project remains separate.
+
 ## Run locally
 
 Requires Node.js 20.9 or newer and npm.
@@ -37,7 +39,7 @@ Collection titles are editorial descriptions. No client dates, ages, locations, 
 
 The only event categories are Debut, Predebut, Weddings, Corporate Events, and Graduations, as confirmed by the owner.
 
-The Films section includes a **Full Pre-debut Film** placeholder using a real portfolio photo, labelled **Coming soon**. Cloudflare Stream is the chosen video provider. Until configured, no player is mounted and no request is made to Cloudflare. No video or client identity is fabricated.
+The Films section includes a **Full Pre-debut Film** placeholder using a real portfolio photo, labelled **Coming soon**. Cloudflare Stream is the chosen future video provider; the owner requested the placeholder for now. Until configured, no player is mounted and no request is made to Cloudflare. No video or client identity is fabricated.
 
 To connect the film:
 
@@ -78,4 +80,4 @@ Browser tests use an installed Google Chrome. Update the channel in `playwright.
 
 This is a standard Next.js deployment. On Netlify, the build uses Netlify's provided `URL` as the canonical origin. Set `NEXT_PUBLIC_SITE_URL` if a different confirmed public origin is needed. Without a confirmed origin, the application emits no invented canonical URL. OpenGraph artwork is a crop of a supplied XRISH photograph. No analytics, forms, database or third-party tracking scripts are included.
 
-Pushing source to GitHub does not itself configure hosting. Production deployment and domain setup are separate decisions.
+The Netlify project currently serves its `netlify.app` address. A custom domain can be added later without changing the repository structure.
