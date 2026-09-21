@@ -122,7 +122,7 @@ The palette is warm and restrained; the photographs provide the saturated color.
 
 ### Primary
 
-- **Gallery Ink** (`ink`): primary text, underlined inquiry actions and the shutter dot. The visual emphasis comes from contrast and scale rather than a colored brand accent.
+- **Gallery Ink** (`ink`): primary text and underlined inquiry actions. The visual emphasis comes from contrast and scale rather than a colored brand accent.
 
 ### Neutral
 
@@ -160,7 +160,7 @@ Desktop stories form an asymmetric two-column spread (1.04fr / 0.8fr), with an (
 
 The horizontal contact sheet uses (285px) figures, alternating vertical offsets of (48px), and proximity scroll snapping. Mobile figures use (72vw), with a (36px) alternating offset. It remains horizontally scrollable by touch, keyboard and the visible directional buttons.
 
-At 700px and below, the camera is absent. React only mounts the camera experience when `(min-width: 701px)` matches; a mobile first load must not create WebGL or request the GLB. The hero preview becomes a full-width (16:9) photograph. These conditions are part of the user-confirmed responsive design, not merely a CSS hiding treatment.
+The hero uses the supplied MIRIELLE-50 portrait as its primary photographic field. On desktop the portrait occupies the right side while layered directional gradients carry the warm paper behind the wordmark. At 700px and below it becomes a full-width vertical photograph between the hero copy and metadata, with top and bottom fades joining it to the page surface.
 
 Coverage and about content collapse to a single column on mobile. Film imagery becomes edge-to-edge, with the caption moved toward the bottom and a vertical scrim. The viewer uses the safe viewport height and contains the full photograph without cropping.
 
@@ -168,13 +168,13 @@ Coverage and about content collapse to a single column on mobile. Film imagery b
 
 The gallery is predominantly flat. Tonal surfaces, hairline dividers, photographic cropping and open space provide hierarchy. Do not add shadowed card containers to the editorial spreads.
 
-The mobile menu has a restrained separation shadow (`0 15px 25px #1111110a`). The desktop camera uses a blurred elliptical grounding shape (`#1a1b1920`, blur (18px)), and photo captions use soft text shadows only where needed over imagery. Film scrims protect readability: a horizontal black-to-transparent gradient on desktop becomes vertical on mobile. Full values and motion timings live in `.impeccable/design.json`.
+The mobile menu has a restrained separation shadow (`0 15px 25px #1111110a`). The hero portrait uses layered paper-to-transparent gradients to protect the wordmark and connect the photograph to the page without a visible panel edge. Photo captions use soft text shadows only where needed over imagery. Film scrims protect readability: a horizontal black-to-transparent gradient on desktop becomes vertical on mobile. Full values and motion timings live in `.impeccable/design.json`.
 
-**The Flat Gallery Rule.** Keep photographic surfaces flat; reserve simulated depth for the camera and readability treatments over imagery.
+**The Flat Gallery Rule.** Keep photographic surfaces flat; use gradients only for photographic blending and readability.
 
 ## Shapes
 
-Photographs, editorial regions and viewer surfaces keep straight edges. Circular geometry identifies compact controls: previous/next, close, back-to-top, the film action and shutter dot. Circular icon controls are (46px) square, and the back-to-top control is (44px). Film controls are (60px), becoming (52px) on mobile.
+Photographs, editorial regions and viewer surfaces keep straight edges. Circular geometry identifies compact controls: previous/next, close, back-to-top and film actions. Circular icon controls are (46px) square, and the back-to-top control is (44px). Film controls are (60px), becoming (52px) on mobile.
 
 Use thin rules for division and underlining for text actions. Avoid introducing pill-shaped inquiry buttons or rounded image cards. There is no general rounded-panel component in the current system.
 
@@ -202,7 +202,7 @@ Story photographs are buttons with explicit View labels, rather than decorative 
 
 Use the dark surface and pale type for the Full Pre-debut Film feature. The supplied photograph is a poster for a clearly labelled Coming soon placeholder, not a playable film. When the owner provides a Cloudflare Stream video UID and customer code, replace the placeholder action with Watch full film and open the Stream player on demand in the existing viewer. Do not autoplay. Keep the poster visible as the underlying composition while playback is unavailable.
 
-Five owner-supplied reels follow in a horizontal, keyboard-scrollable editorial index. The Facebook iframe loads only after an explicit Play action for the two reels Facebook allows to embed. Every reel retains a direct Facebook link, and the three blocked embeds link out rather than showing a broken player. Keep the Cloudflare full-film placeholder separate from these existing short reels.
+Two owner-supplied reels play directly in the Films section using responsive Facebook iframes. Omit the other three because Facebook denies embedding them; every displayed short film must be playable. Keep the Cloudflare full-film placeholder separate from these existing short reels.
 
 ### Testimonials
 
@@ -212,11 +212,9 @@ Use an asymmetric editorial grid on warm paper for the three screenshot-supplied
 
 The photograph viewer is a native modal dialog with a full dark canvas, title, close action, photograph count and directional controls. Opening it locks body scrolling; closing it restores previous focus. Escape closes it, and arrow keys move through photographs. The photo changes with a short (0.16s) opacity transition. Reduced-motion mode suppresses that opacity change. Retain the readable title and visible controls on mobile.
 
-### Desktop camera
+### Photographic hero
 
-The camera is a desktop signature, using Three.js and a replaceable `public/models/xrish-camera.glb`. Pointer movement is damped; Motion translates and rotates the camera region gently as the hero scrolls away. The explicit shutter action opens a genuine story and adds a brief (0.3s) flash only when reduced motion is not requested. It makes no sound.
-
-Reduced motion holds the camera still and disables the scroll transform and flash. Offscreen or hidden-document rendering switches to demand updates. Unsupported WebGL, rendering errors and context loss show a genuine photo fallback. The camera mount gate described in Layout takes precedence over unused narrow-canvas tuning values: there is no mobile camera experience.
+The owner-supplied MIRIELLE-50 portrait replaces the former 3D camera. It uses the same high-resolution responsive image pipeline as the portfolio and receives a restrained vertical scroll drift through Motion. Reduced-motion mode removes the drift. Gradients blend the image into the paper surface without lowering the photograph's delivered resolution.
 
 ## Do's and Don'ts
 
@@ -227,7 +225,7 @@ Reduced motion holds the camera still and disables the scroll transform and flas
 - **Do** use actual supplied photography with accurate alternative text and responsive image sizing.
 - **Do** preserve warm neutral surfaces, straight image edges and staggered editorial spacing.
 - **Do** keep visible keyboard focus, minimum 44px controls and reduced-motion alternatives.
-- **Do** unmount the camera at 700px and below so mobile creates no WebGL and requests no GLB.
+- **Do** preserve the MIRIELLE-50 portrait as the hero image and keep its face and dress visible at each breakpoint.
 
 ### Don't:
 
@@ -235,5 +233,5 @@ Reduced motion holds the camera still and disables the scroll transform and flas
 - **Don't** introduce decorative interface colors that compete with the photographs.
 - **Don't** invent testimonials, awards, statistics, client identities, dates or locations beyond the owner-supplied Laguna location and named client feedback.
 - **Don't** make mobile interactions depend on hover or hide the only path to an action.
-- **Don't** autoplay audio, hijack scrolling or add an automatic shutter flash.
+- **Don't** autoplay audio or hijack scrolling.
 - **Don't** present a photograph as a working embedded film before an actual film asset is supplied.

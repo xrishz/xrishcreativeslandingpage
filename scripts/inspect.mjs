@@ -17,15 +17,13 @@ for (const [name, width, height] of [
   page.on("console", (msg) => {
     if (msg.type() === "error") errors.push(msg.text());
   });
+  await page.route("https://www.facebook.com/plugins/video.php**", (route) =>
+    route.abort(),
+  );
   await page.goto("http://localhost:3000", { waitUntil: "networkidle" });
   await page.addStyleTag({
     content: "html { scroll-behavior: auto !important; }",
   });
-  if (width > 700)
-    await page
-      .locator("canvas")
-      .waitFor({ timeout: 20000 })
-      .catch(() => {});
   await page.waitForTimeout(2000);
   await page.evaluate(async () => {
     for (const image of document.images) image.loading = "eager";
@@ -35,7 +33,7 @@ for (const [name, width, height] of [
     }
     window.scrollTo(0, 0);
   });
-  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(1000);
   await page.evaluate(async () => {
     await Promise.race([
       Promise.all(
@@ -63,12 +61,7 @@ for (const [name, width, height] of [
     overflow: await page.evaluate(
       () => document.documentElement.scrollWidth > innerWidth,
     ),
-    camera:
-      width > 700
-        ? await page
-            .locator("[data-camera-state]")
-            .getAttribute("data-camera-state")
-        : "not mounted on mobile",
+    heroPortrait: await page.locator(".hero-portrait img").getAttribute("src"),
   });
   await page.close();
 }

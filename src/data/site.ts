@@ -32,6 +32,12 @@ const frame = (name: string, alt: string, position?: string): Frame => ({
   position,
 });
 
+export const heroPortrait = frame(
+  "mirielle-50",
+  "Mirielle seated in a green dress beneath trees in Laguna",
+  "50% 57%",
+);
+
 export const stories: Story[] = [
   {
     slug: "in-full-bloom",
@@ -129,34 +135,16 @@ export type Reel = {
 
 export const reels: Reel[] = [
   {
-    title: "Janelle — Pre-debut Film",
-    category: "Predebut",
-    url: "https://www.facebook.com/reel/1062996939839843",
-    embeddable: false,
-  },
-  {
     title: "Mirielle — Pre-debut Film",
     category: "Predebut",
     url: "https://www.facebook.com/reel/1032666439513604",
     embeddable: true,
   },
   {
-    title: "PUP Sto. Tomas — 30th Commencement Exercises",
-    category: "Graduation",
-    url: "https://www.facebook.com/reel/1338311711276190",
-    embeddable: false,
-  },
-  {
     title: "Angel — Debut Same Day Edit",
     category: "Debut",
     url: "https://www.facebook.com/reel/4579322825726121",
     embeddable: true,
-  },
-  {
-    title: "Cherreille — Debut Same Day Edit",
-    category: "Debut",
-    url: "https://www.facebook.com/reel/1395856652369775",
-    embeddable: false,
   },
 ];
 

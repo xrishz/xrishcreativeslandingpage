@@ -20,12 +20,12 @@ for (const file of files) {
   const info = await sharp(input)
     .rotate()
     .resize({
-      width: 2000,
-      height: 2200,
+      width: 3600,
+      height: 4800,
       fit: "inside",
       withoutEnlargement: true,
     })
-    .webp({ quality: 84, effort: 5 })
+    .webp({ quality: 90, effort: 5 })
     .toFile(output);
   const tiny = await sharp(input)
     .rotate()

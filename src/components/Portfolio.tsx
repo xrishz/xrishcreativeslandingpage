@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useRef, useState } from "react";
 import {
   ArrowDown,
   ArrowLeft,
@@ -19,51 +19,28 @@ import {
   contactSheet,
   eventTypes,
   films,
+  heroPortrait,
   reels,
   testimonials,
   streamPlayerUrl,
   site,
   type Story,
   type Film,
-  type Reel,
 } from "@/data/site";
 import { Photo } from "./Media";
 import { Viewer } from "./Viewer";
-import { CameraExperience } from "./camera/CameraExperience";
-
-const desktopQuery = "(min-width: 701px)";
-function subscribeViewport(callback: () => void) {
-  const query = window.matchMedia(desktopQuery);
-  query.addEventListener("change", callback);
-  return () => query.removeEventListener("change", callback);
-}
-const getDesktopSnapshot = () => window.matchMedia(desktopQuery).matches;
-const getServerSnapshot = () => false;
 
 export function Portfolio() {
-  const desktop = useSyncExternalStore(
-    subscribeViewport,
-    getDesktopSnapshot,
-    getServerSnapshot,
-  );
   const [selected, setSelected] = useState<Story>();
   const [selectedFilm, setSelectedFilm] = useState<Film>();
-  const [selectedReel, setSelectedReel] = useState<Reel>();
-  const [shutter, setShutter] = useState(false);
   const strip = useRef<HTMLDivElement>(null);
-  const reelStrip = useRef<HTMLDivElement>(null);
   const hero = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: hero,
     offset: ["start start", "end start"],
   });
-  const cameraY = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const cameraRotate = useTransform(scrollYProgress, [0, 1], [0, -9]);
-  const reveal = () => {
-    setShutter(true);
-    setSelected(stories[0]);
-  };
+  const portraitY = useTransform(scrollYProgress, [0, 1], [0, 55]);
   return (
     <>
       <section
@@ -85,19 +62,17 @@ export function Portfolio() {
             Explore our work <ArrowDown size={18} aria-hidden="true" />
           </a>
         </div>
-        {desktop && (
-          <motion.div
-            className="hero-camera"
-            style={reduced ? undefined : { y: cameraY, rotate: cameraRotate }}
-          >
-            <CameraExperience />
-            <button className="shutter-button" onClick={reveal}>
-              <span className="shutter-dot" />
-              <span>Take a closer look</span>
-              <Plus size={16} aria-hidden="true" />
-            </button>
-          </motion.div>
-        )}
+        <motion.div
+          className="hero-portrait"
+          style={reduced ? undefined : { y: portraitY }}
+        >
+          <Photo
+            frame={heroPortrait}
+            sizes="(max-width: 700px) 100vw, 68vw"
+            priority
+          />
+          <div className="hero-portrait-blend" aria-hidden="true" />
+        </motion.div>
         <div className="hero-bottom">
           <span>
             PHOTOGRAPHY + FILMS
@@ -222,6 +197,33 @@ export function Portfolio() {
             The feeling, all over again.
           </p>
         </div>
+        <div className="reel-heading page-pad">
+          <div>
+            <h3>Watch the moments move.</h3>
+          </div>
+        </div>
+        <div className="reel-gallery page-pad">
+          {reels.filter((reel) => reel.embeddable).map((reel, index) => (
+            <article className="reel-feature" key={reel.url}>
+              <div className="reel-frame">
+                <iframe
+                  title={`${reel.title} — Facebook video player`}
+                  src={`https://www.facebook.com/plugins/video.php?height=314&href=${encodeURIComponent(`${reel.url}/`)}&show_text=false&width=560&t=0`}
+                  loading="lazy"
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
+              <div className="reel-feature-caption">
+                <span>{String(index + 1).padStart(2, "0")} / {reel.category}</span>
+                <h4>{reel.title}</h4>
+              </div>
+              <a href={reel.url} target="_blank" rel="noopener noreferrer">
+                Open original on Facebook <ArrowUpRight size={16} aria-hidden="true" />
+              </a>
+            </article>
+          ))}
+        </div>
         {films.map((film) => (
           <article key={film.slug} className="film-feature page-pad">
             <div className="film-photo">
@@ -263,87 +265,6 @@ export function Portfolio() {
             </div>
           </article>
         ))}
-        <div className="reel-heading page-pad">
-          <div>
-            <span className="section-eyebrow">FROM THE XRISH ARCHIVE</span>
-            <h3>Watch the moments move.</h3>
-            <p>Five short films from real celebrations, shared on Facebook.</p>
-          </div>
-          <div className="reel-controls">
-            <button
-              className="icon-button"
-              aria-label="Scroll films left"
-              onClick={() =>
-                reelStrip.current?.scrollBy({
-                  left: -360,
-                  behavior: reduced ? "instant" : "smooth",
-                })
-              }
-            >
-              <ArrowLeft aria-hidden="true" />
-            </button>
-            <button
-              className="icon-button"
-              aria-label="Scroll films right"
-              onClick={() =>
-                reelStrip.current?.scrollBy({
-                  left: 360,
-                  behavior: reduced ? "instant" : "smooth",
-                })
-              }
-            >
-              <ArrowRight aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-        <div
-          className="reel-strip"
-          ref={reelStrip}
-          tabIndex={0}
-          aria-label="XRISH film reels, horizontally scrollable"
-        >
-          {reels.map((reel, index) => (
-            <article
-              className="reel-card"
-              key={reel.url}
-            >
-              <span className="reel-card-top">
-                <span>{reel.category}</span>
-                <span>{String(index + 1).padStart(2, "0")} / 05</span>
-              </span>
-              <div className="reel-card-main">
-                {reel.embeddable ? (
-                  <button
-                    className="reel-play"
-                    onClick={() => setSelectedReel(reel)}
-                    aria-label={`Play ${reel.title} here`}
-                  >
-                    <Play size={25} aria-hidden="true" />
-                  </button>
-                ) : (
-                  <a
-                    className="reel-play"
-                    href={reel.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Watch ${reel.title} on Facebook`}
-                  >
-                    <ArrowUpRight size={25} aria-hidden="true" />
-                  </a>
-                )}
-                <strong>{reel.title}</strong>
-              </div>
-              <a
-                className="reel-card-bottom"
-                href={reel.url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Watch on Facebook <ArrowUpRight size={18} aria-hidden="true" />
-              </a>
-            </article>
-          ))}
-        </div>
         <div className="film-foot page-pad">
           <span>EVENT FILMS, MADE TO BE FELT.</span>
           <span>PHOTOGRAPHY / CINEMATOGRAPHY</span>
@@ -533,7 +454,7 @@ export function Portfolio() {
         <div className="about-image">
           <Photo
             frame={{ ...contactSheet[4], position: "50% 35%" }}
-            sizes="(max-width: 700px) 100vw, 45vw"
+            sizes="100vw"
           />
           <span>THE WAY WE SEE IT.</span>
         </div>
@@ -581,22 +502,6 @@ export function Portfolio() {
           key={selectedFilm.slug}
           film={selectedFilm}
           close={() => setSelectedFilm(undefined)}
-        />
-      )}
-      {selectedReel && (
-        <Viewer
-          key={selectedReel.url}
-          reel={selectedReel}
-          close={() => setSelectedReel(undefined)}
-        />
-      )}
-      {shutter && !reduced && (
-        <motion.div
-          className="shutter-flash"
-          initial={{ opacity: 0.6 }}
-          animate={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          onAnimationComplete={() => setShutter(false)}
         />
       )}
     </>

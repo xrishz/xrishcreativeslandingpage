@@ -2,6 +2,8 @@
 
 A portfolio-first event photography and film website built from the supplied XRISH photographs. All **Message Us** links open the owner's confirmed Facebook page: https://www.facebook.com/xrishcreatives.
 
+Portfolio photographs are generated from the original files at up to 3600 × 4800 pixels and WebP quality 90. Next.js serves responsive versions at quality 90 so wide and high-density displays remain sharp without forcing every device to download the largest file.
+
 Live site: https://xrish-creatives-portfolio.netlify.app/ . The Netlify project is connected to `xrishz/xrishcreativeslandingpage` on `main` for automatic deployments. The earlier `xrishcreatives.netlify.app` project remains separate.
 
 ## Run locally
@@ -24,10 +26,8 @@ npm start
 
 - Next.js App Router, React 19, TypeScript and Tailwind CSS 4.
 - Motion owns DOM scroll motion and photo-viewer transitions; no competing animation library.
-- React Three Fiber, Drei and Three.js power the isolated, lazy-loaded camera.
 - `src/data/site.ts` contains portfolio collections, photograph descriptions, the confirmed contact link, and the film content interface.
 - `src/components/Viewer.tsx` provides a native modal dialog with keyboard photograph navigation, Escape close, focus restoration and an on-demand Cloudflare Stream player.
-- `src/components/camera/` separates model configuration, loading/fallback, model normalization, lighting, quality and rendering.
 - `src/app/globals.css` contains the editorial design system and mobile composition.
 - `PRODUCT.md`, `DESIGN.md`, and `.impeccable/` preserve the design decisions and Impeccable context.
 
@@ -39,7 +39,7 @@ Collection titles are editorial descriptions. No client dates, ages, locations, 
 
 The only event categories are Debut, Predebut, Weddings, Corporate Events, and Graduations, as confirmed by the owner.
 
-The owner supplied five Facebook reels: two Predebut, one Graduation, and two Debut. The site verifies and presents their actual post titles. Mirielle's Pre-debut Film and Angel's Debut Same Day Edit currently allow Facebook iframe playback, which loads only after a visitor presses Play. Facebook blocks embedding for Janelle, PUP Sto. Tomas and Cherreille, so those reels use direct Facebook links. Every reel has a direct link in case Facebook changes embed availability. The full Pre-debut Film placeholder remains separate from these short reels.
+Mirielle's Pre-debut Film and Angel's Debut Same Day Edit play directly in the Films section through Facebook's embedded player. Facebook blocks embedding for the other three supplied reels, so they are omitted from the site. The full Pre-debut Film placeholder remains separate from these short reels.
 
 Three named client testimonials were transcribed from the owner's supplied screenshots and displayed without inferred star ratings or reused avatars. The About introduction and location metadata say Laguna, Philippines, as confirmed by the owner.
 
@@ -56,18 +56,6 @@ Video UID and customer code are public playback identifiers, not API keys. Never
 
 No paid Cloudflare service or uploaded film has been provisioned by this code change. Replace the About section's portfolio image with an approved team/production image when available.
 
-## Replace the camera
-
-The shipped camera is an original procedural, unbranded model compressed with Meshopt. Its source is `scripts/build-camera.mjs`.
-
-1. Replace `public/models/xrish-camera.glb` with a licensed optimized model.
-2. Face the lens along local +Z, with the top along +Y.
-3. Adjust the rotation/scale/position in `src/components/camera/camera-config.ts` if needed.
-
-Bounds are normalized automatically. Lighting, pointer damping, responsive framing and scroll behavior remain separate from mesh names. A failed WebGL context or model load falls back to a real photograph; visitors retain all navigation and contact actions. At 700px and below, the entire camera is unmounted and its 3D assets are not loaded, as requested. The mobile hero leads directly into a real photograph. Reduced motion uses demand rendering. Hidden/offscreen canvases stop continuous rendering.
-
-Rebuild the original asset with `node scripts/build-camera.mjs`.
-
 ## Validation
 
 ```sh
@@ -78,7 +66,7 @@ npm run build
 npm test
 ```
 
-Browser tests use an installed Google Chrome. Update the channel in `playwright.config.ts` if using Playwright-managed Chromium instead. Tests cover gallery navigation/focus, the contact destination, mobile menu and scrolling, narrow layout, reduced-motion/WebGL fallback, and serious/critical automated accessibility findings. `node scripts/inspect.mjs` saves desktop/mobile screenshots for visual review. These are local/emulated checks, not a claim of physical-device or field performance testing.
+Browser tests use an installed Google Chrome. Update the channel in `playwright.config.ts` if using Playwright-managed Chromium instead. Tests cover the photographic hero, gallery navigation/focus, the contact destination, mobile menu and scrolling, narrow layout, reduced motion, and serious/critical automated accessibility findings. `node scripts/inspect.mjs` saves desktop/mobile screenshots for visual review. These are local/emulated checks, not a claim of physical-device or field performance testing.
 
 ## Hosting and SEO
 

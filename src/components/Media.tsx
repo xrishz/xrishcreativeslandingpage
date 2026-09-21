@@ -33,6 +33,7 @@ export function Photo({
       alt={frame.alt}
       fill
       sizes={sizes}
+      quality={90}
       preload={priority}
       placeholder="blur"
       blurDataURL={frame.image.blurDataURL}

@@ -3,17 +3,15 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, X, ArrowUpRight } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Photo } from "./Media";
-import { site, streamPlayerUrl, type Story, type Film, type Reel } from "@/data/site";
+import { site, streamPlayerUrl, type Story, type Film } from "@/data/site";
 
 export function Viewer({
   story,
   film,
-  reel,
   close,
 }: {
   story?: Story;
   film?: Film;
-  reel?: Reel;
   close: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -54,7 +52,7 @@ export function Viewer({
     >
       <div className="viewer-inner">
         <div className="viewer-top">
-          <h2 id="viewer-title">{story?.title ?? film?.title ?? reel?.title}</h2>
+          <h2 id="viewer-title">{story?.title ?? film?.title}</h2>
           <button
             className="icon-button"
             autoFocus
@@ -143,21 +141,6 @@ export function Viewer({
           ) : (
             <p className="video-error">This film is coming soon.</p>
           ))}
-        {reel && (
-          <>
-            <div className="reel-player">
-              <iframe
-                title={`${reel.title} — Facebook video player`}
-                src={`https://www.facebook.com/plugins/video.php?height=314&href=${encodeURIComponent(`${reel.url}/`)}&show_text=false&width=560&t=0`}
-                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            </div>
-            <p className="stream-help">
-              If this reel cannot play here, <a href={reel.url} target="_blank" rel="noopener noreferrer">watch it on Facebook <ArrowUpRight size={14} aria-hidden="true" /></a>.
-            </p>
-          </>
-        )}
       </div>
     </dialog>
   );

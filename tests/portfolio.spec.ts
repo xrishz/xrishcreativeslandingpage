@@ -2,7 +2,14 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { streamPlayerUrl } from "../src/lib/stream";
 
-test("Stream placeholder is honest, makes no player request and lists only the five events", async ({
+test.beforeEach(async ({ page }) => {
+  // Keep tests deterministic; real Facebook playback is verified in the live browser.
+  await page.route("https://www.facebook.com/plugins/video.php**", (route) =>
+    route.abort(),
+  );
+});
+
+test("Stream placeholder makes no Stream request and lists only the five events", async ({
   page,
 }) => {
   const videoRequests: string[] = [];
@@ -15,7 +22,7 @@ test("Stream placeholder is honest, makes no player request and lists only the f
     page.getByRole("heading", { name: "Full Pre-debut Film" }),
   ).toBeVisible();
   await expect(page.getByText("Coming soon.", { exact: true })).toBeVisible();
-  await expect(page.locator("iframe")).toHaveCount(0);
+  await expect(page.locator(".reel-frame iframe")).toHaveCount(2);
   expect(videoRequests).toEqual([]);
   await expect(page.locator(".event-list a")).toHaveText([
     "Debut",
@@ -50,7 +57,7 @@ test("Stream playback URLs accept only valid public identifiers", () => {
   ).toBeUndefined();
 });
 
-test("client notes and five reels appear, with permitted Facebook embeds opening on demand", async ({
+test("client notes and only playable videos appear directly on the page", async ({
   page,
 }) => {
   await page.goto("/");
@@ -58,31 +65,20 @@ test("client notes and five reels appear, with permitted Facebook embeds opening
   await expect(page.locator(".testimonial")).toHaveCount(3);
   for (const name of ["Janelle Angeles", "Cherreille Gonzales", "Lara Jabagat"])
     await expect(page.getByText(name)).toBeVisible();
-  await expect(page.locator(".reel-card")).toHaveCount(5);
-  await expect(page.locator(".reel-card-bottom").first()).toHaveAttribute("target", "_blank");
-  expect(await page.locator(".reel-card-bottom").evaluateAll((links) =>
-    links.map((link) => link.getAttribute("href")),
-  )).toEqual([
-    "https://www.facebook.com/reel/1062996939839843",
-    "https://www.facebook.com/reel/1032666439513604",
-    "https://www.facebook.com/reel/1338311711276190",
-    "https://www.facebook.com/reel/4579322825726121",
-    "https://www.facebook.com/reel/1395856652369775",
-  ]);
-  await expect(page.getByRole("button", { name: /^Play .* here$/ })).toHaveCount(2);
-  await expect(page.locator("iframe")).toHaveCount(0);
-  await page.getByRole("button", { name: "Play Angel — Debut Same Day Edit here" }).click();
-  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.locator(".reel-card")).toHaveCount(0);
+  await expect(page.locator(".reel-feature")).toHaveCount(2);
+  await expect(page.locator(".reel-frame iframe")).toHaveCount(2);
   await expect(page.getByTitle("Angel — Debut Same Day Edit — Facebook video player")).toHaveAttribute(
     "src",
     /plugins\/video\.php.*4579322825726121/,
   );
-  await page.getByRole("button", { name: "Close viewer" }).click();
-  await expect(page.locator("iframe")).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Watch Janelle — Pre-debut Film on Facebook" })).toHaveAttribute(
-    "href",
-    "https://www.facebook.com/reel/1062996939839843",
+  await expect(page.getByTitle("Mirielle — Pre-debut Film — Facebook video player")).toHaveAttribute(
+    "src",
+    /plugins\/video\.php.*1032666439513604/,
   );
+  await expect(page.getByText("Janelle — Pre-debut Film")).toHaveCount(0);
+  await expect(page.getByText("PUP Sto. Tomas — 30th Commencement Exercises")).toHaveCount(0);
+  await expect(page.getByText("Cherreille — Debut Same Day Edit")).toHaveCount(0);
 });
 
 test("real gallery opens, changes photographs, traps focus and restores it", async ({
@@ -116,7 +112,7 @@ test("all inquiry links use the confirmed Facebook destination", async ({
   await expect(page.getByText("Check Your Date")).toHaveCount(0);
 });
 
-test("mobile navigation, contact sheet and narrow layout remain usable", async ({
+test("hero photograph, mobile navigation, contact sheet and narrow layout remain usable", async ({
   page,
 }) => {
   const modelRequests: string[] = [];
@@ -125,7 +121,11 @@ test("mobile navigation, contact sheet and narrow layout remain usable", async (
   });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await expect(page.locator(".hero-camera")).toHaveCount(0);
+  await expect(page.locator(".hero-portrait")).toBeVisible();
+  await expect(page.locator(".hero-portrait img")).toHaveAttribute(
+    "src",
+    /mirielle-50/,
+  );
   await expect(page.locator("canvas")).toHaveCount(0);
   expect(modelRequests).toEqual([]);
   await page.getByRole("button", { name: "Open navigation" }).click();
@@ -153,29 +153,15 @@ test("mobile navigation, contact sheet and narrow layout remain usable", async (
   }
 });
 
-test("reduced motion and WebGL failure preserve work and inquiry", async ({
+test("reduced motion keeps the photographic hero, work and inquiry available", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.addInitScript(() => {
-    const original = HTMLCanvasElement.prototype.getContext;
-    // Deliberately exercise a browser without a WebGL context.
-    HTMLCanvasElement.prototype.getContext = function (
-      this: HTMLCanvasElement,
-      ...args: Parameters<typeof original>
-    ) {
-      return String(args[0]).includes("webgl")
-        ? null
-        : original.apply(this, args);
-    } as typeof original;
-  });
   await page.goto("/");
-  await expect(page.locator("[data-camera-state]")).toHaveAttribute(
-    "data-camera-state",
-    "fallback",
-  );
+  await expect(page.locator(".hero-portrait")).toBeVisible();
+  await expect(page.locator("canvas")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await page.getByRole("button", { name: "Take a closer look" }).click();
+  await page.getByRole("button", { name: "View In full bloom." }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(

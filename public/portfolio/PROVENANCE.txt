@@ -9,6 +9,7 @@ All photographs supplied by the owner of XRISH CREATIVES in PHOTOS. Optimized de
 /portfolio/khatrina-07544.webp <- PHOTOS/KHATRINA-07544.jpg
 /portfolio/khatrina-07643.webp <- PHOTOS/KHATRINA-07643.jpg
 /portfolio/khatrina-07671-1-.webp <- PHOTOS/KHATRINA-07671 (1).jpg
+/portfolio/mirielle-50.webp <- PHOTOS/MIRIELLE-50.jpg
 /portfolio/snp00769.webp <- PHOTOS/SNP00769.jpg
 /portfolio/snp01320.webp <- PHOTOS/SNP01320.jpg
 /portfolio/snp01339.webp <- PHOTOS/SNP01339.jpg
