@@ -79,6 +79,61 @@ svg {
 section {
   scroll-margin-top: 90px;
 }
+.camera-cursor {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+.camera-cursor[data-visible="true"] {
+  opacity: 1;
+}
+.camera-cursor-mark,
+.camera-cursor-trail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+}
+.camera-cursor-mark {
+  margin-top: -15px;
+  margin-left: -15px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #17171570;
+  border-radius: 50%;
+  background: #f5f4f0e6;
+  color: var(--ink);
+  box-shadow: 0 3px 12px #17171518;
+  transition:
+    color 140ms ease-out,
+    background 140ms ease-out,
+    scale 140ms ease-out;
+}
+.camera-cursor-trail {
+  margin-top: -21px;
+  margin-left: -21px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #17171524;
+  box-shadow: 0 0 18px #17171512;
+}
+.camera-cursor[data-interactive="true"] .camera-cursor-mark {
+  color: var(--paper);
+  background: var(--ink);
+  scale: 1.08;
+}
+@media (hover: hover) and (pointer: fine) {
+  body,
+  a,
+  button {
+    cursor: none;
+  }
+}
 .page-pad {
   padding-inline: var(--gutter);
 }

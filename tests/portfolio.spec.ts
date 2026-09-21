@@ -18,6 +18,9 @@ test("Stream placeholder makes no Stream request and lists only the five events"
       videoRequests.push(request.url());
   });
   await page.goto("/");
+  await page.mouse.move(180, 160);
+  await expect(page.locator(".camera-cursor[data-visible='true']")).toBeVisible();
+  await expect(page.locator(".camera-cursor-trail")).toHaveCount(1);
   await expect(
     page.getByRole("heading", { name: "Full Pre-debut Film" }),
   ).toBeVisible();
@@ -158,6 +161,9 @@ test("reduced motion keeps the photographic hero, work and inquiry available", a
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  await page.mouse.move(180, 160);
+  await expect(page.locator(".camera-cursor[data-visible='true']")).toBeVisible();
+  await expect(page.locator(".camera-cursor-trail")).toHaveCount(0);
   await expect(page.locator(".hero-portrait")).toBeVisible();
   await expect(page.locator("canvas")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

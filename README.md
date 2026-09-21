@@ -26,6 +26,7 @@ npm start
 
 - Next.js App Router, React 19, TypeScript and Tailwind CSS 4.
 - Motion owns DOM scroll motion and photo-viewer transitions; no competing animation library.
+- Fine-pointer devices use a small camera cursor with one reduced-motion-aware trailing halo; touch devices keep native input behavior.
 - `src/data/site.ts` contains portfolio collections, photograph descriptions, the confirmed contact link, and the film content interface.
 - `src/components/Viewer.tsx` provides a native modal dialog with keyboard photograph navigation, Escape close, focus restoration and an on-demand Cloudflare Stream player.
 - `src/app/globals.css` contains the editorial design system and mobile composition.

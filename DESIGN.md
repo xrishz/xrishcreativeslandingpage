@@ -190,6 +190,10 @@ All inquiry calls to action read **Message Us** and point to `https://www.facebo
 
 Circular controls are transparent at rest and gain a current-color (10%) transparent mix on hover, over (0.2s). Icons use (1.5) stroke width. Give icon-only controls an accessible name. Disabled buttons use (0.45) opacity and a not-allowed cursor. All keyboard-focusable actions use a (2px) current-color outline with a (6px) offset.
 
+### Camera cursor
+
+Fine-pointer desktop devices use a small Gallery Ink camera cursor on a translucent Gallery Paper disc. One quiet outlined halo follows slightly behind to reinforce the photographic identity without creating a decorative particle trail. Interactive targets invert the disc colors. Touch devices retain their native behavior, and reduced-motion mode keeps the camera mark while removing the trailing halo.
+
 ### Navigation
 
 The wordmark is a two-line typographic mark. Desktop navigation provides Work, Films and About, with a separate Message Us link. Mobile keeps Message Us visible and replaces the middle navigation with a (44px) menu toggle. Its expanded panel uses large ruled links; selecting a link closes the panel, and Escape closes it and restores focus to the toggle. Keep the header in normal page flow, as implemented.

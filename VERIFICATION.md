@@ -2,6 +2,8 @@
 
 Final requirements verified: hero reads XRISH CREATIVES and uses the supplied MIRIELLE-50 portrait; the former 3D camera code, dependencies and assets are removed; all four inquiry actions read Message Us and point to the confirmed XRISH Facebook page. The About introduction identifies Laguna and Elrish John Rull. The two Facebook reels that permit inline playback and three client testimonials are included.
 
+Fine-pointer devices use the themed camera cursor and a single subtle following halo. The cursor does not mount for coarse/touch pointers, and reduced-motion mode omits the trailing halo.
+
 ## Automated checks
 
 - Production Next.js build: passed.
