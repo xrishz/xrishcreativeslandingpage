@@ -1,0 +1,57 @@
+{
+  "name": "xrish-creatives",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "dev": "next dev --hostname 0.0.0.0",
+    "build": "next build",
+    "start": "next start --hostname 0.0.0.0",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "media": "node scripts/prepare-media.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xrishz/xrishcreativeslandingpage.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/xrishz/xrishcreativeslandingpage/issues"
+  },
+  "homepage": "https://github.com/xrishz/xrishcreativeslandingpage#readme",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@gltf-transform/functions": "^4.5.0",
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.186.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.5",
+    "meshoptimizer": "^1.2.0",
+    "prettier": "^3.9.8",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "lucide-react": "^1.47.0",
+    "motion": "^13.4.0",
+    "next": "^16.3.5",
+    "react": "19.2",
+    "react-dom": "19.2",
+    "sharp": "^0.35.4",
+    "three": "^0.186.0"
+  },
+  "private": "true"
+}

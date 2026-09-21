@@ -1,0 +1,17 @@
+All photographs supplied by the owner of XRISH CREATIVES in PHOTOS. Optimized derivatives only; original photographs remain untouched.
+/portfolio/1.webp <- PHOTOS/1.jpg
+/portfolio/2.webp <- PHOTOS/2.jpg
+/portfolio/3.webp <- PHOTOS/3.jpg
+/portfolio/4.webp <- PHOTOS/4.jpg
+/portfolio/6.webp <- PHOTOS/6.jpg
+/portfolio/7.webp <- PHOTOS/7.jpg
+/portfolio/khatrina-06737.webp <- PHOTOS/KHATRINA-06737.jpg
+/portfolio/khatrina-07544.webp <- PHOTOS/KHATRINA-07544.jpg
+/portfolio/khatrina-07643.webp <- PHOTOS/KHATRINA-07643.jpg
+/portfolio/khatrina-07671-1-.webp <- PHOTOS/KHATRINA-07671 (1).jpg
+/portfolio/snp00769.webp <- PHOTOS/SNP00769.jpg
+/portfolio/snp01320.webp <- PHOTOS/SNP01320.jpg
+/portfolio/snp01339.webp <- PHOTOS/SNP01339.jpg
+/portfolio/stn06660.webp <- PHOTOS/STN06660.jpg
+/portfolio/stn06826.webp <- PHOTOS/STN06826.jpg
+/portfolio/stn06964.webp <- PHOTOS/STN06964.jpg

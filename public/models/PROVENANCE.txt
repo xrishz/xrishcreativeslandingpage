@@ -1,0 +1,1 @@
+Original procedural XRISH camera, authored for this project using Three.js primitives and RoundedBoxGeometry. No third-party model, manufacturer logo or trademark. Rebuild with node scripts/build-camera.mjs.
