@@ -1,9 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { site } from "@/data/site";
 
 export function Header() {
+  const pathname = usePathname();
+  const onHome = pathname === "/";
   const [open, setOpen] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -19,13 +23,28 @@ export function Header() {
   }, [open]);
   return (
     <header className="site-header">
-      <a href="#top" className="wordmark" aria-label="XRISH CREATIVES home">
+      <Link
+        href={onHome ? "#top" : "/"}
+        className="wordmark"
+        aria-label="XRISH CREATIVES home"
+      >
         XRISH<span>CREATIVES</span>
-      </a>
+      </Link>
       <nav className="desktop-nav" aria-label="Main navigation">
-        <a href="#work">Work</a>
-        <a href="#films">Films</a>
-        <a href="#about">About</a>
+        <Link
+          href="/works"
+          aria-current={pathname === "/works" ? "page" : undefined}
+        >
+          Work
+        </Link>
+        <Link href="/#films">Films</Link>
+        <Link href="/#about">About</Link>
+        <Link
+          href="/experience"
+          aria-current={pathname === "/experience" ? "page" : undefined}
+        >
+          Experience
+        </Link>
       </nav>
       <a
         href={site.facebook}
@@ -52,15 +71,26 @@ export function Header() {
           aria-label="Mobile navigation"
         >
           {[
-            ["Work", "#work"],
-            ["Films", "#films"],
-            ["About", "#about"],
-            ["Contact", "#contact"],
+            ["Work", "/works"],
+            ["Films", "/#films"],
+            ["About", "/#about"],
+            ["Experience", "/experience"],
+            ["Contact", "/#contact"],
           ].map(([label, href]) => (
-            <a key={label} href={href} onClick={() => setOpen(false)}>
+            <Link
+              key={label}
+              href={href}
+              onClick={() => setOpen(false)}
+              aria-current={
+                (label === "Experience" && pathname === "/experience") ||
+                (label === "Work" && pathname === "/works")
+                  ? "page"
+                  : undefined
+              }
+            >
               {label}
               <ArrowUpRight aria-hidden="true" />
-            </a>
+            </Link>
           ))}
         </nav>
       )}

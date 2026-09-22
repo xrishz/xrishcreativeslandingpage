@@ -1,21 +1,23 @@
 import { ArrowUpRight, ArrowUp } from "lucide-react";
+import Link from "next/link";
 import { site } from "@/data/site";
 export function Footer() {
   return (
     <footer className="footer page-pad">
       <div className="footer-top">
-        <a href="#top" className="wordmark">
+        <Link href="/" className="wordmark">
           XRISH<span>CREATIVES</span>
-        </a>
+        </Link>
         <p>
           Photography + Films
           <br />
           Laguna, Philippines
         </p>
         <nav aria-label="Footer navigation">
-          <a href="#work">Work</a>
-          <a href="#films">Films</a>
-          <a href="#about">About</a>
+          <Link href="/works">Work</Link>
+          <Link href="/#films">Films</Link>
+          <Link href="/#about">About</Link>
+          <Link href="/experience">Experience</Link>
           <a href={site.facebook} target="_blank" rel="noopener noreferrer">
             Facebook <ArrowUpRight size={14} />
           </a>

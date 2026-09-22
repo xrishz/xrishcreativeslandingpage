@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Sans } from "next/font/google";
 import { site } from "@/data/site";
+import { CameraCursor } from "@/components/CameraCursor";
 import "./globals.css";
 
 const instrument = Instrument_Sans({
@@ -49,6 +50,7 @@ export default function RootLayout({
         <a href="#main" className="skip-link">
           Skip to content
         </a>
+        <CameraCursor />
         {children}
         <script
           type="application/ld+json"

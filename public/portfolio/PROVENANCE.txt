@@ -16,3 +16,4 @@ All photographs supplied by the owner of XRISH CREATIVES in PHOTOS. Optimized de
 /portfolio/stn06660.webp <- PHOTOS/STN06660.jpg
 /portfolio/stn06826.webp <- PHOTOS/STN06826.jpg
 /portfolio/stn06964.webp <- PHOTOS/STN06964.jpg
+/portfolio/stn07143.webp <- PHOTOS/STN07143.jpg

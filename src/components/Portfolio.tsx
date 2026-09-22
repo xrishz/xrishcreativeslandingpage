@@ -1,14 +1,17 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
+  Pause,
   Plus,
   Play,
 } from "lucide-react";
+import Link from "next/link";
 import {
+  AnimatePresence,
   motion,
   useReducedMotion,
   useScroll,
@@ -33,6 +36,10 @@ import { Viewer } from "./Viewer";
 export function Portfolio() {
   const [selected, setSelected] = useState<Story>();
   const [selectedFilm, setSelectedFilm] = useState<Film>();
+  const [leadPhotoIndex, setLeadPhotoIndex] = useState(0);
+  const [leadPaused, setLeadPaused] = useState(false);
+  const [leadHovered, setLeadHovered] = useState(false);
+  const [leadFocused, setLeadFocused] = useState(false);
   const strip = useRef<HTMLDivElement>(null);
   const hero = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
@@ -41,6 +48,32 @@ export function Portfolio() {
     offset: ["start start", "end start"],
   });
   const portraitY = useTransform(scrollYProgress, [0, 1], [0, 55]);
+  const leadLandscapes = stories[0].gallery.filter(
+    (frame) => frame.image.width > frame.image.height,
+  );
+  useEffect(() => {
+    if (
+      reduced ||
+      leadPaused ||
+      leadHovered ||
+      leadFocused ||
+      leadLandscapes.length < 2
+    )
+      return;
+    const timer = window.setInterval(
+      () =>
+        setLeadPhotoIndex((current) => (current + 1) % leadLandscapes.length),
+      5000,
+    );
+    return () => window.clearInterval(timer);
+  }, [
+    leadFocused,
+    leadHovered,
+    leadLandscapes.length,
+    leadPaused,
+    reduced,
+  ]);
+  const leadPhoto = leadLandscapes[leadPhotoIndex] ?? stories[0].cover;
   return (
     <>
       <section
@@ -58,9 +91,9 @@ export function Portfolio() {
             <br />
             worth seeing again.
           </p>
-          <a href="#work" className="text-link">
+          <Link href="/works" className="text-link">
             Explore our work <ArrowDown size={18} aria-hidden="true" />
-          </a>
+          </Link>
         </div>
         <motion.div
           className="hero-portrait"
@@ -79,7 +112,7 @@ export function Portfolio() {
             <br />
             BASED IN LAGUNA, PHILIPPINES
           </span>
-          <a href="#work" className="hero-preview">
+          <Link href="/works" className="hero-preview">
             <div className="hero-preview-photo">
               <Photo
                 frame={stories[0].cover}
@@ -93,7 +126,7 @@ export function Portfolio() {
               Really good memories.
             </span>
             <ArrowDown size={22} aria-hidden="true" />
-          </a>
+          </Link>
           <span className="hero-scroll">
             SCROLL TO EXPLORE <ArrowDown size={14} aria-hidden="true" />
           </span>
@@ -114,13 +147,34 @@ export function Portfolio() {
             <br />A lot of feeling.
           </p>
         </div>
-        <article className="lead-story">
+        <article
+          className="lead-story"
+          onMouseEnter={() => setLeadHovered(true)}
+          onMouseLeave={() => setLeadHovered(false)}
+          onFocusCapture={() => setLeadFocused(true)}
+          onBlurCapture={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget))
+              setLeadFocused(false);
+          }}
+        >
           <button
             className="story-image lead-image"
             onClick={() => setSelected(stories[0])}
             aria-label={`View ${stories[0].title}`}
           >
-            <Photo frame={stories[0].cover} sizes="100vw" />
+            <AnimatePresence initial={false}>
+              <motion.div
+                key={leadPhoto.image.src}
+                className="lead-rotation-frame"
+                data-frame={leadPhoto.image.src}
+                initial={reduced ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={reduced ? undefined : { opacity: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <Photo frame={leadPhoto} sizes="100vw" />
+              </motion.div>
+            </AnimatePresence>
             <span className="image-view">
               <Plus size={20} /> View story
             </span>
@@ -130,6 +184,31 @@ export function Portfolio() {
               you want to keep.
             </span>
           </button>
+          <div className="lead-rotation-control">
+            <span aria-live="polite">
+              {String(leadPhotoIndex + 1).padStart(2, "0")} /{" "}
+              {String(leadLandscapes.length).padStart(2, "0")}
+            </span>
+            {!reduced && (
+              <button
+                type="button"
+                onClick={() => setLeadPaused((current) => !current)}
+                aria-pressed={leadPaused}
+                aria-label={
+                  leadPaused
+                    ? "Resume landscape rotation"
+                    : "Pause landscape rotation"
+                }
+              >
+                {leadPaused ? (
+                  <Play size={14} fill="currentColor" aria-hidden="true" />
+                ) : (
+                  <Pause size={14} fill="currentColor" aria-hidden="true" />
+                )}
+                {leadPaused ? "Resume" : "Pause"}
+              </button>
+            )}
+          </div>
           <div className="story-meta page-pad">
             <div>
               <h3>{stories[0].title}</h3>

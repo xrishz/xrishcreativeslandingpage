@@ -38,6 +38,46 @@ export const heroPortrait = frame(
   "50% 57%",
 );
 
+export const experiencePhotos = {
+  lead: frame(
+    "stn06826",
+    "A woman in a flowing pink gown on a garden bridge surrounded by trees",
+    "50% 52%",
+  ),
+  candid: frame(
+    "khatrina-07544",
+    "Khatrina smiling beneath warm evening lights",
+    "50% 42%",
+  ),
+  detail: frame(
+    "khatrina-06737",
+    "A hand resting gently on the petals of a sunflower",
+  ),
+};
+
+export const driveFilms = {
+  corporate: [
+    {
+      id: "1XLKA9FRPGei4L4iz4WNxLoG86p4hIOp4",
+      title: "Corporate Event Film 01",
+    },
+    {
+      id: "1Bp_mM1BoQxZMqmUeWNeSG75C0xQK2LOZ",
+      title: "Corporate Event Film 02",
+    },
+    {
+      id: "1lxFGs7u_uV8RYVtOICCw4cMVLkEMUmtE",
+      title: "Corporate Event Film 03",
+    },
+  ],
+  graduation: [
+    {
+      id: "1Xx-_JJw9JQcVl5MD2rfdmbjGbPzizFgv",
+      title: "Graduation Film",
+    },
+  ],
+} as const;
+
 export const stories: Story[] = [
   {
     slug: "in-full-bloom",
@@ -59,6 +99,10 @@ export const stories: Story[] = [
       frame(
         "stn06964",
         "A woman beneath golden lights and a canopy of flowers",
+      ),
+      frame(
+        "stn07143",
+        "A celebrant seen from behind beneath dramatic golden stage lights",
       ),
     ],
   },

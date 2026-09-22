@@ -106,7 +106,7 @@ components:
 
 Warm gallery white, near-black, precise sans type, open asymmetric spreads and dark screening-room intervals define the implemented world. Photography supplies the vivid color. The interface frames genuine work with quiet rules, generous space and a clear route to a conversation.
 
-The treatment is editorial, cinematic and human. Large tightly spaced headings establish scale; restrained labels and plain language let the photographs carry the emotional detail. This document records the current implementation and the confirmed brand direction. The homepage composition and story sequence remain in `.impeccable/homepage-brief.md`.
+The treatment is editorial, cinematic and human. Large tightly spaced headings establish scale; restrained labels and plain language let the photographs carry the emotional detail. This document records the current implementation and the confirmed brand direction. Route composition and story sequences remain in `.impeccable/homepage-brief.md`, `.impeccable/works-brief.md` and `.impeccable/experience-brief.md`.
 
 **Key Characteristics:**
 
@@ -168,7 +168,7 @@ Coverage and about content collapse to a single column on mobile. Film imagery b
 
 The gallery is predominantly flat. Tonal surfaces, hairline dividers, photographic cropping and open space provide hierarchy. Do not add shadowed card containers to the editorial spreads.
 
-The mobile menu has a restrained separation shadow (`0 15px 25px #1111110a`). The hero portrait uses layered paper-to-transparent gradients to protect the wordmark and connect the photograph to the page without a visible panel edge. Photo captions use soft text shadows only where needed over imagery. Film scrims protect readability: a horizontal black-to-transparent gradient on desktop becomes vertical on mobile. Full values and motion timings live in `.impeccable/design.json`.
+The mobile menu has a restrained separation shadow (`0 15px 25px #1111110a`). The hero portrait uses layered paper-to-transparent gradients to protect the wordmark and connect the photograph to the page without a visible panel edge. Photo captions use soft text shadows only where needed over imagery. Film scrims protect readability: a horizontal black-to-transparent gradient on desktop becomes vertical on mobile. Current motion and shadow values are defined in `src/app/globals.css` and their affected components. The `.impeccable/design.json` sidecar has a known age mismatch: its `generatedAt` is `2026-09-21T09:40:29.031Z` and its previews/narrative predate these route and interaction changes. It is deliberately preserved, not refreshed by this documentation pass; use this document and current source for the latest behavior.
 
 **The Flat Gallery Rule.** Keep photographic surfaces flat; use gradients only for photographic blending and readability.
 
@@ -192,13 +192,23 @@ Circular controls are transparent at rest and gain a current-color (10%) transpa
 
 ### Camera cursor
 
-Fine-pointer desktop devices use a small Gallery Ink camera cursor on a translucent Gallery Paper disc. One quiet outlined halo follows slightly behind to reinforce the photographic identity without creating a decorative particle trail. Interactive targets invert the disc colors. Touch devices retain their native behavior, and reduced-motion mode keeps the camera mark while removing the trailing halo.
+Fine-pointer desktop devices use a small Gallery Ink camera cursor on a translucent Gallery Paper disc. The glow is the disc’s own box shadow, and both use the same pointer position; there is no independently animated trail to separate over large photographs. Interactive targets invert the disc colors. Touch devices retain their native behavior.
+
+### Our Works
+
+The /works route is a video-led archive with four anchored chapters: Debuts, Predebuts, Corporate Events, and Graduation. Debut and Predebut use the confirmed Facebook players. Each film begins as a full-surface in-site play treatment and mounts in place only after activation, with a Loading film status while its iframe loads. A 15-second load timeout reveals Try again. There are no outbound film actions or card containers. Corporate Events and Graduation retain quiet preparation lines because the supplied Drive masters failed real browser playback and were removed. Graduation keeps a two-equal-column desktop film area for two future web-ready films; it becomes one column at 700px and below. Light Debut and Predebut chapters give way to a dark screening-room surface for Corporate Events and Graduation.
+
+### The XRISH Experience
+
+The /experience route carries the homepage's warm paper and screening-black rhythm into a concise studio story. Its centered two-line title and supplied 2023 origin paragraph identify the studio’s specialization as Event Coverage and lead into a full-width photograph, followed by a dark asymmetric image spread and the closing Facebook inquiry. Casual “fun and chill, parang laro lang” language remains explicitly attached to debut coverage.
 
 ### Navigation
 
-The wordmark is a two-line typographic mark. Desktop navigation provides Work, Films and About, with a separate Message Us link. Mobile keeps Message Us visible and replaces the middle navigation with a (44px) menu toggle. Its expanded panel uses large ruled links; selecting a link closes the panel, and Escape closes it and restores focus to the toggle. Keep the header in normal page flow, as implemented.
+The wordmark is a two-line typographic mark. Desktop navigation provides Work (`/works`), Films (`/#films`), About (`/#about`) and Experience (`/experience`), with a separate Message Us link. Work and Experience expose the current route through `aria-current="page"`. Mobile keeps Message Us visible and replaces the middle navigation with a (44px) menu toggle. Its expanded panel uses large ruled links; selecting a link closes the panel, and Escape closes it and restores focus to the toggle. Keep the header in normal page flow, as implemented.
 
 ### Story photographs and contact sheet
+
+The full-width Selected Stories lead rotates among three landscape photographs every five seconds with a restrained crossfade. A visible two-digit count and Pause/Resume control give visitors direct control; pointer hover anywhere within the lead story and keyboard focus anywhere inside it also pause the rotation. Rotation resumes only after explicit pause is cleared and neither hover nor focus remains. Reduced-motion mode keeps a static landscape and omits the unnecessary Pause/Resume control. The crossfade lasts (0.8s). Owner-supplied `PHOTOS/STN07143.jpg` supplies the warm golden-light frame in this sequence; its optimized derivative retains source provenance.
 
 Story photographs are buttons with explicit View labels, rather than decorative cards. Hover scales the image to (1.025) over (0.75s); the small View story action appears on hover or keyboard focus. It stays visible on mobile. The reusable Photo component uses responsive `sizes`, a blur placeholder, meaningful alternative text and an unavailable-image fallback. Gallery images crop with `cover`; the viewer uses `contain` to show the complete frame.
 
@@ -206,7 +216,7 @@ Story photographs are buttons with explicit View labels, rather than decorative 
 
 Use the dark surface and pale type for the Full Pre-debut Film feature. The supplied photograph is a poster for a clearly labelled Coming soon placeholder, not a playable film. When the owner provides a Cloudflare Stream video UID and customer code, replace the placeholder action with Watch full film and open the Stream player on demand in the existing viewer. Do not autoplay. Keep the poster visible as the underlying composition while playback is unavailable.
 
-Two owner-supplied reels play directly in the Films section using responsive Facebook iframes. Omit the other three because Facebook denies embedding them; every displayed short film must be playable. Keep the Cloudflare full-film placeholder separate from these existing short reels.
+Two owner-supplied reels play directly in the homepage Films section using responsive Facebook iframes. The homepage embeds use lazy iframe loading; the explicit play-surface/loading/retry interaction belongs to `/works`. Omit the other three because Facebook denies embedding them; every displayed short film must be playable. Keep the Cloudflare full-film placeholder separate from these existing short reels.
 
 ### Testimonials
 

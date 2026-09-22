@@ -26,7 +26,10 @@ npm start
 
 - Next.js App Router, React 19, TypeScript and Tailwind CSS 4.
 - Motion owns DOM scroll motion and photo-viewer transitions; no competing animation library.
-- Fine-pointer devices use a small camera cursor with one reduced-motion-aware trailing halo; touch devices keep native input behavior.
+- Fine-pointer devices use a small camera cursor with a restrained attached glow; touch devices keep native input behavior.
+- The /works route presents Debuts, Predebuts, Corporate Events, and Graduation. Its two browser-verified Facebook films use on-demand in-page players with loading and retry feedback.
+- Selected Stories rotates three landscape photographs every five seconds, including owner-supplied `STN07143.jpg`. A visible count and Pause/Resume control accompany it; hover and focus pause rotation, and reduced motion keeps the landscape static.
+- The /experience route presents the supplied 2023 XRISH origin story with Event Coverage as the specialization. The phrase “fun and chill, parang laro lang” is limited to debut coverage.
 - `src/data/site.ts` contains portfolio collections, photograph descriptions, the confirmed contact link, and the film content interface.
 - `src/components/Viewer.tsx` provides a native modal dialog with keyboard photograph navigation, Escape close, focus restoration and an on-demand Cloudflare Stream player.
 - `src/app/globals.css` contains the editorial design system and mobile composition.
@@ -40,7 +43,9 @@ Collection titles are editorial descriptions. No client dates, ages, locations, 
 
 The only event categories are Debut, Predebut, Weddings, Corporate Events, and Graduations, as confirmed by the owner.
 
-Mirielle's Pre-debut Film and Angel's Debut Same Day Edit play directly in the Films section through Facebook's embedded player. Facebook blocks embedding for the other three supplied reels, so they are omitted from the site. The full Pre-debut Film placeholder remains separate from these short reels.
+Mirielle's Pre-debut Film and Angel's Debut Same Day Edit play directly in the homepage Films section through Facebook's lazy-loaded embedded player. The explicit play surfaces with loading/retry states are used on `/works`. Facebook blocks embedding for the other three supplied reels, so they are omitted from the site. The full Pre-debut Film placeholder remains separate from these short reels.
+
+The Our Works page reuses the two browser-verified Facebook films for Debuts and Predebuts. The supplied Corporate Events and Graduation Google Drive previews were removed from the public page after live browser checks reached the correct files but Google reported that each video could not be loaded. Direct playback also failed with a media format error. Their source references remain recorded for later transcoding through Cloudflare Stream or another web video service. Graduation retains a two-column desktop film area ready for two web-ready videos and returns to one column on mobile.
 
 Three named client testimonials were transcribed from the owner's supplied screenshots and displayed without inferred star ratings or reused avatars. The About introduction and location metadata say Laguna, Philippines, as confirmed by the owner.
 
@@ -57,6 +62,10 @@ Video UID and customer code are public playback identifiers, not API keys. Never
 
 No paid Cloudflare service or uploaded film has been provisioned by this code change. Replace the About section's portfolio image with an approved team/production image when available.
 
+## Design documentation status
+
+`DESIGN.md` and the three route briefs describe the current implementation. `.impeccable/design.json` remains deliberately unchanged with `generatedAt: 2026-09-21T09:40:29.031Z`; its component previews and narrative have a known age mismatch. Treat the sidecar as an older reference, not current proof of the routes or interactions.
+
 ## Validation
 
 ```sh
@@ -71,6 +80,6 @@ Browser tests use an installed Google Chrome. Update the channel in `playwright.
 
 ## Hosting and SEO
 
-This is a standard Next.js deployment. On Netlify, the build uses Netlify's provided `URL` as the canonical origin. Set `NEXT_PUBLIC_SITE_URL` if a different confirmed public origin is needed. Without a confirmed origin, the application emits no invented canonical URL. OpenGraph artwork is a crop of a supplied XRISH photograph. No analytics, forms, database or third-party tracking scripts are included.
+This is a standard Next.js deployment. On Netlify, the build uses Netlify's provided `URL` as the canonical origin. Set `NEXT_PUBLIC_SITE_URL` if a different confirmed public origin is needed. Without a confirmed origin, the application emits no invented canonical URL. OpenGraph artwork is a crop of a supplied XRISH photograph. No first-party analytics, forms or database are included. Facebook players are third-party embeds and load only when mounted; the future Cloudflare player is also external.
 
 The Netlify project currently serves its `netlify.app` address. A custom domain can be added later without changing the repository structure.
