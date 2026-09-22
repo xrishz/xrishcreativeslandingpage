@@ -204,7 +204,7 @@ The /experience route carries the homepage's warm paper and screening-black rhyt
 
 ### Navigation
 
-The wordmark is a two-line typographic mark. Desktop navigation provides Work (`/works`), Films (`/#films`), About (`/#about`) and Experience (`/experience`), with a separate Message Us link. Work and Experience expose the current route through `aria-current="page"`. Mobile keeps Message Us visible and replaces the middle navigation with a (44px) menu toggle. Its expanded panel uses large ruled links; selecting a link closes the panel, and Escape closes it and restores focus to the toggle. Keep the header in normal page flow, as implemented.
+The wordmark is a two-line typographic mark. Desktop navigation provides Work (`/works`), Films (`/#films`), About (`/#about`) and Experience (`/experience`), with a separate Message Us link. Work and Experience expose the current route through `aria-current="page"`. The shared header is sticky at the top of every route, with a nearly opaque Gallery Paper surface and restrained backdrop blur so navigation remains legible over photographs and films. Mobile keeps Message Us visible and replaces the middle navigation with a (44px) menu toggle. Its expanded panel stays attached below the sticky header, uses large ruled links, closes after selection, and closes with Escape while restoring focus to the toggle.
 
 ### Story photographs and contact sheet
 
