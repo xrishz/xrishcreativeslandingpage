@@ -87,7 +87,7 @@ export async function GET() {
     `https://graph.facebook.com/${graphVersion}/${encodeURIComponent(pageId)}/posts`,
   );
   url.searchParams.set("fields", fields);
-  url.searchParams.set("limit", "50");
+  url.searchParams.set("limit", "20");
 
   try {
     let response = await fetchPagePosts(url, accessToken);
@@ -115,7 +115,7 @@ export async function GET() {
     const payload = (await response.json()) as { data?: FacebookPost[] };
     const candidates = findFacebookVideos(payload.data ?? [])
       .filter((video) => !isCuratedFacebookFilm(video))
-      .slice(0, 12);
+      .slice(0, 8);
     const embedChecks = await Promise.all(candidates.map(canEmbedOnFacebook));
     const video = candidates.find((_, index) => embedChecks[index]);
     return Response.json(
