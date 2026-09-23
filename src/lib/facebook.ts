@@ -51,6 +51,11 @@ const cleanCopy = (value: string | undefined) =>
 export function findLatestFacebookVideo(
   posts: FacebookPost[],
 ): LatestFacebookVideo | undefined {
+  return findFacebookVideos(posts)[0];
+}
+
+export function findFacebookVideos(posts: FacebookPost[]): LatestFacebookVideo[] {
+  const videos: LatestFacebookVideo[] = [];
   for (const post of posts) {
     if (!post.id || !isFacebookUrl(post.permalink_url)) continue;
     if (!post.attachments?.data?.some(attachmentIsVideo)) continue;
@@ -61,7 +66,7 @@ export function findLatestFacebookVideo(
       ? firstSentence.slice(0, 88)
       : "Latest film from XRISH CREATIVES";
 
-    return {
+    videos.push({
       id: post.id,
       title,
       excerpt:
@@ -70,7 +75,7 @@ export function findLatestFacebookVideo(
           : undefined,
       createdTime: post.created_time,
       permalinkUrl: post.permalink_url,
-    };
+    });
   }
+  return videos;
 }
-

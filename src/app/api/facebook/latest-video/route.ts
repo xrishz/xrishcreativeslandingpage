@@ -1,4 +1,4 @@
-import { findLatestFacebookVideo, type FacebookPost } from "@/lib/facebook";
+import { findFacebookVideos, type FacebookPost, type LatestFacebookVideo } from "@/lib/facebook";
 
 const CACHE_HEADERS = {
   "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=86400",
@@ -37,6 +37,31 @@ function fetchPagePosts(url: URL, accessToken: string) {
     next: { revalidate: 1800 },
     signal: AbortSignal.timeout(8000),
   });
+}
+
+async function canEmbedOnFacebook(video: LatestFacebookVideo) {
+  const embedUrl = new URL("https://www.facebook.com/plugins/video.php");
+  embedUrl.searchParams.set("height", "314");
+  embedUrl.searchParams.set("href", video.permalinkUrl);
+  embedUrl.searchParams.set("show_text", "false");
+  embedUrl.searchParams.set("width", "560");
+  embedUrl.searchParams.set("t", "0");
+
+  try {
+    const response = await fetch(embedUrl, {
+      headers: {
+        Accept: "text/html",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+      next: { revalidate: 1800 },
+      signal: AbortSignal.timeout(6000),
+    });
+    if (!response.ok) return false;
+    const html = await response.text();
+    return html.includes('"videoData"');
+  } catch {
+    return false;
+  }
 }
 
 export async function GET() {
@@ -83,7 +108,9 @@ export async function GET() {
     }
 
     const payload = (await response.json()) as { data?: FacebookPost[] };
-    const video = findLatestFacebookVideo(payload.data ?? []);
+    const candidates = findFacebookVideos(payload.data ?? []).slice(0, 8);
+    const embedChecks = await Promise.all(candidates.map(canEmbedOnFacebook));
+    const video = candidates.find((_, index) => embedChecks[index]);
     return Response.json(
       { status: video ? "ready" : "empty", video: video ?? null },
       { headers: CACHE_HEADERS },
