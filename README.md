@@ -28,6 +28,7 @@ npm start
 - Motion owns DOM scroll motion and photo-viewer transitions; no competing animation library.
 - Fine-pointer devices use a small camera cursor with a restrained attached glow; touch devices keep native input behavior.
 - The /works route presents Debuts, Predebuts, Corporate Events, and Graduation. Its two browser-verified Facebook films use on-demand in-page players with loading and retry feedback.
+- The homepage keeps Mirielle and Angel as its curated films and adds a separate **Latest from XRISH** feature. A server-only Meta Graph API route finds the newest video among the Page's recent posts, uses a 30-minute cache revalidation window, and falls back to the Facebook Page when Meta is unavailable. The iframe mounts only after the visitor presses Play and includes loading, timeout and retry feedback.
 - Selected Stories rotates three landscape photographs every five seconds, including owner-supplied `STN07143.jpg`. A visible count and Pause/Resume control accompany it; hover and focus pause rotation, and reduced motion keeps the landscape static.
 - The /experience route presents the supplied 2023 XRISH origin story with Event Coverage as the specialization. The phrase “fun and chill, parang laro lang” is limited to debut coverage.
 - `src/data/site.ts` contains portfolio collections, photograph descriptions, the confirmed contact link, and the film content interface.
@@ -44,6 +45,24 @@ Collection titles are editorial descriptions. No client dates, ages, locations, 
 The only event categories are Debut, Predebut, Weddings, Corporate Events, and Graduations, as confirmed by the owner.
 
 Mirielle's Pre-debut Film and Angel's Debut Same Day Edit play directly in the homepage Films section through Facebook's lazy-loaded embedded player. The explicit play surfaces with loading/retry states are used on `/works`. Facebook blocks embedding for the other three supplied reels, so they are omitted from the site. The full Pre-debut Film placeholder remains separate from these short reels.
+
+### Automatic latest Facebook film
+
+The **Latest from XRISH** feature does not replace the two selected portfolio films. It reads up to 20 recent XRISH CREATIVES Page posts through Meta's Pages API, skips photo-only posts and invalid Facebook HTTPS permalinks, and selects the first qualifying video or reel in the order returned by Meta. It does not paginate through older posts or independently sort their dates. The credential stored in `FACEBOOK_PAGE_ACCESS_TOKEN` stays on the server and is never returned to the browser.
+
+Configure these server-side values locally in `.env.local` and in Netlify:
+
+```sh
+FACEBOOK_PAGE_ID=113391138358438
+FACEBOOK_PAGE_ACCESS_TOKEN=
+FACEBOOK_GRAPH_API_VERSION=v26.0
+```
+
+The recorded production setup uses Graph API **v26.0**, Page ID **113391138358438**, and a Meta system user assigned **Page Insights-only access** plus **Test access to the app**, with token permissions `pages_show_list` and `pages_read_engagement`. These are the configured assignments for this integration, not a requirement to grant full Page or business control. Store the credential as Netlify's server-only secret `FACEBOOK_PAGE_ACCESS_TOKEN`; the blank value above is intentional. Never put a token in documentation, source control or a `NEXT_PUBLIC_` variable.
+
+The public route returns a status and the selected video's ID, title, excerpt, date and Facebook permalink. Its Graph fetch uses 1,800-second revalidation; successful responses use `s-maxage=1800, stale-while-revalidate=86400`. This is request-driven caching, not a scheduled sync or a guaranteed 30-minute publishing deadline. The browser fetches once when the feature mounts and does not poll, so an already-open page needs a reload or remount to request a newer result. Missing configuration and provider failures return uncached fallback responses.
+
+Selecting a video attachment does not verify that Facebook permits embedding or that playback succeeds. The feature retains a **View post on Facebook** link for a selected result, while missing configuration, API errors and an empty result show the Page fallback. The iframe mounts only after Play is pressed and presents loading plus a 15-second retry state. It does not automatically detect an error displayed inside Facebook's cross-origin player. The two curated films remain separate from this automatic selection.
 
 The Our Works page reuses the two browser-verified Facebook films for Debuts and Predebuts. The supplied Corporate Events and Graduation Google Drive previews were removed from the public page after live browser checks reached the correct files but Google reported that each video could not be loaded. Direct playback also failed with a media format error. Their source references remain recorded for later transcoding through Cloudflare Stream or another web video service. Graduation retains a two-column desktop film area ready for two web-ready videos and returns to one column on mobile.
 

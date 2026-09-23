@@ -32,6 +32,7 @@ import {
 } from "@/data/site";
 import { Photo } from "./Media";
 import { Viewer } from "./Viewer";
+import { LatestFacebookFilm } from "./LatestFacebookFilm";
 
 export function Portfolio() {
   const [selected, setSelected] = useState<Story>();
@@ -303,6 +304,7 @@ export function Portfolio() {
             </article>
           ))}
         </div>
+        <LatestFacebookFilm />
         {films.map((film) => (
           <article key={film.slug} className="film-feature page-pad">
             <div className="film-photo">

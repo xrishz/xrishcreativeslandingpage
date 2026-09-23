@@ -642,6 +642,158 @@ section {
 .reel-feature > a:hover {
   color: white;
 }
+.latest-facebook {
+  margin-top: clamp(95px, 10vw, 160px);
+  padding-top: clamp(72px, 7vw, 112px);
+  border-top: 1px solid #f5f4f02e;
+}
+.latest-facebook-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 330px);
+  align-items: end;
+  gap: 40px;
+}
+.latest-facebook-intro h3 {
+  max-width: 10ch;
+  font-size: clamp(52px, 6.5vw, 96px);
+  font-weight: 500;
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+}
+.latest-facebook-intro p {
+  color: #b9bab2;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.latest-facebook-film {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.65fr);
+  align-items: stretch;
+  gap: clamp(34px, 5vw, 82px);
+  margin-top: clamp(52px, 6vw, 88px);
+}
+.latest-facebook-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #0b0b0a;
+}
+.latest-facebook-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.latest-facebook-launch {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: clamp(24px, 4vw, 58px);
+  border: 1px solid #f5f4f02e;
+  color: var(--paper);
+  background:
+    radial-gradient(circle at 78% 22%, #f5f4f012, transparent 35%),
+    linear-gradient(135deg, #181916, #090a09);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  text-align: left;
+}
+.latest-facebook-launch > span:first-child {
+  color: #b9bab2;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.latest-facebook-launch strong {
+  max-width: 18ch;
+  font-size: clamp(25px, 3.2vw, 48px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+.latest-facebook-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 12px;
+}
+.latest-facebook-play svg {
+  transition: transform 0.25s ease;
+}
+.latest-facebook-launch:hover .latest-facebook-play svg {
+  transform: translateX(4px);
+}
+.latest-facebook-player-state {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: #b9bab2;
+  background: #0b0b0a;
+  font-size: 12px;
+  text-align: center;
+}
+.latest-facebook-player-error {
+  gap: 18px;
+  align-content: center;
+}
+.latest-facebook-player-error button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  border-bottom: 1px solid currentColor;
+  color: var(--paper);
+}
+.latest-facebook-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #f5f4f040;
+}
+.latest-facebook-copy > span {
+  color: #b9bab2;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.latest-facebook-copy h4 {
+  margin-top: 20px;
+  font-size: clamp(25px, 3vw, 46px);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+.latest-facebook-copy p {
+  margin-top: 22px;
+  color: #d2d1c8;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.latest-facebook-copy a,
+.latest-facebook-state a {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 30px;
+  border-bottom: 1px solid currentColor;
+  font-size: 12px;
+}
+.latest-facebook-state {
+  display: flex;
+  min-height: 230px;
+  margin-top: clamp(52px, 6vw, 88px);
+  padding-top: 24px;
+  border-top: 1px solid #f5f4f040;
+  color: #b9bab2;
+  flex-direction: column;
+  font-size: 13px;
+}
 .film-foot {
   display: flex;
   justify-content: space-between;
@@ -1414,6 +1566,31 @@ section {
   }
   .reel-feature-caption h4 {
     font-size: 18px;
+  }
+  .latest-facebook {
+    margin-top: 76px;
+    padding-top: 62px;
+  }
+  .latest-facebook-intro,
+  .latest-facebook-film {
+    display: block;
+  }
+  .latest-facebook-intro h3 {
+    font-size: 52px;
+  }
+  .latest-facebook-intro p {
+    max-width: 260px;
+    margin-top: 24px;
+  }
+  .latest-facebook-film,
+  .latest-facebook-state {
+    margin-top: 44px;
+  }
+  .latest-facebook-copy {
+    margin-top: 28px;
+  }
+  .latest-facebook-copy h4 {
+    font-size: 30px;
   }
   .approach-section {
     padding-top: 74px;

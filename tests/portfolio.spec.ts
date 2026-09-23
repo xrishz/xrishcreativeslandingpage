@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { streamPlayerUrl } from "../src/lib/stream";
+import { findLatestFacebookVideo } from "../src/lib/facebook";
 
 test.beforeEach(async ({ page }) => {
   // Keep tests deterministic; real Facebook playback is verified in the live browser.
@@ -9,6 +10,21 @@ test.beforeEach(async ({ page }) => {
   );
   await page.route("https://drive.google.com/file/d/**/preview", (route) =>
     route.abort(),
+  );
+  await page.route("**/api/facebook/latest-video", (route) =>
+    route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        status: "ready",
+        video: {
+          id: "post-1",
+          title: "A fresh XRISH film.",
+          excerpt: "A new celebration from the XRISH page.",
+          createdTime: "2026-09-23T01:00:00+0000",
+          permalinkUrl: "https://www.facebook.com/xrishcreatives/videos/123456789",
+        },
+      }),
+    }),
   );
 });
 
@@ -46,6 +62,16 @@ test("Stream placeholder makes no Stream request and lists only the five events"
   ).toBeVisible();
   await expect(page.getByText("Coming soon.", { exact: true })).toBeVisible();
   await expect(page.locator(".reel-frame iframe")).toHaveCount(2);
+  await expect(page.locator(".latest-facebook-film")).toHaveCount(1);
+  await expect(
+    page.getByRole("button", { name: "Play A fresh XRISH film. on this page" }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Play A fresh XRISH film. on this page" })
+    .click();
+  await expect(
+    page.getByTitle("A fresh XRISH film. — latest XRISH Facebook film"),
+  ).toHaveAttribute("src", /plugins\/video\.php.*123456789/);
   expect(videoRequests).toEqual([]);
   await expect(page.locator(".event-list a")).toHaveText([
     "Debut",
@@ -54,6 +80,37 @@ test("Stream placeholder makes no Stream request and lists only the five events"
     "Corporate Events",
     "Graduations",
   ]);
+});
+
+test("latest Facebook selector skips non-video posts and unsafe URLs", () => {
+  expect(
+    findLatestFacebookVideo([
+      {
+        id: "photo",
+        permalink_url: "https://www.facebook.com/xrishcreatives/posts/1",
+        attachments: { data: [{ media_type: "photo" }] },
+      },
+      {
+        id: "unsafe",
+        permalink_url: "https://example.com/video/2",
+        attachments: { data: [{ media_type: "video" }] },
+      },
+      {
+        id: "video",
+        message: "A new XRISH story. More from the celebration.",
+        created_time: "2026-09-23T01:00:00+0000",
+        permalink_url:
+          "https://www.facebook.com/xrishcreatives/videos/123456789",
+        attachments: { data: [{ media_type: "video" }] },
+      },
+    ]),
+  ).toEqual({
+    id: "video",
+    title: "A new XRISH story.",
+    excerpt: "A new XRISH story. More from the celebration.",
+    createdTime: "2026-09-23T01:00:00+0000",
+    permalinkUrl: "https://www.facebook.com/xrishcreatives/videos/123456789",
+  });
 });
 
 test("Stream playback URLs accept only valid public identifiers", () => {
