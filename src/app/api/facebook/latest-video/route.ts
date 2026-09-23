@@ -61,6 +61,8 @@ export async function GET() {
 
   try {
     let response = await fetchPagePosts(url, accessToken);
+    const systemTokenStatus = response.status;
+    let pageTokenResolved = false;
 
     // A Meta system-user token may need to be exchanged for the assigned
     // Page token before Page posts can be read. Keep both credentials server-only.
@@ -70,13 +72,26 @@ export async function GET() {
         pageId,
         accessToken,
       );
-      if (pageAccessToken) response = await fetchPagePosts(url, pageAccessToken);
+      if (pageAccessToken) {
+        pageTokenResolved = true;
+        response = await fetchPagePosts(url, pageAccessToken);
+      }
     }
 
     if (!response.ok) {
       return Response.json(
         { status: "unavailable", video: null },
-        { status: 502, headers: { "Cache-Control": "no-store" } },
+        {
+          status: 502,
+          headers: {
+            "Cache-Control": "no-store",
+            "X-XRISH-Facebook-Diagnostic": [
+              `system-${systemTokenStatus}`,
+              pageTokenResolved ? "page-resolved" : "page-unavailable",
+              `final-${response.status}`,
+            ].join(","),
+          },
+        },
       );
     }
 
