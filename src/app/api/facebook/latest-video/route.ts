@@ -1,4 +1,9 @@
-import { findFacebookVideos, type FacebookPost, type LatestFacebookVideo } from "@/lib/facebook";
+import {
+  findFacebookVideos,
+  isCuratedFacebookFilm,
+  type FacebookPost,
+  type LatestFacebookVideo,
+} from "@/lib/facebook";
 
 const CACHE_HEADERS = {
   "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=86400",
@@ -108,7 +113,9 @@ export async function GET() {
     }
 
     const payload = (await response.json()) as { data?: FacebookPost[] };
-    const candidates = findFacebookVideos(payload.data ?? []).slice(0, 8);
+    const candidates = findFacebookVideos(payload.data ?? [])
+      .filter((video) => !isCuratedFacebookFilm(video))
+      .slice(0, 8);
     const embedChecks = await Promise.all(candidates.map(canEmbedOnFacebook));
     const video = candidates.find((_, index) => embedChecks[index]);
     return Response.json(

@@ -21,6 +21,20 @@ export type LatestFacebookVideo = {
   permalinkUrl: string;
 };
 
+const CURATED_FACEBOOK_FILM_IDS = new Set([
+  "1032666439513604", // Mirielle — Pre-debut Film
+  "4579322825726121", // Angel — Debut Same Day Edit
+]);
+
+export const isCuratedFacebookFilm = (video: LatestFacebookVideo) => {
+  try {
+    const segments = new URL(video.permalinkUrl).pathname.split("/").filter(Boolean);
+    return segments.some((segment) => CURATED_FACEBOOK_FILM_IDS.has(segment));
+  } catch {
+    return false;
+  }
+};
+
 const isFacebookUrl = (value: string | undefined): value is string => {
   if (!value) return false;
   try {

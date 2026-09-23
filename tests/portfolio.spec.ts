@@ -1,7 +1,10 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { streamPlayerUrl } from "../src/lib/stream";
-import { findLatestFacebookVideo } from "../src/lib/facebook";
+import {
+  findLatestFacebookVideo,
+  isCuratedFacebookFilm,
+} from "../src/lib/facebook";
 
 test.beforeEach(async ({ page }) => {
   // Keep tests deterministic; real Facebook playback is verified in the live browser.
@@ -111,6 +114,28 @@ test("latest Facebook selector skips non-video posts and unsafe URLs", () => {
     createdTime: "2026-09-23T01:00:00+0000",
     permalinkUrl: "https://www.facebook.com/xrishcreatives/videos/123456789",
   });
+
+  expect(
+    isCuratedFacebookFilm({
+      id: "mirielle",
+      title: "Mirielle",
+      permalinkUrl: "https://www.facebook.com/reel/1032666439513604/",
+    }),
+  ).toBe(true);
+  expect(
+    isCuratedFacebookFilm({
+      id: "angel",
+      title: "Angel",
+      permalinkUrl: "https://www.facebook.com/reel/4579322825726121/",
+    }),
+  ).toBe(true);
+  expect(
+    isCuratedFacebookFilm({
+      id: "different",
+      title: "Different film",
+      permalinkUrl: "https://www.facebook.com/reel/123456789/",
+    }),
+  ).toBe(false);
 });
 
 test("Stream playback URLs accept only valid public identifiers", () => {
