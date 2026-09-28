@@ -11,3 +11,6 @@ playwright-report/
 *.log
 next-env.d.ts
 tsconfig.tsbuildinfo
+
+# Local Netlify folder
+.netlify

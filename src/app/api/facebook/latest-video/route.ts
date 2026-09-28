@@ -94,7 +94,7 @@ export async function GET() {
   }
 
   const fields =
-    "id,message,created_time,permalink_url,attachments{media_type,media,target,url,subattachments{media_type,media,target,url}}";
+    "id,message,created_time,permalink_url,attachments{media_type,target,url,subattachments{media_type,target,url}}";
   const url = new URL(
     `https://graph.facebook.com/${graphVersion}/${encodeURIComponent(pageId)}/posts`,
   );
