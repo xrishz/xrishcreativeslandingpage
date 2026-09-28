@@ -7,6 +7,9 @@ import {
 } from "../src/lib/facebook";
 
 test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() =>
+    window.sessionStorage.setItem("xrish-intro-seen", "true"),
+  );
   // Keep tests deterministic; real Facebook playback is verified in the live browser.
   await page.route("https://www.facebook.com/plugins/video.php**", (route) =>
     route.abort(),
@@ -29,6 +32,18 @@ test.beforeEach(async ({ page }) => {
       }),
     }),
   );
+});
+
+test("the XRISH loader appears once per browser session", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => window.sessionStorage.removeItem("xrish-intro-seen"));
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("status", { name: "XRISH CREATIVES is loading" })).toBeVisible();
+  await expect(page.getByRole("status", { name: "XRISH CREATIVES is loading" })).toHaveCount(0, {
+    timeout: 3000,
+  });
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("status", { name: "XRISH CREATIVES is loading" })).toHaveCount(0);
 });
 
 test("Stream placeholder makes no Stream request and lists only the five events", async ({
@@ -64,7 +79,8 @@ test("Stream placeholder makes no Stream request and lists only the five events"
     page.getByRole("heading", { name: "Full Pre-debut Film" }),
   ).toBeVisible();
   await expect(page.getByText("Coming soon.", { exact: true })).toBeVisible();
-  await expect(page.locator(".reel-frame iframe")).toHaveCount(2);
+  await expect(page.locator(".cinematic-film video")).toHaveCount(4);
+  await expect(page.locator(".reel-frame iframe")).toHaveCount(0);
   await expect(page.locator(".latest-facebook-film")).toHaveCount(1);
   await expect(
     page.getByRole("button", { name: "Play A fresh XRISH film. on this page" }),
@@ -162,7 +178,7 @@ test("Stream playback URLs accept only valid public identifiers", () => {
   ).toBeUndefined();
 });
 
-test("client notes and only playable videos appear directly on the page", async ({
+test("client notes and all four native films appear directly on the page", async ({
   page,
 }) => {
   await page.goto("/");
@@ -171,17 +187,30 @@ test("client notes and only playable videos appear directly on the page", async 
   for (const name of ["Janelle Angeles", "Cherreille Gonzales", "Lara Jabagat"])
     await expect(page.getByText(name)).toBeVisible();
   await expect(page.locator(".reel-card")).toHaveCount(0);
-  await expect(page.locator(".reel-feature")).toHaveCount(2);
-  await expect(page.locator(".reel-frame iframe")).toHaveCount(2);
-  await expect(page.getByTitle("Angel — Debut Same Day Edit — Facebook video player")).toHaveAttribute(
-    "src",
-    /plugins\/video\.php.*4579322825726121/,
-  );
-  await expect(page.getByTitle("Mirielle — Pre-debut Film — Facebook video player")).toHaveAttribute(
-    "src",
-    /plugins\/video\.php.*1032666439513604/,
-  );
-  await expect(page.getByText("Janelle — Pre-debut Film")).toHaveCount(0);
+  await expect(page.locator(".reel-feature")).toHaveCount(0);
+  await expect(page.locator(".reel-frame iframe")).toHaveCount(0);
+  await expect(page.locator(".cinematic-film video")).toHaveCount(4);
+  for (const film of ["mirielle", "angel", "janelle", "khatrina"])
+    await expect(page.locator(`video[data-film-src="/films/${film}.mp4"]`)).toHaveCount(1);
+  const mirielle = page.locator('video[data-film-src="/films/mirielle.mp4"]');
+  await expect(page.getByRole("button", { name: "Watch Mirielle from the beginning" })).toBeVisible();
+  await page.getByRole("button", { name: "Watch Mirielle from the beginning" }).click();
+  await expect(mirielle).toHaveAttribute("controls", "");
+  await expect.poll(() => mirielle.evaluate((node) => {
+    const video = node as HTMLVideoElement;
+    return { muted: video.muted, time: video.currentTime };
+  })).toMatchObject({ muted: false });
+  const angel = page.locator('video[data-film-src="/films/angel.mp4"]');
+  await page.getByRole("button", { name: "Watch Angel from the beginning" }).click();
+  await expect.poll(() => mirielle.evaluate((node) => (node as HTMLVideoElement).muted)).toBe(true);
+  await mirielle.evaluate((node) => {
+    const video = node as HTMLVideoElement;
+    video.muted = false;
+    video.dispatchEvent(new Event("volumechange"));
+  });
+  await expect.poll(() => angel.evaluate((node) => (node as HTMLVideoElement).muted)).toBe(true);
+  await page.getByRole("button", { name: "Pause Janelle" }).click();
+  await expect(page.getByRole("button", { name: "Play Janelle" })).toBeVisible();
   await expect(page.getByText("PUP Sto. Tomas — 30th Commencement Exercises")).toHaveCount(0);
   await expect(page.getByText("Cherreille — Debut Same Day Edit")).toHaveCount(0);
 });
@@ -259,7 +288,7 @@ test("all inquiry links use the confirmed Facebook destination", async ({
   await expect(page.getByText("Check Your Date")).toHaveCount(0);
 });
 
-test("hero photograph, mobile navigation, contact sheet and narrow layout remain usable", async ({
+test("hero film, mobile navigation, contact sheet and narrow layout remain usable", async ({
   page,
 }) => {
   const modelRequests: string[] = [];
@@ -268,11 +297,22 @@ test("hero photograph, mobile navigation, contact sheet and narrow layout remain
   });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await expect(page.locator(".hero-portrait")).toBeVisible();
-  await expect(page.locator(".hero-portrait img")).toHaveAttribute(
-    "src",
-    /mirielle-50/,
-  );
+  await expect(page.locator(".hero-film")).toBeVisible();
+  const approvedHeroSources = [
+    "/films/mirielle.mp4",
+    "/films/angel.mp4",
+    "/films/janelle.mp4",
+    "/films/khatrina.mp4",
+  ];
+  const firstHeroSource = await page.locator(".hero-film video").getAttribute("src");
+  expect(approvedHeroSources).toContain(firstHeroSource);
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await expect.poll(
+    () => page.locator(".hero-film video").getAttribute("src"),
+  ).not.toBe(firstHeroSource);
+  const nextHeroSource = await page.locator(".hero-film video").getAttribute("src");
+  expect(approvedHeroSources).toContain(nextHeroSource);
+  await expect(page.getByRole("button", { name: "Pause hero film" })).toBeVisible();
   await expect(page.locator("canvas")).toHaveCount(0);
   expect(modelRequests).toEqual([]);
   await page.getByRole("button", { name: "Open navigation" }).click();
@@ -325,7 +365,7 @@ test("The XRISH Experience presents Event Coverage and limits the casual shoot l
   ).toBeTruthy();
 });
 
-test("Our Works keeps only the two films verified as playable in the site", async ({
+test("Our Works presents all four supplied films as native players", async ({
   page,
 }) => {
   await page.goto("/works");
@@ -341,23 +381,11 @@ test("Our Works keeps only the two films verified as playable in the site", asyn
     await expect(
       page.getByRole("heading", { name: heading, exact: true }),
     ).toBeVisible();
-  const filmTitles = [
-    "Angel — Debut Same Day Edit",
-    "Mirielle — Pre-debut Film",
-  ];
-  await expect(page.locator(".works-film-launch")).toHaveCount(2);
+  const filmTitles = ["Angel", "Janelle", "Mirielle", "Khatrina"];
+  await expect(page.locator(".works-native-films .cinematic-film")).toHaveCount(4);
   await expect(page.locator(".works-film iframe")).toHaveCount(0);
   for (const title of filmTitles)
-    await page
-      .getByRole("button", { name: "Play " + title + " on this page" })
-      .click();
-  await expect(page.locator(".works-film iframe")).toHaveCount(2);
-  await expect(
-    page.getByTitle("Angel — Debut Same Day Edit — Facebook video player"),
-  ).toHaveAttribute("src", /facebook\.com\/plugins\/video\.php/);
-  await expect(
-    page.getByTitle("Mirielle — Pre-debut Film — Facebook video player"),
-  ).toHaveAttribute("src", /facebook\.com\/plugins\/video\.php/);
+    await expect(page.getByText(title, { exact: true })).toBeVisible();
   await expect(page.locator('.works-film iframe[src*="drive.google.com"]')).toHaveCount(0);
   await expect(
     page.locator(
@@ -391,7 +419,8 @@ test("reduced motion keeps the photographic hero, work and inquiry available", a
   await page.mouse.move(180, 160);
   await expect(page.locator(".camera-cursor[data-visible='true']")).toBeVisible();
   await expect(page.locator(".camera-cursor-trail")).toHaveCount(0);
-  await expect(page.locator(".hero-portrait")).toBeVisible();
+  await expect(page.locator(".hero-film")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Play hero film" })).toBeVisible();
   await expect(page.locator("canvas")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await page.getByRole("button", { name: "View In full bloom." }).click();

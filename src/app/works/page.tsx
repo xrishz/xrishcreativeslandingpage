@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { InlineFilm } from "@/components/InlineFilm";
-import { reels, site } from "@/data/site";
+import { CinematicFilm } from "@/components/CinematicFilm";
+import { previewFilms, site } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Our Works — XRISH CREATIVES",
@@ -18,14 +18,13 @@ export const metadata: Metadata = {
   },
 };
 
-const facebookPlayer = (url: string) =>
-  "https://www.facebook.com/plugins/video.php?height=314&href=" +
-  encodeURIComponent(url + "/") +
-  "&show_text=false&width=560&t=0";
-
 export default function WorksPage() {
-  const debutFilm = reels.find((reel) => reel.category === "Debut");
-  const predebutFilm = reels.find((reel) => reel.category === "Predebut");
+  const debutFilms = previewFilms.filter((film) =>
+    ["Debut", "Same Day Edit"].includes(film.category),
+  );
+  const predebutFilms = previewFilms.filter((film) =>
+    ["Predebut", "Portrait Film"].includes(film.category),
+  );
   return (
     <div id="top">
       <Header />
@@ -60,15 +59,10 @@ export default function WorksPage() {
               parang laro lang.
             </p>
           </div>
-          <div className="works-film-list works-film-list-light">
-            {debutFilm && (
-              <InlineFilm
-                title={debutFilm.title}
-                src={facebookPlayer(debutFilm.url)}
-                index={1}
-                provider="Facebook"
-              />
-            )}
+          <div className="works-native-films">
+            {debutFilms.map((film, index) => (
+              <CinematicFilm key={film.slug} film={film} priority={index === 0} />
+            ))}
           </div>
         </section>
 
@@ -81,15 +75,10 @@ export default function WorksPage() {
             <h2>PREDEBUTS</h2>
             <p>A day to explore locations and make the portraits your own.</p>
           </div>
-          <div className="works-film-list works-film-list-light">
-            {predebutFilm && (
-              <InlineFilm
-                title={predebutFilm.title}
-                src={facebookPlayer(predebutFilm.url)}
-                index={1}
-                provider="Facebook"
-              />
-            )}
+          <div className="works-native-films">
+            {predebutFilms.map((film) => (
+              <CinematicFilm key={film.slug} film={film} />
+            ))}
           </div>
         </section>
 

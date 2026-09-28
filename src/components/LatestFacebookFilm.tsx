@@ -69,8 +69,8 @@ export function LatestFacebookFilm() {
   return (
     <section className="latest-facebook page-pad" aria-labelledby="latest-facebook-title">
       <div className="latest-facebook-intro">
-        <h3 id="latest-facebook-title">Latest from XRISH.</h3>
-        <p>New films from our Facebook page, as they’re published.</p>
+        <h3 id="latest-facebook-title">Fresh from the page.</h3>
+        <p>New work appears here as it is published.</p>
       </div>
 
       {!result ? (

@@ -8,22 +8,20 @@ import {
   Pause,
   Plus,
   Play,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import Link from "next/link";
 import {
   AnimatePresence,
   motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
 } from "motion/react";
 import {
   stories,
   contactSheet,
   eventTypes,
   films,
-  heroPortrait,
-  reels,
+  previewFilms,
   testimonials,
   streamPlayerUrl,
   site,
@@ -33,6 +31,10 @@ import {
 import { Photo } from "./Media";
 import { Viewer } from "./Viewer";
 import { LatestFacebookFilm } from "./LatestFacebookFilm";
+import { CinematicFilm } from "./CinematicFilm";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useRotatingHeroFilm } from "@/hooks/useRotatingHeroFilm";
+import { claimVideoSound, VIDEO_SOUND_EVENT } from "@/lib/video-coordination";
 
 export function Portfolio() {
   const [selected, setSelected] = useState<Story>();
@@ -41,14 +43,43 @@ export function Portfolio() {
   const [leadPaused, setLeadPaused] = useState(false);
   const [leadHovered, setLeadHovered] = useState(false);
   const [leadFocused, setLeadFocused] = useState(false);
+  const [heroMuted, setHeroMuted] = useState(true);
+  const [heroPaused, setHeroPaused] = useState(false);
   const strip = useRef<HTMLDivElement>(null);
-  const hero = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: hero,
-    offset: ["start start", "end start"],
-  });
-  const portraitY = useTransform(scrollYProgress, [0, 1], [0, 55]);
+  const heroVideo = useRef<HTMLVideoElement>(null);
+  const heroRoot = useRef<HTMLElement>(null);
+  const heroManuallyPaused = useRef(false);
+  const reduced = useHydratedReducedMotion();
+  const heroFilm = useRotatingHeroFilm();
+  const heroAppearsPaused = reduced || heroPaused;
+  useEffect(() => {
+    if (!reduced) return;
+    heroVideo.current?.pause();
+  }, [reduced]);
+  useEffect(() => {
+    const muteWhenAnotherFilmSpeaks = (event: Event) => {
+      const source = (event as CustomEvent<{ source?: string }>).detail?.source;
+      if (source === "hero") return;
+      const video = heroVideo.current;
+      if (!video) return;
+      video.muted = true;
+      setHeroMuted(true);
+    };
+    window.addEventListener(VIDEO_SOUND_EVENT, muteWhenAnotherFilmSpeaks);
+    return () => window.removeEventListener(VIDEO_SOUND_EVENT, muteWhenAnotherFilmSpeaks);
+  }, []);
+  useEffect(() => {
+    const root = heroRoot.current;
+    if (!root) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      const video = heroVideo.current;
+      if (!video || reduced) return;
+      if (!entry.isIntersecting) video.pause();
+      else if (!heroManuallyPaused.current) video.play().catch(() => undefined);
+    }, { threshold: 0.05 });
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [reduced]);
   const leadLandscapes = stories[0].gallery.filter(
     (frame) => frame.image.width > frame.image.height,
   );
@@ -78,35 +109,51 @@ export function Portfolio() {
   return (
     <>
       <section
+        ref={heroRoot}
         className="hero page-pad"
-        ref={hero}
         aria-labelledby="hero-heading"
       >
+        <div className="hero-film" aria-hidden="true">
+          <video
+            key={heroFilm.src}
+            ref={heroVideo}
+            src={heroFilm.src}
+            poster={heroFilm.poster}
+            autoPlay={!reduced}
+            muted
+            loop
+            playsInline
+            preload="auto"
+            onPlay={() => setHeroPaused(false)}
+            onPause={() => setHeroPaused(true)}
+          />
+          <div className="hero-film-blend" />
+        </div>
         <div className="hero-copy">
           <h1 id="hero-heading">
-            <span>XRISH</span>
-            <span>CREATIVES</span>
+            <motion.span
+              initial={reduced ? false : { y: "105%" }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.85, delay: 1.25, ease: [0.16, 1, 0.3, 1] }}
+            >
+              XRISH
+            </motion.span>
+            <motion.span
+              initial={reduced ? false : { y: "105%" }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.85, delay: 1.34, ease: [0.16, 1, 0.3, 1] }}
+            >
+              CREATIVES
+            </motion.span>
           </h1>
           <p>
-            Photo & film for celebrations
-            <br />
-            worth seeing again.
+            Photo and film for the days
+            <br />that gather everyone you love.
           </p>
           <Link href="/works" className="text-link">
             Explore our work <ArrowDown size={18} aria-hidden="true" />
           </Link>
         </div>
-        <motion.div
-          className="hero-portrait"
-          style={reduced ? undefined : { y: portraitY }}
-        >
-          <Photo
-            frame={heroPortrait}
-            sizes="(max-width: 700px) 100vw, 68vw"
-            priority
-          />
-          <div className="hero-portrait-blend" aria-hidden="true" />
-        </motion.div>
         <div className="hero-bottom">
           <span>
             PHOTOGRAPHY + FILMS
@@ -114,13 +161,6 @@ export function Portfolio() {
             BASED IN LAGUNA, PHILIPPINES
           </span>
           <Link href="/works" className="hero-preview">
-            <div className="hero-preview-photo">
-              <Photo
-                frame={stories[0].cover}
-                sizes="(max-width: 700px) 100vw, 110px"
-                priority
-              />
-            </div>
             <span>
               Real people.
               <br />
@@ -131,6 +171,45 @@ export function Portfolio() {
           <span className="hero-scroll">
             SCROLL TO EXPLORE <ArrowDown size={14} aria-hidden="true" />
           </span>
+          <div className="hero-film-controls">
+            <button
+              type="button"
+              onClick={() => {
+                const video = heroVideo.current;
+                if (!video) return;
+                video.muted = !video.muted;
+                setHeroMuted(video.muted);
+                if (!video.muted) claimVideoSound("hero");
+                if (video.paused) {
+                  heroManuallyPaused.current = false;
+                  video.play().then(() => setHeroPaused(false)).catch(() => setHeroPaused(true));
+                }
+              }}
+              aria-label={heroMuted ? "Turn on hero film sound" : "Mute hero film"}
+            >
+              {heroMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+              {heroMuted ? "Sound" : "Sound on"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const video = heroVideo.current;
+                if (!video) return;
+                if (video.paused) {
+                  heroManuallyPaused.current = false;
+                  video.play().then(() => setHeroPaused(false)).catch(() => setHeroPaused(true));
+                }
+                else {
+                  heroManuallyPaused.current = true;
+                  video.pause();
+                  setHeroPaused(true);
+                }
+              }}
+              aria-label={heroAppearsPaused ? "Play hero film" : "Pause hero film"}
+            >
+              {heroAppearsPaused ? <Play size={14} fill="currentColor" /> : <Pause size={14} fill="currentColor" />}
+            </button>
+          </div>
         </div>
       </section>
 
@@ -264,44 +343,24 @@ export function Portfolio() {
         aria-labelledby="films-heading"
       >
         <div className="film-top page-pad">
-          <h2 id="films-heading">
-            You had to
-            <br />
-            be there.
-          </h2>
+          <motion.h2
+            id="films-heading"
+            initial={reduced ? false : { y: 70, filter: "blur(8px)" }}
+            whileInView={{ y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.45 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          >
+            The moments
+            <br />still move.
+          </motion.h2>
           <p>
-            Or press play.
-            <br />
-            The movement. The voices.
-            <br />
-            The feeling, all over again.
+            The glance before the pose. The laughter between takes. The energy
+            of the room, kept in motion.
           </p>
         </div>
-        <div className="reel-heading page-pad">
-          <div>
-            <h3>Watch the moments move.</h3>
-          </div>
-        </div>
-        <div className="reel-gallery page-pad">
-          {reels.filter((reel) => reel.embeddable).map((reel, index) => (
-            <article className="reel-feature" key={reel.url}>
-              <div className="reel-frame">
-                <iframe
-                  title={`${reel.title} — Facebook video player`}
-                  src={`https://www.facebook.com/plugins/video.php?height=314&href=${encodeURIComponent(`${reel.url}/`)}&show_text=false&width=560&t=0`}
-                  loading="lazy"
-                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              </div>
-              <div className="reel-feature-caption">
-                <span>{String(index + 1).padStart(2, "0")} / {reel.category}</span>
-                <h4>{reel.title}</h4>
-              </div>
-              <a href={reel.url} target="_blank" rel="noopener noreferrer">
-                Open original on Facebook <ArrowUpRight size={16} aria-hidden="true" />
-              </a>
-            </article>
+        <div className="cinematic-gallery page-pad">
+          {previewFilms.map((film, index) => (
+            <CinematicFilm key={film.slug} film={film} priority={index === 0} />
           ))}
         </div>
         <LatestFacebookFilm />
@@ -411,12 +470,14 @@ export function Portfolio() {
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 {
                   [
+                    "The preparation",
                     "The details",
                     "The personality",
                     "The quiet",
                     "The energy",
                     "The after hours",
                     "The whole feeling",
+                    "The reflection",
                   ][index]
                 }
               </figcaption>
@@ -534,7 +595,7 @@ export function Portfolio() {
         </div>
         <div className="about-image">
           <Photo
-            frame={{ ...contactSheet[4], position: "50% 35%" }}
+            frame={{ ...contactSheet[5], position: "50% 35%" }}
             sizes="100vw"
           />
           <span>THE WAY WE SEE IT.</span>

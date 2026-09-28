@@ -27,8 +27,8 @@ npm start
 - Next.js App Router, React 19, TypeScript and Tailwind CSS 4.
 - Motion owns DOM scroll motion and photo-viewer transitions; no competing animation library.
 - Fine-pointer devices use a small camera cursor with a restrained attached glow; touch devices keep native input behavior.
-- The /works route presents Debuts, Predebuts, Corporate Events, and Graduation. Its two browser-verified Facebook films use on-demand in-page players with loading and retry feedback.
-- The homepage keeps Mirielle and Angel as its curated films and adds a separate **Latest from XRISH** feature. A server-only Meta Graph API route finds the newest video among the Page's recent posts, uses a 30-minute cache revalidation window, and falls back to the Facebook Page when Meta is unavailable. The iframe mounts only after the visitor presses Play and includes loading, timeout and retry feedback.
+- The /works route presents Debuts, Predebuts, Corporate Events, and Graduation. Its Debut and Predebut chapters use the four approved native H.264/AAC films in staggered editorial pairs.
+- The homepage presents native Mirielle, Angel, Janelle and Khatrina films and adds a separate **Latest from XRISH** feature. A server-only Meta Graph API route finds the newest video among the Page's recent posts, uses a 30-minute cache revalidation window, and falls back to the Facebook Page when Meta is unavailable. The iframe mounts only after the visitor presses Play and includes loading, timeout and retry feedback.
 - Selected Stories rotates three landscape photographs every five seconds, including owner-supplied `STN07143.jpg`. A visible count and Pause/Resume control accompany it; hover and focus pause rotation, and reduced motion keeps the landscape static.
 - The /experience route presents the supplied 2023 XRISH origin story with Event Coverage as the specialization. The phrase “fun and chill, parang laro lang” is limited to debut coverage.
 - `src/data/site.ts` contains portfolio collections, photograph descriptions, the confirmed contact link, and the film content interface.
@@ -44,7 +44,7 @@ Collection titles are editorial descriptions. No client dates, ages, locations, 
 
 The only event categories are Debut, Predebut, Weddings, Corporate Events, and Graduations, as confirmed by the owner.
 
-Mirielle's Pre-debut Film and Angel's Debut Same Day Edit play directly in the homepage Films section through Facebook's lazy-loaded embedded player. The explicit play surfaces with loading/retry states are used on `/works`. Facebook blocks embedding for the other three supplied reels, so they are omitted from the site. The full Pre-debut Film placeholder remains separate from these short reels.
+The first-session paper/ink XRISH introduction opens into a native film hero. Each full refresh chooses among Mirielle, Angel, Janelle and Khatrina, avoiding the last session choice when storage is available. Muted previews loop and pause offscreen; reduced motion starts paused. **Watch the film** restarts from zero, unmutes and reveals native timeline, seeking, volume and fullscreen controls. Shared sound coordination includes native unmute and permits one audible native source. The four H.264/AAC films and their posters live in `public/films`. The separate Full Pre-debut Film placeholder remains unchanged.
 
 ### Automatic latest Facebook film
 
@@ -62,9 +62,9 @@ The recorded production setup uses Graph API **v26.0**, Page ID **11339113835843
 
 The public route returns a status and the selected video's ID, title, excerpt, date and Facebook permalink. Its Graph fetch uses 1,800-second revalidation; successful responses use `s-maxage=1800, stale-while-revalidate=86400`. This is request-driven caching, not a scheduled sync or a guaranteed 30-minute publishing deadline. The browser fetches once when the feature mounts and does not poll, so an already-open page needs a reload or remount to request a newer result. Missing configuration and provider failures return uncached fallback responses.
 
-The automatic selector verifies that Facebook's public player response includes video data before presenting a candidate. The feature retains a **View post on Facebook** link for a selected result, while missing configuration, API errors, blocked candidates and an empty result show the Page fallback. The iframe mounts only after Play is pressed and presents loading plus a 15-second retry state. Facebook can still change a post's embed eligibility after a cached check, so the recovery link remains visible. The two curated films remain separate from this automatic selection.
+The automatic selector verifies that Facebook's public player response includes video data before presenting a candidate. The feature retains a **View post on Facebook** link for a selected result, while missing configuration, API errors, blocked candidates and an empty result show the Page fallback. The iframe mounts only after Play is pressed and presents loading plus a 15-second retry state. Facebook can still change a post's embed eligibility after a cached check, so the recovery link remains visible. The four native curated films remain separate from this automatic selection; the original Mirielle and Angel reel IDs remain excluded by the Facebook selector.
 
-The Our Works page reuses the two browser-verified Facebook films for Debuts and Predebuts. The supplied Corporate Events and Graduation Google Drive previews were removed from the public page after live browser checks reached the correct files but Google reported that each video could not be loaded. Direct playback also failed with a media format error. Their source references remain recorded for later transcoding through Cloudflare Stream or another web video service. Graduation retains a two-column desktop film area ready for two web-ready videos and returns to one column on mobile.
+The Our Works page reuses the native Angel/Janelle films for Debuts and Mirielle/Khatrina for Predebuts. The supplied Corporate Events and Graduation Google Drive previews were removed from the public page after live browser checks reached the correct files but Google reported that each video could not be loaded. Direct playback also failed with a media format error. Their source references remain recorded for later transcoding through Cloudflare Stream or another web video service. Graduation retains a two-column desktop film area ready for two web-ready videos and returns to one column on mobile.
 
 Three named client testimonials were transcribed from the owner's supplied screenshots and displayed without inferred star ratings or reused avatars. The About introduction and location metadata say Laguna, Philippines, as confirmed by the owner.
 
@@ -83,7 +83,7 @@ No paid Cloudflare service or uploaded film has been provisioned by this code ch
 
 ## Design documentation status
 
-`DESIGN.md` and the three route briefs describe the current implementation. `.impeccable/design.json` remains deliberately unchanged with `generatedAt: 2026-09-21T09:40:29.031Z`; its component previews and narrative have a known age mismatch. Treat the sidecar as an older reference, not current proof of the routes or interactions.
+`DESIGN.md`, the route briefs and `.impeccable/design.json` now describe the XRISH cinematic screening room. The sidecar was refreshed after the final SHIP review to match the new hero, first-session introduction, native film controls and preserved paper/ink system.
 
 ## Validation
 
@@ -95,7 +95,7 @@ npm run build
 npm test
 ```
 
-Browser tests use an installed Google Chrome. Update the channel in `playwright.config.ts` if using Playwright-managed Chromium instead. Tests cover the photographic hero, gallery navigation/focus, the contact destination, mobile menu and scrolling, narrow layout, reduced motion, and serious/critical automated accessibility findings. `node scripts/inspect.mjs` saves desktop/mobile screenshots for visual review. These are local/emulated checks, not a claim of physical-device or field performance testing.
+Browser tests use an installed Google Chrome. Update the channel in `playwright.config.ts` if using Playwright-managed Chromium instead. Tests cover the film hero, gallery navigation/focus, the contact destination, mobile menu and scrolling, narrow layout, reduced motion, and serious/critical automated accessibility findings. `node scripts/inspect.mjs` saves desktop/mobile screenshots for visual review. These are local/emulated checks, not a claim of physical-device or field performance testing.
 
 ## Hosting and SEO
 

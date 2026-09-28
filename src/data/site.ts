@@ -4,7 +4,11 @@ export { streamPlayerUrl } from "@/lib/stream";
 export const site = {
   name: "XRISH CREATIVES",
   facebook: "https://www.facebook.com/xrishcreatives",
-  url: (process.env.NEXT_PUBLIC_SITE_URL || process.env.URL)?.replace(/\/$/, ""),
+  url: (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.URL ||
+    "https://xrish-creatives-portfolio.netlify.app"
+  ).replace(/\/$/, ""),
 };
 
 export function photo(name: string) {
@@ -154,12 +158,20 @@ export const stories: Story[] = [
 ];
 
 export const contactSheet: Frame[] = [
+  frame(
+    "pat05482",
+    "Angel having her makeup finished before her debut celebration",
+  ),
   frame("khatrina-06737", "Fingers resting on a bright sunflower"),
   frame("2", "A portrait against a vivid yellow background"),
   frame("snp01339", "A quiet close-up in a pink gown"),
   frame("3", "A red-lit portrait in silhouette"),
   frame("khatrina-07544", "Khatrina under the evening lights"),
   frame("stn06964", "A celebration portrait among golden lights and flowers"),
+  frame(
+    "amber-01094",
+    "Amber reflected in a dark arched mirror wearing a red gown",
+  ),
 ];
 
 export const eventTypes = [
@@ -168,6 +180,50 @@ export const eventTypes = [
   "Weddings",
   "Corporate Events",
   "Graduations",
+];
+
+export type PreviewFilm = {
+  slug: string;
+  title: string;
+  category: "Debut" | "Predebut" | "Same Day Edit" | "Portrait Film";
+  description: string;
+  src: string;
+  poster: string;
+};
+
+export const previewFilms: PreviewFilm[] = [
+  {
+    slug: "mirielle",
+    title: "Mirielle",
+    category: "Predebut",
+    description: "A predebut portrait in motion.",
+    src: "/films/mirielle.mp4",
+    poster: "/films/mirielle-poster.jpg",
+  },
+  {
+    slug: "angel",
+    title: "Angel",
+    category: "Debut",
+    description: "A debut story, shaped as it happened.",
+    src: "/films/angel.mp4",
+    poster: "/films/angel-poster.jpg",
+  },
+  {
+    slug: "janelle",
+    title: "Janelle",
+    category: "Same Day Edit",
+    description: "The celebration, returned to the room while it is still unfolding.",
+    src: "/films/janelle.mp4",
+    poster: "/films/janelle-poster.jpg",
+  },
+  {
+    slug: "khatrina",
+    title: "Khatrina",
+    category: "Portrait Film",
+    description: "Late light, open gardens, and an evening portrait.",
+    src: "/films/khatrina.mp4",
+    poster: "/films/khatrina-poster.jpg",
+  },
 ];
 
 export type Reel = {

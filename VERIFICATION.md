@@ -1,6 +1,16 @@
-# Verification — 22 September 2026
+# Verification — current screening-room release, 28 September 2026
 
-Final requirements verified locally: the hero reads XRISH CREATIVES and uses the supplied MIRIELLE-50 portrait; the former 3D camera code, dependencies and assets are removed; all inquiry actions read Message Us and point to the confirmed XRISH Facebook page. The About introduction identifies Laguna and Elrish John Rull. The two Facebook reels that permit real inline playback and three client testimonials are included. Dedicated Our Works and The XRISH Experience routes are present.
+## Current release
+
+The final reviewer returned **SHIP**, with no blockers, for the XRISH cinematic screening room. The coordinating agent reports responsive verification at 1440px, 778px and 390px. The current hero uses all four approved native H.264/AAC films, selected on full refresh with immediate-repeat avoidance when session storage is available. A first-session paper/ink wordmark loader precedes the full-viewport opening. Ambient playback is muted and pauses offscreen; reduced motion begins paused. Watch the film restarts from zero, unmutes and exposes native controls, with sound coordination also handling native unmute.
+
+Current source was inspected for the loader, hero selection, film playback, sound coordination and final CSS cascade. Design documentation and the sidecar were merged/refreshed without application edits. Reviewer screenshots include `desktop.png`, `mobile.png`, `user-778.png`, `loader.png`, `films-desktop.png`, `films-mobile.png` and `film-viewing.png` under `.impeccable/review`. Some intermediate film screenshots retain the earlier Hear the film label; current source and the final viewing interaction use Watch the film. This documentation pass did not independently rerun builds or browser tests and does not establish a new production deployment.
+
+## Historical verification record — 22–23 September
+
+The following sections retain earlier release evidence. Their fixed-image hero, two-Facebook-film descriptions and old sidecar-age note are historical and are superseded by the current release above.
+
+Earlier requirements verified locally: the hero reads XRISH CREATIVES and uses the supplied MIRIELLE-50 portrait; the former 3D camera code, dependencies and assets are removed; all inquiry actions read Message Us and point to the confirmed XRISH Facebook page. The About introduction identifies Laguna and Elrish John Rull. The two Facebook reels that permit real inline playback and three client testimonials are included. Dedicated Our Works and The XRISH Experience routes are present.
 
 Fine-pointer devices use the themed camera cursor with a restrained glow attached to the cursor disc. There is no independently animated trail to separate over photographs. The cursor does not mount for coarse/touch pointers.
 

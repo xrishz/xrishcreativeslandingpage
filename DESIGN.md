@@ -1,6 +1,6 @@
 ---
 name: XRISH CREATIVES
-description: A warm photographic gallery with precise typography and dark film intervals.
+description: The XRISH cinematic screening room, with real films, paper and ink, and restrained editorial controls.
 colors:
   paper: "#f5f4f0"
   ink: "#171715"
@@ -9,19 +9,22 @@ colors:
   dark: "#111210"
   contact-surface: "#e8e6de"
   image-ground: "#dad7ce"
+  film-ground: "#090a09"
+  film-control: "#111210cc"
+  film-copy: "#c9c8c0"
 typography:
   display:
     fontFamily: "Instrument Sans, sans-serif"
-    fontSize: "clamp(76px, 9.2vw, 154px)"
+    fontSize: "clamp(78px, 10vw, 168px)"
     fontWeight: 600
-    lineHeight: 0.94
-    letterSpacing: "-0.055em"
+    lineHeight: 0.82
+    letterSpacing: "-0.065em"
   display-mobile:
     fontFamily: "Instrument Sans, sans-serif"
-    fontSize: "clamp(48px, 13.8vw, 96px)"
+    fontSize: "clamp(56px, 16vw, 78px)"
     fontWeight: 600
-    lineHeight: 0.96
-    letterSpacing: "-0.052em"
+    lineHeight: 0.9
+    letterSpacing: "-0.065em"
   headline:
     fontFamily: "Instrument Sans, sans-serif"
     fontSize: "clamp(40px, 5vw, 74px)"
@@ -46,6 +49,18 @@ typography:
     fontFamily: "Instrument Sans, sans-serif"
     fontSize: "10px"
     letterSpacing: "0.08em"
+  film-title:
+    fontFamily: "Instrument Sans, sans-serif"
+    fontSize: "clamp(22px, 2.4vw, 40px)"
+    fontWeight: 500
+    lineHeight: 1
+    letterSpacing: "-0.035em"
+  loader-mark:
+    fontFamily: "Instrument Sans, sans-serif"
+    fontSize: "clamp(48px, 8vw, 118px)"
+    fontWeight: 650
+    lineHeight: 0.82
+    letterSpacing: "-0.065em"
   text-link:
     fontFamily: "Instrument Sans, sans-serif"
     fontSize: "14px"
@@ -60,6 +75,17 @@ spacing:
   viewer-padding: "20px 40px 30px"
   viewer-padding-mobile: "16px 18px 30px"
 components:
+  film-control:
+    backgroundColor: "{colors.film-control}"
+    textColor: "{colors.paper}"
+    padding: "0 14px"
+  film-control-hover:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.dark}"
+  intro-loader:
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
+    padding: "24px"
   text-link:
     textColor: "{colors.ink}"
     typography: "{typography.text-link}"
@@ -102,23 +128,23 @@ components:
 
 ## Overview
 
-**Creative North Star: "The Photographic Gallery"**
+**Creative North Star: "XRISH cinematic screening room"**
 
-Warm gallery white, near-black, precise sans type, open asymmetric spreads and dark screening-room intervals define the implemented world. Photography supplies the vivid color. The interface frames genuine work with quiet rules, generous space and a clear route to a conversation.
+Real films lead the experience. Warm paper and near-black ink frame an immersive opening film, controlled oversized typography and an asymmetric screening sequence. Studio Yanagi’s film-forward restraint informs the direction, while the XRISH wordmark, supplied celebrations and local voice keep the identity specific to XRISH.
 
-The treatment is editorial, cinematic and human. Large tightly spaced headings establish scale; restrained labels and plain language let the photographs carry the emotional detail. This document records the current implementation and the confirmed brand direction. Route composition and story sequences remain in `.impeccable/homepage-brief.md`, `.impeccable/works-brief.md` and `.impeccable/experience-brief.md`.
+The interface stays quiet: short observational copy, micro-labels, fine rules and clear playback controls let real work supply color and feeling. Existing photographic spreads, honest client messages and the Facebook inquiry path remain useful parts of the same world. Route composition is recorded in `.impeccable/homepage-brief.md`, `.impeccable/works-brief.md` and `.impeccable/experience-brief.md`.
 
 **Key Characteristics:**
 
-- Warm neutral surfaces with near-black text.
-- Oversized Instrument Sans headings and discreet supporting labels.
-- Straight photographic edges, staggered spreads and open space.
-- Dark film presentation with circular action controls.
-- Purposeful motion with keyboard, touch and reduced-motion equivalents.
+- Full-viewport native film opening with the exact XRISH CREATIVES title.
+- Paper/ink first-session wordmark introduction.
+- Asymmetric editorial film sequencing and straight media edges.
+- Quiet ambient previews with deliberate sound and full-player controls.
+- Real photographs, owner-supplied testimonials and clear Facebook inquiries.
 
 ## Colors
 
-The palette is warm and restrained; the photographs provide the saturated color. Frontmatter records the canonical values extracted from `src/app/globals.css`.
+The palette is warm and restrained; real films and photographs provide the saturated color. Frontmatter records the canonical values extracted from `src/app/globals.css`.
 
 ### Primary
 
@@ -132,8 +158,11 @@ The palette is warm and restrained; the photographs provide the saturated color.
 - **Screening Black** (`dark`): film section and full-screen viewer background.
 - **Contact Stone** (`contact-surface`): the closing inquiry area, gently distinct from the page ground.
 - **Image Ground** (`image-ground`): background behind story photographs while content resolves.
+- **Film Ground** (`film-ground`): native player background.
+- **Film Control** (`film-control`): translucent ink behind preview controls.
+- **Film Copy** (`film-copy`): supporting text in the dark screening sequence.
 
-**The Photography Color Rule.** Let supplied photographs supply vivid color; keep the interface within the observed neutral palette.
+**The Photography Color Rule.** Let supplied films and photographs supply vivid color; keep the interface within the observed neutral palette.
 
 ## Typography
 
@@ -143,9 +172,10 @@ Headings use compact leading and negative tracking. Smaller uppercase labels use
 
 ### Hierarchy
 
-- **Display:** the desktop hero uses `typography.display`; mobile uses `typography.display-mobile`. Between 701px and 1100px the hero size is (9vw). The hero text is exactly **XRISH CREATIVES**, arranged on two lines.
+- **Display:** the desktop hero uses `typography.display`; mobile uses `typography.display-mobile`. Between 701px and 1100px the hero size is `clamp(68px, 11.6vw, 122px)`. The hero text is exactly **XRISH CREATIVES**, arranged on two lines.
 - **Headline:** selected-stories headings use `typography.headline`; on mobile this becomes (37px), with a (1.04) line height. Other section titles retain their role-specific responsive sizes rather than all becoming the hero style.
 - **Film headline:** `typography.film-headline` sets the large screening-room heading. Mobile uses (66px).
+- **Film title:** `typography.film-title` uses close tracking and a single-line leading; mobile titles use (25px). The loader uses `typography.loader-mark`, with a small tracked CREATIVES line below.
 - **Title:** story names use `typography.title`, becoming (20px) on mobile.
 - **Body:** `typography.body` records the approach paragraph style; mobile uses (14px). Supporting copy elsewhere uses (13–17px), and the about introduction uses a distinct larger (24px) paragraph. Preserve these role differences.
 - **Label:** `typography.label` records the contact-sheet label role. Supporting metadata ranges from (9–12px), with tabular numerals for photograph counts.
@@ -160,7 +190,9 @@ Desktop stories form an asymmetric two-column spread (1.04fr / 0.8fr), with an (
 
 The horizontal contact sheet uses (285px) figures, alternating vertical offsets of (48px), and proximity scroll snapping. Mobile figures use (72vw), with a (36px) alternating offset. It remains horizontally scrollable by touch, keyboard and the visible directional buttons.
 
-The hero uses the supplied MIRIELLE-50 portrait as its primary photographic field. On desktop the portrait occupies the right side while layered directional gradients carry the warm paper behind the wordmark. At 700px and below it becomes a full-width vertical photograph between the hero copy and metadata, with top and bottom fades joining it to the page surface.
+The hero is a full-width native video field beneath the header, with minimum height `calc(100svh - 96px)` on desktop and `calc(100svh - 80px)` on mobile. Video covers the field; dark directional scrims protect the pale two-line wordmark and observational copy. Mobile retains the film rather than substituting a fixed portrait, and places compact sound and playback controls beside the location label.
+
+The homepage film sequence uses a twelve-column grid: first film spans the full row; second occupies columns 1–7, third 8–12 aligned low, and fourth 3–11. Vertical gaps are `clamp(64px, 8vw, 130px)`. At 700px and below films stack with (72px) separation. Native film stages use (16:9). The `/works` native-film chapters use two staggered columns on desktop and one column on mobile. Final responsive review covered widths (1440px), (778px) and (390px).
 
 Coverage and about content collapse to a single column on mobile. Film imagery becomes edge-to-edge, with the caption moved toward the bottom and a vertical scrim. The viewer uses the safe viewport height and contains the full photograph without cropping.
 
@@ -168,13 +200,13 @@ Coverage and about content collapse to a single column on mobile. Film imagery b
 
 The gallery is predominantly flat. Tonal surfaces, hairline dividers, photographic cropping and open space provide hierarchy. Do not add shadowed card containers to the editorial spreads.
 
-The mobile menu has a restrained separation shadow (`0 15px 25px #1111110a`). The hero portrait uses layered paper-to-transparent gradients to protect the wordmark and connect the photograph to the page without a visible panel edge. Photo captions use soft text shadows only where needed over imagery. Film scrims protect readability: a horizontal black-to-transparent gradient on desktop becomes vertical on mobile. Current motion and shadow values are defined in `src/app/globals.css` and their affected components. The `.impeccable/design.json` sidecar has a known age mismatch: its `generatedAt` is `2026-09-21T09:40:29.031Z` and its previews/narrative predate these route and interaction changes. It is deliberately preserved, not refreshed by this documentation pass; use this document and current source for the latest behavior.
+The mobile menu has a restrained separation shadow (`0 15px 25px #1111110a`). The opening film uses layered ink-to-transparent gradients to protect the pale wordmark without flattening the supplied footage. Photo captions use soft text shadows only where needed over imagery. Film scrims protect readability: a horizontal black-to-transparent gradient on desktop becomes vertical on mobile. Current motion and shadow values are defined in `src/app/globals.css` and their affected components. The `.impeccable/design.json` sidecar was refreshed with this screening-room documentation pass; it extends the frontmatter with motion, responsive metadata and representative component previews.
 
 **The Flat Gallery Rule.** Keep photographic surfaces flat; use gradients only for photographic blending and readability.
 
 ## Shapes
 
-Photographs, editorial regions and viewer surfaces keep straight edges. Circular geometry identifies compact controls: previous/next, close, back-to-top and film actions. Circular icon controls are (46px) square, and the back-to-top control is (44px). Film controls are (60px), becoming (52px) on mobile.
+Photographs, editorial regions and viewer surfaces keep straight edges. Circular geometry identifies previous/next, close, back-to-top and the secondary full-film destination. Native film preview controls are restrained rectangular outlines; entering full viewing exposes the browser’s familiar media controls. Circular icon controls are (46px) square, and the back-to-top control is (44px). Film controls are (60px), becoming (52px) on mobile.
 
 Use thin rules for division and underlining for text actions. Avoid introducing pill-shaped inquiry buttons or rounded image cards. There is no general rounded-panel component in the current system.
 
@@ -188,7 +220,7 @@ All inquiry calls to action read **Message Us** and point to `https://www.facebo
 
 ### Icon buttons
 
-Circular controls are transparent at rest and gain a current-color (10%) transparent mix on hover, over (0.2s). Icons use (1.5) stroke width. Give icon-only controls an accessible name. Disabled buttons use (0.45) opacity and a not-allowed cursor. All keyboard-focusable actions use a (2px) current-color outline with a (6px) offset.
+Circular controls are transparent at rest and gain a current-color (10%) transparent mix on hover, over (0.2s). Icons use (1.5) stroke width. Give icon-only controls an accessible name. Disabled buttons use (0.45) opacity and a not-allowed cursor. Film preview buttons currently use a (44px) minimum height on desktop and (40px) on mobile; hero controls remain (44px). All keyboard-focusable actions use a (2px) current-color outline with a (6px) offset.
 
 ### Camera cursor
 
@@ -196,7 +228,7 @@ Fine-pointer desktop devices use a small Gallery Ink camera cursor on a transluc
 
 ### Our Works
 
-The /works route is a video-led archive with four anchored chapters: Debuts, Predebuts, Corporate Events, and Graduation. Debut and Predebut use the confirmed Facebook players. Each film begins as a full-surface in-site play treatment and mounts in place only after activation, with a Loading film status while its iframe loads. A 15-second load timeout reveals Try again. There are no outbound film actions or card containers. Corporate Events and Graduation retain quiet preparation lines because the supplied Drive masters failed real browser playback and were removed. Graduation keeps a two-equal-column desktop film area for two future web-ready films; it becomes one column at 700px and below. Light Debut and Predebut chapters give way to a dark screening-room surface for Corporate Events and Graduation.
+The `/works` route keeps four anchored chapters: Debuts, Predebuts, Corporate Events and Graduation. Debuts displays Angel and Janelle; Predebuts displays Mirielle and Khatrina using the shared native film component. Desktop pairs are staggered and collapse to one column on mobile. Corporate Events and Graduation retain quiet preparation lines because their supplied Drive masters were not browser-playable. The Graduation area remains ready for two desktop columns, becoming one at 700px and below.
 
 ### The XRISH Experience
 
@@ -214,11 +246,13 @@ Story photographs are buttons with explicit View labels, rather than decorative 
 
 ### Films
 
-Use the dark surface and pale type for the Full Pre-debut Film feature. The supplied photograph is a poster for a clearly labelled Coming soon placeholder, not a playable film. When the owner provides a Cloudflare Stream video UID and customer code, replace the placeholder action with Watch full film and open the Stream player on demand in the existing viewer. Do not autoplay. Keep the poster visible as the underlying composition while playback is unavailable.
+The curated sequence contains four approved native H.264/AAC films: Mirielle, Angel, Janelle and Khatrina. Their posters come from the supplied films. Muted inline looping previews provide atmosphere; non-priority sources are attached as they approach the viewport, and offscreen playback pauses. Manual pause is respected. Reduced motion starts previews paused and removes entry translation.
 
-Two owner-supplied reels play directly in the homepage Films section using responsive Facebook iframes. The homepage embeds use lazy iframe loading; the explicit play-surface/loading/retry interaction belongs to `/works`. Omit the other three supplied reels because Facebook denies embedding them. Keep the curated selection limited to browser-verified films; the separate automatic feature does not test each post’s playback eligibility. Keep the Cloudflare full-film placeholder separate from these existing short reels.
+**The Deliberate Sound Rule.** Ambient motion begins muted. **Watch the film** restarts at time zero, unmutes, and replaces the custom overlay actions with native controls for timeline, seeking, volume and fullscreen. Shared sound coordination mutes the other native films and hero whenever one claims sound, including unmute through native controls. Preserve one audible native source at a time.
 
-Below the curated pair, **Latest from XRISH** is a distinct editorial feature rather than a third matching card. Its oversized heading and short explanation introduce a wide play surface paired with the post date and Page copy. The feature requests a cached result from the managed Facebook Page through a server-only route once when it mounts. The route checks up to 20 recent posts in the order Meta returns, excludes the curated Mirielle and Angel reel IDs, skips non-video posts, and verifies up to eight remaining video candidates against Facebook’s public embedded player response. It selects the newest response containing playable video data and skips blocked embeds. It does not poll while the page stays open. While loading it uses a quiet status line; API, permission, blocked-candidate or empty-result failures resolve to a simple XRISH Facebook link. A selected result keeps its date, text and View post on Facebook link beside the player. The Facebook iframe mounts only after the visitor presses Play, then shows loading feedback and a 15-second retry state. Facebook may change embed eligibility after a cached check, so the recovery link remains visible.
+The films enter with a restrained (48px) vertical reveal over (0.85s). Preview controls use quiet borders and invert to paper on hover over (220ms). Do not put card shells around the films. The separate Full Pre-debut Film / Coming soon feature and future on-demand Cloudflare integration remain distinct from these working native films.
+
+The automatic Facebook section remains a secondary feature, currently headed **Fresh from the page.** It uses the server-only managed Page route, excludes the original curated Mirielle/Angel reel IDs and verifies candidate embed responses. Play mounts the selected Facebook iframe with loading and retry feedback; the recovery Page link remains available. These external embeds do not participate in native-video sound coordination. Keep them distinct from the four approved native films.
 
 ### Testimonials
 
@@ -228,9 +262,13 @@ Use an asymmetric editorial grid on warm paper for the three screenshot-supplied
 
 The photograph viewer is a native modal dialog with a full dark canvas, title, close action, photograph count and directional controls. Opening it locks body scrolling; closing it restores previous focus. Escape closes it, and arrow keys move through photographs. The photo changes with a short (0.16s) opacity transition. Reduced-motion mode suppresses that opacity change. Retain the readable title and visible controls on mobile.
 
-### Photographic hero
+### Opening film
 
-The owner-supplied MIRIELLE-50 portrait replaces the former 3D camera. It uses the same high-resolution responsive image pipeline as the portfolio and receives a restrained vertical scroll drift through Motion. Reduced-motion mode removes the drift. Gradients blend the image into the paper surface without lowering the photograph's delivered resolution.
+The opening film is selected from all four approved native films on each full document refresh. Session storage records the prior choice and avoids an immediate repeat; if storage is unavailable, selection remains random but repeat avoidance cannot be guaranteed. This is a refresh-time choice, not an automatic four-film carousel within a visit. The hero loops muted, pauses offscreen and starts paused under reduced motion. Its explicit sound and pause/play controls remain available.
+
+### First-session introduction
+
+A paper/ink XRISH wordmark overlays the first visit in a browser session, with a thin progress line. The normal first-session delay is (1.65s), followed by a (0.55s) fade; reduced motion uses a brief (350ms) hold and no exit motion. Session storage suppresses the hold on later visits in that session. This is a timed brand introduction, not a measured media-download percentage.
 
 ## Do's and Don'ts
 
@@ -241,7 +279,9 @@ The owner-supplied MIRIELLE-50 portrait replaces the former 3D camera. It uses t
 - **Do** use actual supplied photography with accurate alternative text and responsive image sizing.
 - **Do** preserve warm neutral surfaces, straight image edges and staggered editorial spacing.
 - **Do** keep visible keyboard focus, minimum 44px controls and reduced-motion alternatives.
-- **Do** preserve the MIRIELLE-50 portrait as the hero image and keep its face and dress visible at each breakpoint.
+- **Do** keep all four approved native films eligible for the opening and preserve refresh-time repeat avoidance.
+- **Do** restart Watch the film from zero and expose native controls with one audible native source.
+- **Do** keep event types limited to Debut, Predebut, Weddings, Corporate Events and Graduations.
 
 ### Don't:
 

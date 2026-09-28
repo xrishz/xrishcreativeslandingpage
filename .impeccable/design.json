@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-21T09:40:29.031Z",
+  "generatedAt": "2026-09-28T14:17:52.183Z",
   "title": "Design System: XRISH CREATIVES",
   "extensions": {
     "colorMeta": {
@@ -101,12 +101,54 @@
           "oklch(83.57% 0.01263 91.53)",
           "oklch(95.00% 0.01263 91.53)"
         ]
+      },
+      "film-ground": {
+        "role": "neutral",
+        "displayName": "Film Ground",
+        "tonalRamp": [
+          "oklch(15.00% 0.005 100)",
+          "oklch(26.43% 0.005 100)",
+          "oklch(37.86% 0.005 100)",
+          "oklch(49.29% 0.005 100)",
+          "oklch(60.71% 0.005 100)",
+          "oklch(72.14% 0.005 100)",
+          "oklch(83.57% 0.005 100)",
+          "oklch(95.00% 0.005 100)"
+        ]
+      },
+      "film-control": {
+        "role": "neutral",
+        "displayName": "Film Control",
+        "tonalRamp": [
+          "oklch(15.00% 0.005 100)",
+          "oklch(26.43% 0.005 100)",
+          "oklch(37.86% 0.005 100)",
+          "oklch(49.29% 0.005 100)",
+          "oklch(60.71% 0.005 100)",
+          "oklch(72.14% 0.005 100)",
+          "oklch(83.57% 0.005 100)",
+          "oklch(95.00% 0.005 100)"
+        ]
+      },
+      "film-copy": {
+        "role": "neutral",
+        "displayName": "Film Copy",
+        "tonalRamp": [
+          "oklch(15.00% 0.005 100)",
+          "oklch(26.43% 0.005 100)",
+          "oklch(37.86% 0.005 100)",
+          "oklch(49.29% 0.005 100)",
+          "oklch(60.71% 0.005 100)",
+          "oklch(72.14% 0.005 100)",
+          "oklch(83.57% 0.005 100)",
+          "oklch(95.00% 0.005 100)"
+        ]
       }
     },
     "typographyMeta": {
       "display": {
         "displayName": "Hero Display",
-        "purpose": "Exact XRISH CREATIVES headline above 1100px."
+        "purpose": "Opening film headline above 1100px."
       },
       "display-mobile": {
         "displayName": "Mobile Hero Display",
@@ -135,6 +177,14 @@
       "text-link": {
         "displayName": "Text Link",
         "purpose": "Underlined actions with directional icons."
+      },
+      "film-title": {
+        "displayName": "Native film title",
+        "purpose": "Title beneath native film stages."
+      },
+      "loader-mark": {
+        "displayName": "First-session wordmark",
+        "purpose": "XRISH mark in the paper/ink introduction."
       }
     },
     "shadows": [
@@ -176,29 +226,30 @@
         "purpose": "Opacity transition between photographs; reduced-motion opacity stays at 1."
       },
       {
-        "name": "shutter-flash",
-        "value": "0.3s; opacity 0.6 to 0",
-        "purpose": "User-triggered shutter response, absent with reduced motion."
+        "name": "film-entry",
+        "value": "48px to 0; 0.85s; cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Once-only film entry; absent with reduced motion."
       },
       {
-        "name": "camera-pointer",
-        "value": "pointerRotation 0.11; damping 4",
-        "purpose": "Damped desktop pointer rotation; no mobile camera mount."
+        "name": "intro",
+        "value": "1650ms hold; 550ms fade; 1250ms progress line",
+        "purpose": "First session only; reduced motion uses 350ms hold and no animation."
       },
       {
-        "name": "camera-scroll",
-        "value": "translateY 0 to 100px; rotate 0 to -9deg",
-        "purpose": "Desktop hero scroll response through Motion; omitted with reduced motion."
+        "name": "hero-title",
+        "value": "0.85s; delays 1.25s / 1.34s",
+        "purpose": "Two controlled title-line reveals; absent with reduced motion."
+      },
+      {
+        "name": "film-control-hover",
+        "value": "220ms var(--ease)",
+        "purpose": "Paper/ink inversion on preview controls."
       }
     ],
     "breakpoints": [
       {
         "name": "mobile-max",
         "value": "700px"
-      },
-      {
-        "name": "camera-mount-min",
-        "value": "701px"
       },
       {
         "name": "compact-desktop-max",
@@ -232,16 +283,8 @@
       "kind": "nav",
       "refersTo": "site-header",
       "description": "Quiet text navigation on the gallery-paper ground; mobile replaces it with the menu toggle.",
-      "html": "<nav class=\"ds-navigation\" aria-label=\"Main navigation\"><a href=\"#work\">Work</a><a href=\"#films\">Films</a><a href=\"#about\">About</a></nav>",
+      "html": "<nav class=\"ds-navigation\" aria-label=\"Main navigation\"><a href=\"/works\">Work</a><a href=\"/#films\">Films</a><a href=\"/#about\">About</a><a href=\"/experience\">Experience</a></nav>",
       "css": ".ds-navigation{font-family:var(--font-instrument,\"Instrument Sans\"),sans-serif;color:var(--ink,#171715);display:flex;gap:38px;background:var(--paper,#f5f4f0)}.ds-navigation a{color:inherit;font-size:13px;min-height:44px;display:flex;align-items:center;text-decoration:none;text-underline-offset:5px}.ds-navigation a:hover{text-decoration:underline}.ds-navigation a:focus-visible{outline:2px solid currentColor;outline-offset:6px}"
-    },
-    {
-      "name": "Film Destination",
-      "kind": "button",
-      "refersTo": "play-circle",
-      "description": "Facebook film exploration on the dark screening-room surface.",
-      "html": "<div class=\"ds-film-surface\"><a class=\"ds-film-link\" href=\"https://www.facebook.com/xrishcreatives\" target=\"_blank\" rel=\"noopener noreferrer\"><span class=\"ds-play-circle\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></span><span>Explore films on Facebook</span></a></div>",
-      "css": ".ds-film-surface{background:var(--dark,#111210);color:var(--paper,#f5f4f0)}.ds-film-link{font-family:var(--font-instrument,\"Instrument Sans\"),sans-serif;display:flex;align-items:center;gap:20px;color:inherit;font-size:12px;text-decoration:none}.ds-play-circle{width:60px;height:60px;border:1px solid #d8d8cd;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .25s,color .25s}.ds-play-circle svg{width:28px;height:28px}.ds-film-link:hover .ds-play-circle{background:var(--paper,#f5f4f0);color:var(--ink,#171715)}.ds-film-link:focus-visible{outline:2px solid currentColor;outline-offset:6px}@media(max-width:700px){.ds-play-circle{width:52px;height:52px}.ds-film-link{gap:15px;font-size:11px}}"
     },
     {
       "name": "Story View Action",
@@ -257,22 +300,38 @@
       "description": "Ruled coverage link leading to the confirmed Facebook page.",
       "html": "<a class=\"ds-event-row\" href=\"https://www.facebook.com/xrishcreatives\" target=\"_blank\" rel=\"noopener noreferrer\"><span>Weddings</span><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></a>",
       "css": ".ds-event-row{font-family:var(--font-instrument,\"Instrument Sans\"),sans-serif;color:var(--ink,#171715);border-top:1px solid var(--rule,#d1d0c9);border-bottom:1px solid var(--rule,#d1d0c9);display:flex;align-items:center;gap:24px;min-height:81px;font-size:clamp(20px,2.3vw,34px);letter-spacing:-.035em;text-decoration:none;transition:color .25s var(--ease,cubic-bezier(.16,1,.3,1))}.ds-event-row svg{margin-left:auto;width:24px;height:24px}.ds-event-row:hover{color:var(--muted,#65645e)}.ds-event-row:focus-visible{outline:2px solid currentColor;outline-offset:6px}@media(max-width:700px){.ds-event-row{min-height:73px;font-size:22px;gap:18px}}"
+    },
+    {
+      "name": "Native Film Control",
+      "kind": "button",
+      "refersTo": "film-control",
+      "description": "Ambient preview entry into full native playback. Preview snippet shows visual states; the application restarts, unmutes and reveals native controls.",
+      "html": "<button class=\"ds-film-control\"><svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M11 5 6 9H3v6h3l5 4V5ZM16 9l5 6m0-6-5 6\"/></svg>Watch the film</button>",
+      "css": ".ds-film-control{font-family:var(--font-instrument,\"Instrument Sans\"),sans-serif;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid #f5f4f057;background:#111210cc;color:var(--paper,#f5f4f0);font-size:11px;cursor:pointer;transition:background-color 220ms var(--ease),color 220ms var(--ease)}.ds-film-control:hover{background:var(--paper,#f5f4f0);color:var(--dark,#111210)}.ds-film-control:focus-visible{outline:2px solid currentColor;outline-offset:6px}@media(max-width:700px){.ds-film-control{min-height:40px;padding:0 11px;font-size:10px}}@media(prefers-reduced-motion:reduce){.ds-film-control{transition:none}}"
+    },
+    {
+      "name": "First-session Mark",
+      "kind": "custom",
+      "refersTo": "intro-loader",
+      "description": "Paper and ink wordmark used in the first-session timed introduction.",
+      "html": "<div class=\"ds-intro\"><strong>XRISH</strong><span>CREATIVES</span></div>",
+      "css": ".ds-intro{font-family:var(--font-instrument,\"Instrument Sans\"),sans-serif;display:flex;flex-direction:column;align-items:center;padding:24px;background:var(--paper,#f5f4f0);color:var(--ink,#171715);line-height:.82}.ds-intro strong{font-size:clamp(48px,8vw,118px);font-weight:650;letter-spacing:-.065em}.ds-intro span{margin-top:15px;font-size:10px;font-weight:650;letter-spacing:.24em}"
     }
   ],
   "narrative": {
-    "northStar": "The Photographic Gallery",
-    "overview": "Warm gallery white, near-black, precise sans type, open asymmetric spreads and dark screening-room intervals define the implemented world. Photography supplies the vivid color. The interface frames genuine work with quiet rules, generous space and a clear route to a conversation.\n\nThe treatment is editorial, cinematic and human. Large tightly spaced headings establish scale; restrained labels and plain language let the photographs carry the emotional detail. This document records the current implementation and the confirmed brand direction. The homepage composition and story sequence remain in `.impeccable/homepage-brief.md`.",
+    "northStar": "XRISH cinematic screening room",
+    "overview": "Real films lead the experience. Warm paper and near-black ink frame an immersive opening film, controlled oversized typography and an asymmetric screening sequence. Studio Yanagi’s film-forward restraint informs the direction, while the XRISH wordmark, supplied celebrations and local voice keep the identity specific to XRISH.\n\nThe interface stays quiet: short observational copy, micro-labels, fine rules and clear playback controls let real work supply color and feeling. Existing photographic spreads, honest client messages and the Facebook inquiry path remain useful parts of the same world. Route composition is recorded in `.impeccable/homepage-brief.md`, `.impeccable/works-brief.md` and `.impeccable/experience-brief.md`.",
     "keyCharacteristics": [
-      "Warm neutral surfaces with near-black text.",
-      "Oversized Instrument Sans headings and discreet supporting labels.",
-      "Straight photographic edges, staggered spreads and open space.",
-      "Dark film presentation with circular action controls.",
-      "Purposeful motion with keyboard, touch and reduced-motion equivalents."
+      "Full-viewport native film opening with the exact XRISH CREATIVES title.",
+      "Paper/ink first-session wordmark introduction.",
+      "Asymmetric editorial film sequencing and straight media edges.",
+      "Quiet ambient previews with deliberate sound and full-player controls.",
+      "Real photographs, owner-supplied testimonials and clear Facebook inquiries."
     ],
     "rules": [
       {
         "name": "The Photography Color Rule",
-        "body": "Let supplied photographs supply vivid color; keep the interface within the observed neutral palette.",
+        "body": "Let supplied films and photographs supply vivid color; keep the interface within the observed neutral palette.",
         "section": "colors"
       },
       {
@@ -282,8 +341,13 @@
       },
       {
         "name": "The Flat Gallery Rule",
-        "body": "Keep photographic surfaces flat; reserve simulated depth for the camera and readability treatments over imagery.",
+        "body": "Keep photographic surfaces flat; use gradients only for photographic blending and readability.",
         "section": "elevation"
+      },
+      {
+        "name": "The Deliberate Sound Rule",
+        "body": "Ambient motion begins muted. **Watch the film** restarts at time zero, unmutes, and replaces the custom overlay actions with native controls for timeline, seeking, volume and fullscreen. Shared sound coordination mutes the other native films and hero whenever one claims sound, including unmute through native controls. Preserve one audible native source at a time.",
+        "section": "components"
       }
     ],
     "dos": [
@@ -292,14 +356,16 @@
       "Do use actual supplied photography with accurate alternative text and responsive image sizing.",
       "Do preserve warm neutral surfaces, straight image edges and staggered editorial spacing.",
       "Do keep visible keyboard focus, minimum 44px controls and reduced-motion alternatives.",
-      "Do unmount the camera at 700px and below so mobile creates no WebGL and requests no GLB."
+      "Do keep all four approved native films eligible for the opening and preserve refresh-time repeat avoidance.",
+      "Do restart Watch the film from zero and expose native controls with one audible native source.",
+      "Do keep event types limited to Debut, Predebut, Weddings, Corporate Events and Graduations."
     ],
     "donts": [
       "Don't substitute generic rounded card grids for the photographic spreads.",
       "Don't introduce decorative interface colors that compete with the photographs.",
-      "Don't invent testimonials, awards, statistics, client identities, dates or locations.",
+      "Don't invent testimonials, awards, statistics, client identities, dates or locations beyond the owner-supplied Laguna location and named client feedback.",
       "Don't make mobile interactions depend on hover or hide the only path to an action.",
-      "Don't autoplay audio, hijack scrolling or add an automatic shutter flash.",
+      "Don't autoplay audio or hijack scrolling.",
       "Don't present a photograph as a working embedded film before an actual film asset is supplied."
     ]
   }
