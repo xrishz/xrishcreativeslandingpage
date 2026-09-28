@@ -65,7 +65,7 @@ const attachmentIsVideo = (attachment: FacebookAttachment): boolean => {
 const cleanCopy = (value: string | undefined) =>
   value?.replace(/\s+/g, " ").trim();
 
-const safeFacebookImage = (value: string | undefined) => {
+export const safeFacebookImage = (value: string | undefined) => {
   if (!value) return undefined;
   try {
     const url = new URL(value);
