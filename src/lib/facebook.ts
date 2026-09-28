@@ -1,5 +1,6 @@
 export type FacebookAttachment = {
   media_type?: string;
+  media?: { image?: { src?: string } };
   target?: { url?: string };
   url?: string;
   subattachments?: { data?: FacebookAttachment[] };
@@ -79,6 +80,18 @@ const safeFacebookImage = (value: string | undefined) => {
   }
 };
 
+const attachmentPreview = (
+  attachment: FacebookAttachment,
+): string | undefined => {
+  const own = safeFacebookImage(attachment.media?.image?.src);
+  if (own) return own;
+  for (const child of attachment.subattachments?.data ?? []) {
+    const nested = attachmentPreview(child);
+    if (nested) return nested;
+  }
+  return undefined;
+};
+
 export function findLatestFacebookVideo(
   posts: FacebookPost[],
 ): LatestFacebookVideo | undefined {
@@ -107,7 +120,9 @@ export function findFacebookVideos(posts: FacebookPost[]): LatestFacebookVideo[]
           : undefined,
       createdTime: post.created_time,
       permalinkUrl: post.permalink_url,
-      previewUrl: safeFacebookImage(post.full_picture),
+      previewUrl:
+        safeFacebookImage(post.full_picture) ||
+        post.attachments?.data?.map(attachmentPreview).find(Boolean),
     });
   }
   return videos;
