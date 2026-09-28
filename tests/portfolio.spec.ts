@@ -28,6 +28,7 @@ test.beforeEach(async ({ page }) => {
           excerpt: "A new celebration from the XRISH page.",
           createdTime: "2026-09-23T01:00:00+0000",
           permalinkUrl: "https://www.facebook.com/xrishcreatives/videos/123456789",
+          previewUrl: "https://scontent.fmnl1-1.fna.fbcdn.net/xrish-preview.jpg",
         },
       }),
     }),
@@ -44,6 +45,39 @@ test("the XRISH loader appears once per browser session", async ({ page }) => {
   });
   await page.reload({ waitUntil: "domcontentloaded" });
   await expect(page.getByRole("status", { name: "XRISH CREATIVES is loading" })).toHaveCount(0);
+});
+
+test("the decorative loader never blocks the portfolio without JavaScript", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    baseURL: "http://localhost:3000",
+    javaScriptEnabled: false,
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  await expect(page.locator(".intro-loader")).toBeHidden();
+  await expect(page.getByRole("heading", { level: 1, name: "XRISH CREATIVES" })).toBeVisible();
+  await context.close();
+});
+
+test("the decorative loader clears when session storage is unavailable", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ baseURL: "http://localhost:3000" });
+  await context.addInitScript(() => {
+    Object.defineProperty(window, "sessionStorage", {
+      configurable: true,
+      get() {
+        throw new DOMException("Storage is disabled", "SecurityError");
+      },
+    });
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  await expect(page.locator(".intro-loader")).toHaveCount(0, { timeout: 2000 });
+  await expect(page.getByRole("heading", { level: 1, name: "XRISH CREATIVES" })).toBeVisible();
+  await context.close();
 });
 
 test("Stream placeholder makes no Stream request and lists only the five events", async ({
@@ -63,6 +97,28 @@ test("Stream placeholder makes no Stream request and lists only the five events"
   const pause = page.getByRole("button", {
     name: "Pause landscape rotation",
   });
+  await pause.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(650);
+  const pauseBox = await pause.boundingBox();
+  expect(pauseBox).not.toBeNull();
+  const buttonX = pauseBox!.x + pauseBox!.width / 2;
+  const buttonY = pauseBox!.y + pauseBox!.height / 2;
+  await page.mouse.move(buttonX - 2, buttonY - 2);
+  await page.mouse.move(buttonX, buttonY);
+  await expect(page.locator(".camera-cursor[data-interactive='true']")).toBeVisible();
+  const cursorBeforeHoverTransition = await page.locator(".camera-cursor-mark").boundingBox();
+  await page.waitForTimeout(220);
+  const cursorAfterHoverTransition = await page.locator(".camera-cursor-mark").boundingBox();
+  expect(cursorBeforeHoverTransition).not.toBeNull();
+  expect(cursorAfterHoverTransition).not.toBeNull();
+  expect(Math.abs(
+    cursorAfterHoverTransition!.x + cursorAfterHoverTransition!.width / 2 - buttonX,
+  )).toBeLessThan(1);
+  expect(Math.abs(
+    cursorAfterHoverTransition!.y + cursorAfterHoverTransition!.height / 2 - buttonY,
+  )).toBeLessThan(1);
+  expect(Math.abs(cursorAfterHoverTransition!.x - cursorBeforeHoverTransition!.x)).toBeLessThan(1);
+  expect(Math.abs(cursorAfterHoverTransition!.y - cursorBeforeHoverTransition!.y)).toBeLessThan(1);
   await pause.click();
   await expect(
     page.getByRole("button", { name: "Resume landscape rotation" }),
@@ -85,6 +141,10 @@ test("Stream placeholder makes no Stream request and lists only the five events"
   await expect(
     page.getByRole("button", { name: "Play A fresh XRISH film. on this page" }),
   ).toBeVisible();
+  await expect(page.locator(".latest-facebook-preview")).toHaveCSS(
+    "background-image",
+    /xrish-preview\.jpg/,
+  );
   await page
     .getByRole("button", { name: "Play A fresh XRISH film. on this page" })
     .click();
@@ -116,8 +176,9 @@ test("latest Facebook selector skips non-video posts and unsafe URLs", () => {
       },
       {
         id: "video",
-        message: "A new XRISH story. More from the celebration.",
+        message: "PUP STO. TOMAS | 31ST COMMENCEMENT EXERCISES SDE. More from the celebration.",
         created_time: "2026-09-23T01:00:00+0000",
+        full_picture: "https://scontent.fmnl1-1.fna.fbcdn.net/xrish-preview.jpg",
         permalink_url:
           "https://www.facebook.com/xrishcreatives/videos/123456789",
         attachments: { data: [{ media_type: "video" }] },
@@ -125,10 +186,11 @@ test("latest Facebook selector skips non-video posts and unsafe URLs", () => {
     ]),
   ).toEqual({
     id: "video",
-    title: "A new XRISH story.",
-    excerpt: "A new XRISH story. More from the celebration.",
+    title: "PUP STO. TOMAS",
+    excerpt: "PUP STO. TOMAS | 31ST COMMENCEMENT EXERCISES SDE. More from the celebration.",
     createdTime: "2026-09-23T01:00:00+0000",
     permalinkUrl: "https://www.facebook.com/xrishcreatives/videos/123456789",
+    previewUrl: "https://scontent.fmnl1-1.fna.fbcdn.net/xrish-preview.jpg",
   });
 
   expect(
@@ -186,6 +248,16 @@ test("client notes and all four native films appear directly on the page", async
   await expect(page.locator(".testimonial")).toHaveCount(3);
   for (const name of ["Janelle Angeles", "Cherreille Gonzales", "Lara Jabagat"])
     await expect(page.getByText(name)).toBeVisible();
+  const laraNote = page.getByLabel("Client note 3 of 3");
+  await expect(laraNote.locator("blockquote p")).toHaveCount(1);
+  await expect(laraNote).toContainText("balanced professionalism with humor");
+  await page.getByRole("button", { name: "Next client note" }).click();
+  await expect(page.getByRole("button", { name: "Show note 2 from Cherreille Gonzales" })).toHaveAttribute("aria-current", "true");
+  await page.locator(".testimonial-carousel").press("ArrowRight");
+  await expect(page.getByRole("button", { name: "Show note 3 from Lara Jabagat" })).toHaveAttribute("aria-current", "true");
+  await expect.poll(() => page.locator(".testimonial-track").evaluate((track) => track.scrollLeft)).toBeGreaterThan(0);
+  await page.getByRole("button", { name: "Show note 1 from Janelle Angeles" }).click();
+  await expect(page.getByRole("button", { name: "Show note 1 from Janelle Angeles" })).toHaveAttribute("aria-current", "true");
   await expect(page.locator(".reel-card")).toHaveCount(0);
   await expect(page.locator(".reel-feature")).toHaveCount(0);
   await expect(page.locator(".reel-frame iframe")).toHaveCount(0);
@@ -193,6 +265,12 @@ test("client notes and all four native films appear directly on the page", async
   for (const film of ["mirielle", "angel", "janelle", "khatrina"])
     await expect(page.locator(`video[data-film-src="/films/${film}.mp4"]`)).toHaveCount(1);
   const mirielle = page.locator('video[data-film-src="/films/mirielle.mp4"]');
+  await expect(mirielle).toHaveAttribute("controlslist", /nodownload/);
+  await expect(mirielle).toHaveAttribute("disablepictureinpicture", "");
+  await expect(mirielle).toHaveAttribute("disableremoteplayback", "");
+  expect(await mirielle.evaluate((node) => node.dispatchEvent(
+    new MouseEvent("contextmenu", { bubbles: true, cancelable: true }),
+  ))).toBe(false);
   await expect(page.getByRole("button", { name: "Watch Mirielle from the beginning" })).toBeVisible();
   await page.getByRole("button", { name: "Watch Mirielle from the beginning" }).click();
   await expect(mirielle).toHaveAttribute("controls", "");
@@ -213,6 +291,22 @@ test("client notes and all four native films appear directly on the page", async
   await expect(page.getByRole("button", { name: "Play Janelle" })).toBeVisible();
   await expect(page.getByText("PUP Sto. Tomas — 30th Commencement Exercises")).toHaveCount(0);
   await expect(page.getByText("Cherreille — Debut Same Day Edit")).toHaveCount(0);
+});
+
+test("homepage exposes the branded hero preview to Messenger and social crawlers", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    "content",
+    /\/opengraph-image\.jpg/,
+  );
+  await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute("content", "1200");
+  await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute("content", "630");
+  await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+    "content",
+    /hero page preview/,
+  );
 });
 
 test("Selected Stories rotates between landscape photographs without separating the cursor", async ({

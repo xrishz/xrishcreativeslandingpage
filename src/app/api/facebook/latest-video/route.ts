@@ -9,6 +9,13 @@ const CACHE_HEADERS = {
   "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=86400",
 };
 
+const REQUEST_DEADLINE_MS = 22000;
+const GRAPH_REQUEST_TIMEOUT_MS = 6000;
+const EMBED_REQUEST_TIMEOUT_MS = 5000;
+
+const boundedSignal = (deadline: AbortSignal, timeout: number) =>
+  AbortSignal.any([deadline, AbortSignal.timeout(timeout)]);
+
 const graphHeaders = (accessToken: string) => ({
   Accept: "application/json",
   Authorization: `Bearer ${accessToken}`,
@@ -18,6 +25,7 @@ async function resolvePageAccessToken(
   graphVersion: string,
   pageId: string,
   systemUserToken: string,
+  deadline: AbortSignal,
 ) {
   const url = new URL(`https://graph.facebook.com/${graphVersion}/me/accounts`);
   url.searchParams.set("fields", "id,access_token");
@@ -26,7 +34,7 @@ async function resolvePageAccessToken(
   const response = await fetch(url, {
     cache: "no-store",
     headers: graphHeaders(systemUserToken),
-    signal: AbortSignal.timeout(8000),
+    signal: boundedSignal(deadline, GRAPH_REQUEST_TIMEOUT_MS),
   });
   if (!response.ok) return undefined;
 
@@ -36,15 +44,18 @@ async function resolvePageAccessToken(
   return payload.data?.find((page) => page.id === pageId)?.access_token;
 }
 
-function fetchPagePosts(url: URL, accessToken: string) {
+function fetchPagePosts(url: URL, accessToken: string, deadline: AbortSignal) {
   return fetch(url, {
     headers: graphHeaders(accessToken),
     next: { revalidate: 1800 },
-    signal: AbortSignal.timeout(8000),
+    signal: boundedSignal(deadline, GRAPH_REQUEST_TIMEOUT_MS),
   });
 }
 
-async function canEmbedOnFacebook(video: LatestFacebookVideo) {
+async function canEmbedOnFacebook(
+  video: LatestFacebookVideo,
+  deadline: AbortSignal,
+) {
   const embedUrl = new URL("https://www.facebook.com/plugins/video.php");
   embedUrl.searchParams.set("height", "314");
   embedUrl.searchParams.set("href", video.permalinkUrl);
@@ -59,7 +70,7 @@ async function canEmbedOnFacebook(video: LatestFacebookVideo) {
         "Accept-Language": "en-US,en;q=0.9",
       },
       next: { revalidate: 1800 },
-      signal: AbortSignal.timeout(6000),
+      signal: boundedSignal(deadline, EMBED_REQUEST_TIMEOUT_MS),
     });
     if (!response.ok) return false;
     const html = await response.text();
@@ -73,6 +84,7 @@ export async function GET() {
   const pageId = process.env.FACEBOOK_PAGE_ID;
   const accessToken = process.env.FACEBOOK_PAGE_ACCESS_TOKEN;
   const graphVersion = process.env.FACEBOOK_GRAPH_API_VERSION || "v26.0";
+  const deadline = AbortSignal.timeout(REQUEST_DEADLINE_MS);
 
   if (!pageId || !accessToken) {
     return Response.json(
@@ -82,7 +94,7 @@ export async function GET() {
   }
 
   const fields =
-    "id,message,created_time,permalink_url,attachments{media_type,target,url,subattachments{media_type,target,url}}";
+    "id,message,created_time,permalink_url,full_picture,attachments{media_type,target,url,subattachments{media_type,target,url}}";
   const url = new URL(
     `https://graph.facebook.com/${graphVersion}/${encodeURIComponent(pageId)}/posts`,
   );
@@ -90,7 +102,7 @@ export async function GET() {
   url.searchParams.set("limit", "20");
 
   try {
-    let response = await fetchPagePosts(url, accessToken);
+    let response = await fetchPagePosts(url, accessToken, deadline);
 
     // A Meta system-user token may need to be exchanged for the assigned
     // Page token before Page posts can be read. Keep both credentials server-only.
@@ -99,9 +111,10 @@ export async function GET() {
         graphVersion,
         pageId,
         accessToken,
+        deadline,
       );
       if (pageAccessToken) {
-        response = await fetchPagePosts(url, pageAccessToken);
+        response = await fetchPagePosts(url, pageAccessToken, deadline);
       }
     }
 
@@ -116,7 +129,9 @@ export async function GET() {
     const candidates = findFacebookVideos(payload.data ?? [])
       .filter((video) => !isCuratedFacebookFilm(video))
       .slice(0, 8);
-    const embedChecks = await Promise.all(candidates.map(canEmbedOnFacebook));
+    const embedChecks = await Promise.all(
+      candidates.map((candidate) => canEmbedOnFacebook(candidate, deadline)),
+    );
     const video = candidates.find((_, index) => embedChecks[index]);
     return Response.json(
       { status: video ? "ready" : "empty", video: video ?? null },

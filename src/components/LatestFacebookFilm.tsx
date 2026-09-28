@@ -37,7 +37,7 @@ export function LatestFacebookFilm() {
   useEffect(() => {
     const controller = new AbortController();
     let cancelled = false;
-    const timer = window.setTimeout(() => controller.abort(), 8000);
+    const timer = window.setTimeout(() => controller.abort(), 25000);
     fetch("/api/facebook/latest-video", { signal: controller.signal })
       .then(async (response) => {
         const body = (await response.json()) as LatestResponse;
@@ -70,7 +70,7 @@ export function LatestFacebookFilm() {
     <section className="latest-facebook page-pad" aria-labelledby="latest-facebook-title">
       <div className="latest-facebook-intro">
         <h3 id="latest-facebook-title">Fresh from the page.</h3>
-        <p>New work appears here as it is published.</p>
+        <p>Recent work from our Facebook page.</p>
       </div>
 
       {!result ? (
@@ -87,6 +87,13 @@ export function LatestFacebookFilm() {
                 onClick={() => setPlayerActive(true)}
                 aria-label={`Play ${video.title} on this page`}
               >
+                {video.previewUrl && (
+                  <span
+                    className="latest-facebook-preview"
+                    style={{ backgroundImage: `url(${JSON.stringify(video.previewUrl)})` }}
+                    aria-hidden="true"
+                  />
+                )}
                 <span>Latest Facebook film</span>
                 <strong>{video.title}</strong>
                 <span className="latest-facebook-play">

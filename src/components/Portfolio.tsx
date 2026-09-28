@@ -45,13 +45,40 @@ export function Portfolio() {
   const [leadFocused, setLeadFocused] = useState(false);
   const [heroMuted, setHeroMuted] = useState(true);
   const [heroPaused, setHeroPaused] = useState(false);
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
   const strip = useRef<HTMLDivElement>(null);
+  const testimonialTrack = useRef<HTMLDivElement>(null);
+  const testimonialScrollLocked = useRef(false);
+  const testimonialUnlockTimer = useRef<number | undefined>(undefined);
   const heroVideo = useRef<HTMLVideoElement>(null);
   const heroRoot = useRef<HTMLElement>(null);
   const heroManuallyPaused = useRef(false);
   const reduced = useHydratedReducedMotion();
   const heroFilm = useRotatingHeroFilm();
   const heroAppearsPaused = reduced || heroPaused;
+  const showTestimonial = (index: number) => {
+    const next = (index + testimonials.length) % testimonials.length;
+    setTestimonialIndex(next);
+    testimonialScrollLocked.current = true;
+    window.clearTimeout(testimonialUnlockTimer.current);
+    testimonialUnlockTimer.current = window.setTimeout(() => {
+      testimonialScrollLocked.current = false;
+    }, reduced ? 0 : 650);
+    const track = testimonialTrack.current;
+    const card = track?.children[next] as HTMLElement | undefined;
+    if (track && card) {
+      track.scrollTo({
+        left: card.offsetLeft - track.offsetLeft,
+        behavior: reduced ? "auto" : "smooth",
+      });
+    }
+  };
+  const changeTestimonial = (direction: number) => {
+    showTestimonial(testimonialIndex + direction);
+  };
+  useEffect(() => {
+    return () => window.clearTimeout(testimonialUnlockTimer.current);
+  }, []);
   useEffect(() => {
     if (!reduced) return;
     heroVideo.current?.pause();
@@ -124,6 +151,11 @@ export function Portfolio() {
             loop
             playsInline
             preload="auto"
+            controlsList="nodownload noremoteplayback"
+            disablePictureInPicture
+            disableRemotePlayback
+            draggable={false}
+            onContextMenu={(event) => event.preventDefault()}
             onPlay={() => setHeroPaused(false)}
             onPause={() => setHeroPaused(true)}
           />
@@ -359,8 +391,32 @@ export function Portfolio() {
           </p>
         </div>
         <div className="cinematic-gallery page-pad">
-          {previewFilms.map((film, index) => (
-            <CinematicFilm key={film.slug} film={film} priority={index === 0} />
+          <div className="cinematic-lead-story">
+            <CinematicFilm film={previewFilms[0]} priority />
+            <motion.aside
+              className="film-story"
+              initial={reduced ? false : { y: 34 }}
+              whileInView={{ y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              aria-labelledby="film-story-heading"
+            >
+              <span>Behind the film</span>
+              <h3 id="film-story-heading">A good frame can start with a joke.</h3>
+              <p>
+                Between takes, we played around, traded jokes, and let the shoot
+                feel easy. Nothing too serious or strict—just our team and the
+                debutant enjoying the afternoon while the real moments found
+                their way into the film.
+              </p>
+              <p>
+                The energy stays light. The care behind the final work never
+                does.
+              </p>
+            </motion.aside>
+          </div>
+          {previewFilms.slice(1).map((film) => (
+            <CinematicFilm key={film.slug} film={film} />
           ))}
         </div>
         <LatestFacebookFilm />
@@ -541,23 +597,78 @@ export function Portfolio() {
           </div>
           <p>What it felt like, in their own words.</p>
         </div>
-        <div className="testimonials-grid">
-          {testimonials.map((testimonial, index) => (
-            <figure
-              className={`testimonial testimonial-${index}`}
-              key={testimonial.name}
-            >
-              <span className="testimonial-index">
-                {String(index + 1).padStart(2, "0")} / 03
-              </span>
-              <blockquote>
-                {testimonial.quote.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
-              </blockquote>
-              <figcaption>{testimonial.name} <span>· Client</span></figcaption>
-            </figure>
-          ))}
+        <div
+          className="testimonial-carousel"
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Client feedback"
+          tabIndex={0}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowLeft") changeTestimonial(-1);
+            if (event.key === "ArrowRight") changeTestimonial(1);
+          }}
+        >
+          <div
+            ref={testimonialTrack}
+            className="testimonial-track"
+            tabIndex={0}
+            aria-label="Client note cards; scroll horizontally"
+            onScroll={(event) => {
+              if (testimonialScrollLocked.current) return;
+              const track = event.currentTarget;
+              const cards = Array.from(track.children) as HTMLElement[];
+              const closest = cards.reduce(
+                (best, card, index) => {
+                  const distance = Math.abs(card.offsetLeft - track.scrollLeft);
+                  return distance < best.distance ? { index, distance } : best;
+                },
+                { index: 0, distance: Number.POSITIVE_INFINITY },
+              );
+              setTestimonialIndex(closest.index);
+            }}
+          >
+            {testimonials.map((testimonial, index) => (
+              <figure
+                className={`testimonial ${index === 2 ? "testimonial-long" : ""}`}
+                key={testimonial.name}
+                aria-label={`Client note ${index + 1} of ${testimonials.length}`}
+              >
+                <span className="testimonial-index">
+                  {String(index + 1).padStart(2, "0")} / {String(testimonials.length).padStart(2, "0")}
+                </span>
+                <blockquote>
+                  {testimonial.quote.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </blockquote>
+                <figcaption>
+                  {testimonial.name} <span>· Client</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          <div className="testimonial-controls">
+            <div className="testimonial-dots" aria-label="Choose a client note">
+              {testimonials.map((testimonial, index) => (
+                <button
+                  type="button"
+                  key={testimonial.name}
+                  className={index === testimonialIndex ? "is-current" : undefined}
+                  onClick={() => showTestimonial(index)}
+                  aria-label={`Show note ${index + 1} from ${testimonial.name}`}
+                  aria-current={index === testimonialIndex ? "true" : undefined}
+                />
+              ))}
+            </div>
+            <div className="testimonial-arrows">
+              <button type="button" onClick={() => changeTestimonial(-1)} aria-label="Previous client note">
+                <ArrowLeft size={20} aria-hidden="true" />
+              </button>
+              <button type="button" onClick={() => changeTestimonial(1)} aria-label="Next client note">
+                <ArrowRight size={20} aria-hidden="true" />
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 

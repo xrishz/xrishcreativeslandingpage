@@ -32,7 +32,7 @@ typography:
     letterSpacing: "-0.045em"
   film-headline:
     fontFamily: "Instrument Sans, sans-serif"
-    fontSize: "clamp(55px, 7.2vw, 106px)"
+    fontSize: "clamp(52px, 5.8vw, 88px)"
     fontWeight: 500
     lineHeight: 0.96
     letterSpacing: "-0.045em"
@@ -174,7 +174,7 @@ Headings use compact leading and negative tracking. Smaller uppercase labels use
 
 - **Display:** the desktop hero uses `typography.display`; mobile uses `typography.display-mobile`. Between 701px and 1100px the hero size is `clamp(68px, 11.6vw, 122px)`. The hero text is exactly **XRISH CREATIVES**, arranged on two lines.
 - **Headline:** selected-stories headings use `typography.headline`; on mobile this becomes (37px), with a (1.04) line height. Other section titles retain their role-specific responsive sizes rather than all becoming the hero style.
-- **Film headline:** `typography.film-headline` sets the large screening-room heading. Mobile uses (66px).
+- **Film headline:** `typography.film-headline` sets the large screening-room heading. Mobile uses `clamp(48px, 14vw, 58px)`.
 - **Film title:** `typography.film-title` uses close tracking and a single-line leading; mobile titles use (25px). The loader uses `typography.loader-mark`, with a small tracked CREATIVES line below.
 - **Title:** story names use `typography.title`, becoming (20px) on mobile.
 - **Body:** `typography.body` records the approach paragraph style; mobile uses (14px). Supporting copy elsewhere uses (13–17px), and the about introduction uses a distinct larger (24px) paragraph. Preserve these role differences.
@@ -192,7 +192,7 @@ The horizontal contact sheet uses (285px) figures, alternating vertical offsets 
 
 The hero is a full-width native video field beneath the header, with minimum height `calc(100svh - 96px)` on desktop and `calc(100svh - 80px)` on mobile. Video covers the field; dark directional scrims protect the pale two-line wordmark and observational copy. Mobile retains the film rather than substituting a fixed portrait, and places compact sound and playback controls beside the location label.
 
-The homepage film sequence uses a twelve-column grid: first film spans the full row; second occupies columns 1–7, third 8–12 aligned low, and fourth 3–11. Vertical gaps are `clamp(64px, 8vw, 130px)`. At 700px and below films stack with (72px) separation. Native film stages use (16:9). The `/works` native-film chapters use two staggered columns on desktop and one column on mobile. Final responsive review covered widths (1440px), (778px) and (390px).
+The homepage film sequence starts with a compact left-video/right-story composition: a 7fr video column and a story column with a minimum width of (280px), separated by `clamp(38px, 5vw, 84px)`. Film titles sit directly below and align with the left edge of each video; visible category labels are removed. The remaining sequence keeps its twelve-column grid: second film occupies columns 1–7, third 8–12 aligned low, and fourth 3–11. Vertical gaps are `clamp(64px, 8vw, 130px)`. At 700px and below the lead story stacks beneath its video, and films stack with (72px) separation. Native film stages use (16:9). The `/works` native-film chapters use two staggered columns on desktop and one column on mobile. Final responsive review covered widths (1440px), (778px) and (390px).
 
 Coverage and about content collapse to a single column on mobile. Film imagery becomes edge-to-edge, with the caption moved toward the bottom and a vertical scrim. The viewer uses the safe viewport height and contains the full photograph without cropping.
 
@@ -224,7 +224,7 @@ Circular controls are transparent at rest and gain a current-color (10%) transpa
 
 ### Camera cursor
 
-Fine-pointer desktop devices use a small Gallery Ink camera cursor on a translucent Gallery Paper disc. The glow is the disc’s own box shadow, and both use the same pointer position; there is no independently animated trail to separate over large photographs. Interactive targets invert the disc colors. Touch devices retain their native behavior.
+Fine-pointer desktop devices use a small Gallery Ink camera cursor on a translucent Gallery Paper disc. The glow is the disc’s own box shadow, and both use the same pointer position; there is no independently animated trail to separate over large photographs. Interactive targets, including native video controls, invert the disc colors. Pointer movement updates position and visual flags without a React state update on every move, keeping the custom cursor stable. It hides on window blur or pointer exit. Touch devices retain their native behavior.
 
 ### Our Works
 
@@ -250,17 +250,25 @@ The curated sequence contains four approved native H.264/AAC films: Mirielle, An
 
 **The Deliberate Sound Rule.** Ambient motion begins muted. **Watch the film** restarts at time zero, unmutes, and replaces the custom overlay actions with native controls for timeline, seeking, volume and fullscreen. Shared sound coordination mutes the other native films and hero whenever one claims sound, including unmute through native controls. Preserve one audible native source at a time.
 
+Native film elements request `nodownload` and `noremoteplayback`, disable picture-in-picture and remote playback, disable dragging, and suppress the video context menu. These are browser-dependent download deterrents, not DRM: publicly delivered video can still be retrieved or recorded. Preserve timeline, seeking, volume and fullscreen in viewing mode.
+
 The films enter with a restrained (48px) vertical reveal over (0.85s). Preview controls use quiet borders and invert to paper on hover over (220ms). Do not put card shells around the films. The separate Full Pre-debut Film / Coming soon feature and future on-demand Cloudflare integration remain distinct from these working native films.
 
-The automatic Facebook section remains a secondary feature, currently headed **Fresh from the page.** It uses the server-only managed Page route, excludes the original curated Mirielle/Angel reel IDs and verifies candidate embed responses. Play mounts the selected Facebook iframe with loading and retry feedback; the recovery Page link remains available. These external embeds do not participate in native-video sound coordination. Keep them distinct from the four approved native films.
+The automatic Facebook section remains a secondary feature, currently headed **Fresh from the page.** It uses the server-only managed Page route, excludes the original curated Mirielle/Angel reel IDs and verifies candidate embed responses. The play surface uses the post’s preview image when a trusted HTTPS Facebook/CDN image is available. Its title preserves the complete caption segment before the first pipe character, falling back to the first sentence or the generic title; it is not shortened to a fixed character count. Play mounts the selected Facebook iframe with loading and retry feedback; the recovery Page link remains available. These external embeds do not participate in native-video sound coordination. Keep them distinct from the four approved native films.
 
 ### Testimonials
 
-Use an asymmetric editorial grid on warm paper for the three screenshot-supplied client messages. The longer Lara note occupies the larger column on desktop; all three stack in reading order on mobile. Preserve the clients' own wording and names. Do not reproduce unsupported ratings or avatars from the screenshots.
+The three owner-supplied client messages appear in bordered horizontal cards on a warm neutral ground. The scroll-snap track supports swiping, arrow keys, previous/next buttons and indexed selection. Cards share a fixed track height of `clamp(410px, 30vw, 460px)` on desktop and (440px) at 700px and below, with attribution pinned toward the bottom. Desktop cards use `minmax(520px, 62%)` width; mobile cards fill the track width.
+
+Use the shared Instrument Sans family, restrained weight and compact spacing. Lara’s approved proofread note is one paragraph, with a smaller long-form type size to fit the same compact card height; do not imply that all quotes use the same font size. Preserve each client’s attribution and intended meaning. Do not add unsupported ratings or avatars. Production-build measurements found no card overflow at 1440px, 390px or 320px.
 
 ### Viewer
 
 The photograph viewer is a native modal dialog with a full dark canvas, title, close action, photograph count and directional controls. Opening it locks body scrolling; closing it restores previous focus. Escape closes it, and arrow keys move through photographs. The photo changes with a short (0.16s) opacity transition. Reduced-motion mode suppresses that opacity change. Retain the readable title and visible controls on mobile.
+
+### Social sharing preview
+
+The Open Graph/Messenger image is a branded (1200 × 630px) capture of the homepage hero using the supplied Mirielle film. It includes navigation, the XRISH wordmark and hero copy over an authentic film frame. Preserve its source-provenance sidecar. This is the intended sharing artwork; external platforms may retain an older cached preview.
 
 ### Opening film
 
@@ -268,7 +276,7 @@ The opening film is selected from all four approved native films on each full do
 
 ### First-session introduction
 
-A paper/ink XRISH wordmark overlays the first visit in a browser session, with a thin progress line. The normal first-session delay is (1.65s), followed by a (0.55s) fade; reduced motion uses a brief (350ms) hold and no exit motion. Session storage suppresses the hold on later visits in that session. This is a timed brand introduction, not a measured media-download percentage.
+A paper/ink XRISH wordmark overlays the first visit in a browser session, with a thin progress line. The normal first-session delay is (1.65s), followed by a (0.55s) fade; reduced motion uses a brief (350ms) hold and no exit motion. Session storage suppresses the hold on later visits in that session. Storage access is guarded, and a noscript escape hides the decorative overlay when JavaScript is disabled, keeping the underlying portfolio accessible. This is a timed brand introduction, not a measured media-download percentage.
 
 ## Do's and Don'ts
 

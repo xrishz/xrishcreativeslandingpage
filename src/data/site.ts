@@ -252,20 +252,19 @@ export const testimonials = [
   {
     name: "Janelle Angeles",
     quote: [
-      "Andami pong nagandahan sa sde, including mee. super ganda po huhu thank you so much po",
+      "Andami pong nagandahan sa SDE, including me. Super ganda po. Huhu, thank you so much po!",
     ],
   },
   {
     name: "Cherreille Gonzales",
     quote: [
-      "Thank you so much po! I had fun filming with you all po and I am glad na kayo po ang pinili kong photo and video",
+      "Thank you so much po! I had fun filming with you all po, and I’m glad na kayo po ang pinili ko for photo and video.",
     ],
   },
   {
     name: "Lara Jabagat",
     quote: [
-      "I chose XRISH CREATIVES as my photographer because as I was browsing through my social medias, I saw their works and immediately knew I would love to work with them because their works neatly matched my preferences. I felt light and at ease during the entire shoot because the photographers were nice and very down to earth. They can balance professionalism and humor!",
-      "My favorite part of the experience was working them for about 6-7 hours. Because I got comfortable and able to express myself throughout the shoot (parang nakikipag hangout lang rin ako sa friends ko hihi) I would even recommend them because I really felt comfortable considering they are just few years older than me so I feel like I’m just hanging with my Ate’s and Kuya’s Alongside with that, their works are amazing and it is worth giving a shot!",
+      "I chose XRISH CREATIVES after seeing their work on social media and knowing their style matched mine. During our shoot, I felt comfortable expressing myself because the team was kind, down-to-earth, and balanced professionalism with humor. Parang nakikipag-hangout lang ako sa friends ko! Their work is amazing, and I would gladly recommend them.",
     ],
   },
 ] as const;

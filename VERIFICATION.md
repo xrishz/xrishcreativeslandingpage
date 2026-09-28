@@ -1,6 +1,12 @@
-# Verification — current screening-room release, 28 September 2026
+# Verification — current screening-room release, 29 September 2026
 
-## Current release
+## Final refinement — 29 September
+
+The coordinating agent reports **TypeScript, ESLint and the production build passed**, **all 16 Playwright tests passed**, including no-JavaScript and unavailable-session-storage loader coverage, and the final reviewer returned **SHIP**. Production-build testimonial measurements found **zero card overflow at 1440px, 390px and 320px**. The post-audit loader fix guards sessionStorage access and adds a noscript escape so the decorative overlay cannot block the portfolio when JavaScript is disabled. Typecheck, lint and build passed again after this fix. These are the supplied final validation results; this documentation-only pass did not rerun the checks or establish a new deployment.
+
+Current source confirms the compact left-video/right-story lead, aligned video titles without category labels, native download deterrents, trusted Facebook preview image and complete pre-pipe title, bordered horizontal testimonial cards, approved one-paragraph Lara note, and cursor updates that avoid per-move React state churn. The Open Graph provenance records a branded 1200 × 630 homepage-hero capture using the supplied Mirielle film. Download deterrents do not prevent retrieval or recording of public browser video, and external sharing platforms can retain cached artwork.
+
+## Screening-room foundation — 28 September
 
 The final reviewer returned **SHIP**, with no blockers, for the XRISH cinematic screening room. The coordinating agent reports responsive verification at 1440px, 778px and 390px. The current hero uses all four approved native H.264/AAC films, selected on full refresh with immediate-repeat avoidance when session storage is available. A first-session paper/ink wordmark loader precedes the full-viewport opening. Ambient playback is muted and pauses offscreen; reduced motion begins paused. Watch the film restarts from zero, unmutes and exposes native controls, with sound coordination also handling native unmute.
 

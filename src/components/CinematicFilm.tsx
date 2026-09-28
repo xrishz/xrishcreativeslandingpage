@@ -132,7 +132,12 @@ export function CinematicFilm({ film, priority = false }: CinematicFilmProps) {
           playsInline
           preload={priority ? "auto" : "metadata"}
           controls={viewing}
+          controlsList="nodownload noremoteplayback"
+          disablePictureInPicture
+          disableRemotePlayback
+          draggable={false}
           aria-label={`${film.title} — ${film.category}`}
+          onContextMenu={(event) => event.preventDefault()}
           onPlay={() => setPaused(false)}
           onPause={() => setPaused(true)}
           onVolumeChange={(event) => {
@@ -170,7 +175,6 @@ export function CinematicFilm({ film, priority = false }: CinematicFilmProps) {
         </div>}
       </div>
       <div className="cinematic-caption">
-        <span>{film.category}</span>
         <div>
           <h3>{film.title}</h3>
           <p>{film.description}</p>

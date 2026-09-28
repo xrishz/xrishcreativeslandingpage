@@ -10,6 +10,7 @@ export type FacebookPost = {
   message?: string;
   created_time?: string;
   permalink_url?: string;
+  full_picture?: string;
   attachments?: { data?: FacebookAttachment[] };
 };
 
@@ -19,6 +20,7 @@ export type LatestFacebookVideo = {
   excerpt?: string;
   createdTime?: string;
   permalinkUrl: string;
+  previewUrl?: string;
 };
 
 const CURATED_FACEBOOK_FILM_IDS = new Set([
@@ -62,6 +64,21 @@ const attachmentIsVideo = (attachment: FacebookAttachment): boolean => {
 const cleanCopy = (value: string | undefined) =>
   value?.replace(/\s+/g, " ").trim();
 
+const safeFacebookImage = (value: string | undefined) => {
+  if (!value) return undefined;
+  try {
+    const url = new URL(value);
+    const trustedHost =
+      url.hostname === "facebook.com" ||
+      url.hostname.endsWith(".facebook.com") ||
+      url.hostname.endsWith(".fbcdn.net") ||
+      url.hostname.endsWith(".fbsbx.com");
+    return url.protocol === "https:" && trustedHost ? url.toString() : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 export function findLatestFacebookVideo(
   posts: FacebookPost[],
 ): LatestFacebookVideo | undefined {
@@ -75,10 +92,11 @@ export function findFacebookVideos(posts: FacebookPost[]): LatestFacebookVideo[]
     if (!post.attachments?.data?.some(attachmentIsVideo)) continue;
 
     const message = cleanCopy(post.message);
+    const pipeTitle = message?.includes("|")
+      ? message.split("|", 1)[0]?.trim()
+      : undefined;
     const firstSentence = message?.split(/(?<=[.!?])\s/)[0];
-    const title = firstSentence
-      ? firstSentence.slice(0, 88)
-      : "Latest film from XRISH CREATIVES";
+    const title = pipeTitle || firstSentence || "Latest film from XRISH CREATIVES";
 
     videos.push({
       id: post.id,
@@ -89,6 +107,7 @@ export function findFacebookVideos(posts: FacebookPost[]): LatestFacebookVideo[]
           : undefined,
       createdTime: post.created_time,
       permalinkUrl: post.permalink_url,
+      previewUrl: safeFacebookImage(post.full_picture),
     });
   }
   return videos;

@@ -113,12 +113,17 @@ section {
   transition:
     color 140ms ease-out,
     background 140ms ease-out,
-    scale 140ms ease-out;
+    border-color 140ms ease-out,
+    box-shadow 140ms ease-out;
 }
 .camera-cursor[data-interactive="true"] .camera-cursor-mark {
   color: var(--paper);
   background: var(--ink);
-  scale: 1.08;
+  border-color: var(--ink);
+  box-shadow:
+    0 3px 12px #17171520,
+    0 0 0 7px #f5f4f030,
+    0 0 20px #f5f4f2a;
 }
 @media (hover: hover) and (pointer: fine) {
   body,
@@ -645,6 +650,7 @@ section {
 .latest-facebook {
   margin-top: clamp(95px, 10vw, 160px);
   padding-top: clamp(72px, 7vw, 112px);
+  padding-bottom: clamp(82px, 8vw, 132px);
   border-top: 1px solid #f5f4f02e;
 }
 .latest-facebook-intro {
@@ -684,6 +690,7 @@ section {
   border: 0;
 }
 .latest-facebook-launch {
+  position: relative;
   display: flex;
   width: 100%;
   height: 100%;
@@ -697,6 +704,23 @@ section {
   align-items: flex-start;
   justify-content: space-between;
   text-align: left;
+}
+.latest-facebook-preview {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  transform: scale(1.002);
+}
+.latest-facebook-launch::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #090a0940 0%, #090a09a6 100%);
+  content: "";
+}
+.latest-facebook-launch > :not(.latest-facebook-preview) {
+  position: relative;
+  z-index: 1;
 }
 .latest-facebook-launch > span:first-child {
   color: #b9bab2;
@@ -952,16 +976,33 @@ section {
   line-height: 1.5;
   color: var(--muted);
 }
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  column-gap: 8%;
+.testimonial-carousel {
+  outline: none;
 }
-.testimonial {
-  border-top: 1px solid #b9b7ae;
-  padding: 24px 0 35px;
+.testimonial-track {
+  display: grid;
+  align-items: stretch;
+  grid-auto-columns: minmax(520px, 62%);
+  grid-auto-flow: column;
+  height: clamp(410px, 30vw, 460px);
+  gap: clamp(16px, 2vw, 28px);
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-behavior: smooth;
+  scroll-snap-type: inline mandatory;
+  scrollbar-width: none;
+}
+.testimonial-track::-webkit-scrollbar {
+  display: none;
+}
+.testimonial-carousel .testimonial {
+  min-height: 0;
+  height: 100%;
+  padding: clamp(24px, 2.5vw, 36px);
+  border: 1px solid #b9b7ae;
   display: flex;
   flex-direction: column;
+  scroll-snap-align: start;
 }
 .testimonial-index {
   font-size: 10px;
@@ -969,14 +1010,20 @@ section {
   color: var(--muted);
 }
 .testimonial blockquote {
-  margin: 24px 0 32px;
-  font-size: clamp(21px, 2.3vw, 32px);
-  line-height: 1.4;
+  max-width: 31ch;
+  margin: clamp(28px, 3vw, 42px) 0 30px;
+  font-size: clamp(27px, 2.7vw, 40px);
+  line-height: 1.2;
   letter-spacing: -0.03em;
   font-weight: 500;
 }
 .testimonial blockquote p + p {
   margin-top: 25px;
+}
+.testimonial-long blockquote {
+  max-width: none;
+  font-size: clamp(18px, 1.5vw, 22px);
+  line-height: 1.38;
 }
 .testimonial figcaption {
   margin-top: auto;
@@ -987,13 +1034,52 @@ section {
   color: var(--muted);
   font-weight: 400;
 }
-.testimonial-2 {
-  grid-column: 2;
-  grid-row: 1 / span 2;
+.testimonial-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #b9b7ae;
 }
-.testimonial-2 blockquote {
-  font-size: clamp(18px, 1.65vw, 24px);
-  line-height: 1.52;
+.testimonial-dots {
+  display: flex;
+  width: min(460px, 58%);
+  gap: 8px;
+}
+.testimonial-dots button {
+  position: relative;
+  width: 100%;
+  min-height: 44px;
+}
+.testimonial-dots button::before {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: #b9b7ae;
+  content: "";
+}
+.testimonial-dots button.is-current::before {
+  height: 2px;
+  background: var(--ink);
+}
+.testimonial-arrows {
+  display: flex;
+  gap: 8px;
+}
+.testimonial-arrows button {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #b9b7ae;
+  place-items: center;
+  transition: color 180ms ease, background-color 180ms ease;
+}
+.testimonial-arrows button:hover {
+  color: var(--paper);
+  background: var(--ink);
 }
 .about-section {
   border-top: 1px solid var(--rule);
@@ -1313,12 +1399,8 @@ section {
   }
 }
 @media (max-width: 900px) {
-  .testimonials-grid {
-    display: block;
-  }
-  .testimonial-2 {
-    grid-column: auto;
-    grid-row: auto;
+  .testimonial-track {
+    grid-auto-columns: min(82vw, 620px);
   }
 }
 @media (max-width: 700px) {
@@ -1570,6 +1652,7 @@ section {
   .latest-facebook {
     margin-top: 76px;
     padding-top: 62px;
+    padding-bottom: 74px;
   }
   .latest-facebook-intro,
   .latest-facebook-film {
@@ -1676,10 +1759,29 @@ section {
     margin-top: 20px;
   }
   .testimonial blockquote {
-    font-size: 23px;
+    margin-top: 30px;
+    font-size: clamp(23px, 6.8vw, 30px);
+    line-height: 1.28;
   }
-  .testimonial-2 blockquote {
-    font-size: 19px;
+  .testimonial-long blockquote {
+    margin-top: 24px;
+    margin-bottom: 20px;
+    font-size: 17px;
+    line-height: 1.4;
+  }
+  .testimonial-track {
+    grid-auto-columns: 100%;
+    height: 440px;
+  }
+  .testimonial-carousel .testimonial {
+    padding: 24px;
+  }
+  .testimonial-dots {
+    width: 58%;
+  }
+  .testimonial-arrows button {
+    width: 44px;
+    height: 44px;
   }
   .about-title h2 {
     font-size: 63px;
@@ -2463,14 +2565,15 @@ section {
 
 /* Films in motion */
 .films-section {
-  padding-top: clamp(105px, 11vw, 180px);
+  padding-top: clamp(78px, 7vw, 120px);
   padding-bottom: 42px;
 }
 .film-top {
-  margin-bottom: clamp(68px, 8vw, 128px);
+  margin-bottom: clamp(46px, 5vw, 76px);
 }
 .film-top h2 {
   max-width: 11ch;
+  font-size: clamp(52px, 5.8vw, 88px);
 }
 .film-top p {
   max-width: 36ch;
@@ -2487,17 +2590,53 @@ section {
 .cinematic-film {
   min-width: 0;
 }
-.cinematic-gallery .cinematic-film:first-child {
+.cinematic-lead-story {
   grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(280px, 3fr);
+  gap: clamp(38px, 5vw, 84px);
+  align-items: center;
 }
-.cinematic-gallery .cinematic-film:nth-child(2) {
+.cinematic-lead-story .cinematic-film {
+  grid-column: auto;
+}
+.film-story {
+  max-width: 410px;
+  padding-block: 28px;
+  border-top: 1px solid #f5f4f040;
+  border-bottom: 1px solid #f5f4f040;
+}
+.film-story > span {
+  color: #aaa9a2;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.film-story h3 {
+  margin-top: 22px;
+  font-size: clamp(30px, 3vw, 49px);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+.film-story p {
+  margin-top: 26px;
+  color: #c9c8c0;
+  font-size: clamp(13px, 1vw, 15px);
+  line-height: 1.7;
+}
+.film-story p + p {
+  margin-top: 16px;
+  color: var(--paper);
+}
+.cinematic-gallery > .cinematic-film:nth-child(2) {
   grid-column: 1 / 8;
 }
-.cinematic-gallery .cinematic-film:nth-child(3) {
+.cinematic-gallery > .cinematic-film:nth-child(3) {
   grid-column: 8 / -1;
   align-self: end;
 }
-.cinematic-gallery .cinematic-film:nth-child(4) {
+.cinematic-gallery > .cinematic-film:nth-child(4) {
   grid-column: 3 / 12;
 }
 .cinematic-stage {
@@ -2546,17 +2685,9 @@ section {
   background: #f5f4f0;
 }
 .cinematic-caption {
-  display: grid;
-  grid-template-columns: minmax(90px, 0.35fr) minmax(0, 1fr);
-  gap: 24px;
+  display: block;
   padding-top: 18px;
   border-top: 1px solid #f5f4f040;
-}
-.cinematic-caption > span {
-  color: #aaa9a2;
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 .cinematic-caption h3 {
   font-size: clamp(22px, 2.4vw, 40px);
@@ -2589,9 +2720,15 @@ section {
 }
 
 @media (max-width: 700px) {
+  .films-section {
+    padding-top: 68px;
+  }
   .film-top {
     display: block;
-    margin-bottom: 58px;
+    margin-bottom: 42px;
+  }
+  .film-top h2 {
+    font-size: clamp(48px, 14vw, 58px);
   }
   .film-top p {
     max-width: 31ch;
@@ -2600,12 +2737,30 @@ section {
   .cinematic-gallery {
     display: block;
   }
+  .cinematic-lead-story {
+    display: block;
+  }
+  .film-story {
+    max-width: none;
+    margin-top: 34px;
+    padding-block: 24px;
+  }
+  .film-story h3 {
+    max-width: 12ch;
+    margin-top: 18px;
+    font-size: 34px;
+  }
+  .film-story p {
+    max-width: 43ch;
+    margin-top: 20px;
+  }
   .cinematic-gallery .cinematic-film + .cinematic-film {
     margin-top: 72px;
   }
+  .cinematic-lead-story + .cinematic-film {
+    margin-top: 72px;
+  }
   .cinematic-caption {
-    grid-template-columns: 82px minmax(0, 1fr);
-    gap: 14px;
     padding-top: 14px;
   }
   .cinematic-caption h3 {

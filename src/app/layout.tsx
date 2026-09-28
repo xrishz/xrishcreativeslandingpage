@@ -23,6 +23,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_PH",
     siteName: "XRISH CREATIVES",
+    url: "/",
   },
   twitter: { card: "summary_large_image" },
 };

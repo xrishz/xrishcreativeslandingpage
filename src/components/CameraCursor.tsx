@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Camera } from "lucide-react";
 import { motion, useMotionValue } from "motion/react";
 
@@ -8,22 +8,32 @@ export function CameraCursor() {
   const x = useMotionValue(-80);
   const y = useMotionValue(-80);
   const [enabled, setEnabled] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [interactive, setInteractive] = useState(false);
+  const cursor = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const media = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const updateCapability = () => setEnabled(media.matches);
+    const updateCapability = () => {
+      setEnabled(media.matches);
+      if (!media.matches && cursor.current) cursor.current.dataset.visible = "false";
+    };
     const move = (event: PointerEvent) => {
       x.set(event.clientX);
       y.set(event.clientY);
-      setVisible(true);
-      setInteractive(
+      const element = cursor.current;
+      if (!element) return;
+      element.dataset.visible = "true";
+      element.dataset.interactive = String(
         event.target instanceof Element &&
-          Boolean(event.target.closest("a, button, [role='button']")),
+          Boolean(
+            event.target.closest(
+              "a, button, [role='button'], video[controls], input, select, textarea, summary",
+            ),
+          ),
       );
     };
-    const leave = () => setVisible(false);
+    const leave = () => {
+      if (cursor.current) cursor.current.dataset.visible = "false";
+    };
 
     updateCapability();
     media.addEventListener("change", updateCapability);
@@ -42,9 +52,10 @@ export function CameraCursor() {
 
   return (
     <div
+      ref={cursor}
       className="camera-cursor"
-      data-visible={visible}
-      data-interactive={interactive}
+      data-visible="false"
+      data-interactive="false"
       aria-hidden="true"
     >
       <motion.span className="camera-cursor-mark" style={{ x, y }}>
