@@ -37,7 +37,7 @@ export function LatestFacebookFilm() {
   useEffect(() => {
     const controller = new AbortController();
     let cancelled = false;
-    const timer = window.setTimeout(() => controller.abort(), 25000);
+    const timer = window.setTimeout(() => controller.abort(), 33000);
     fetch("/api/facebook/latest-video", { signal: controller.signal })
       .then(async (response) => {
         const body = (await response.json()) as LatestResponse;

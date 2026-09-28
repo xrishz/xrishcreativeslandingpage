@@ -9,9 +9,9 @@ const CACHE_HEADERS = {
   "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=86400",
 };
 
-const REQUEST_DEADLINE_MS = 22000;
-const GRAPH_REQUEST_TIMEOUT_MS = 6000;
-const EMBED_REQUEST_TIMEOUT_MS = 5000;
+const REQUEST_DEADLINE_MS = 30000;
+const GRAPH_REQUEST_TIMEOUT_MS = 8000;
+const EMBED_REQUEST_TIMEOUT_MS = 6000;
 
 const boundedSignal = (deadline: AbortSignal, timeout: number) =>
   AbortSignal.any([deadline, AbortSignal.timeout(timeout)]);
