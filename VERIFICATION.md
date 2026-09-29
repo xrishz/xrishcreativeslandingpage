@@ -1,5 +1,11 @@
 # Verification — current screening-room release, 29 September 2026
 
+## Media caching and billing check — 29 September 2026
+
+Cloudflare Stream's **55 / 1,000 minutes stored** measures the combined duration of uploaded videos; browser caching does not lower it. Stream delivery is a separate usage metric. Fresh response headers showed `max-age=864000` (10 days) on a Stream video segment and `max-age=172800` (2 days) on a hosted Cloudflare Image. Those provider-managed browser caches already exceed the requested five minutes, so they are left intact. The site does not add a service worker or proxy for Stream manifests, which Cloudflare says should be fetched directly and not independently cached. Browser eviction, private mode, changed URLs, and cache bypass can still cause a new request.
+
+Netlify's local `/films/*` previews/posters and `/portfolio/*` backup images previously returned `max-age=0,must-revalidate`. `netlify.toml` now requests a five-minute browser cache for those two static paths. This reduces repeat requests for those local assets without changing how the public film or photo galleries look. Stream preloading and autoplay still count toward delivered minutes when segments are first fetched; reducing the number of simultaneous previews is a separate tradeoff against the requested moving-video experience. The new static headers require live verification after publication.
+
 ## Meta feed and Stream playback follow-up — 29 September 2026
 
 The XRISH Facebook Page's existing system user, Elrish Rull, now has Content and Insights access. The owner explicitly approved enabling Content; no other Page permission was changed. With the existing server-only read token, the live `/api/facebook/latest-video` route returned HTTP 200 and `status: ready` for a distinct PUP Sto. Tomas commencement reel. A live Chrome check opened the reel inside the site's Facebook embed and observed its playback position advance. Mirielle and Angel remain the curated films and are excluded from this automatic selection. The Page link remains the recovery path if a future reel cannot be embedded.

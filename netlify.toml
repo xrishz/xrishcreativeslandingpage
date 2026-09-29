@@ -1,0 +1,11 @@
+# Five-minute browser cache for local preview videos and backup photographs.
+# Cloudflare Stream and Cloudflare Images retain their own, longer cache headers.
+[[headers]]
+  for = "/films/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300, must-revalidate"
+
+[[headers]]
+  for = "/portfolio/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300, must-revalidate"
