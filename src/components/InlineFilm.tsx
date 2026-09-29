@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { Play, RotateCcw } from "lucide-react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -17,6 +17,10 @@ type InlineFilmProps = {
   priority?: boolean;
 };
 
+const subscribeHydration = () => () => undefined;
+const clientIsHydrated = () => true;
+const serverIsHydrated = () => false;
+
 export function InlineFilm({
   streamVideoId,
   customerCode,
@@ -30,6 +34,7 @@ export function InlineFilm({
   const fullVideo = useRef<HTMLVideoElement>(null);
   const reduced = useHydratedReducedMotion();
   const [nearViewport, setNearViewport] = useState(priority);
+  const hydrated = useSyncExternalStore(subscribeHydration, clientIsHydrated, serverIsHydrated);
   const [started, setStarted] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -159,7 +164,7 @@ export function InlineFilm({
             if (!event.currentTarget.muted) claimVideoSound(`works-${streamVideoId}`);
           }}
         />
-        {!started && !failed && (
+        {hydrated && !started && !failed && (
           <button
             type="button"
             className="works-film-launch"

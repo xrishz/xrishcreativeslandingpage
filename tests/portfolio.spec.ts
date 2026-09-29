@@ -543,6 +543,15 @@ test("Our Works presents predebut films and preloaded corporate and graduation p
   ).toBeTruthy();
 });
 
+test("the first visible film play button responds on a fresh page load", async ({ page }) => {
+  await page.goto("/works", { waitUntil: "domcontentloaded" });
+  const launch = page.getByRole("button", { name: "Play C&E EDConnect 2026" });
+  await launch.click();
+  const stage = page.locator(".works-film").first().locator(".works-film-stage");
+  await expect(stage).toHaveAttribute("data-started", "true");
+  await expect(stage).toHaveAttribute("data-playing", "true", { timeout: 30000 });
+});
+
 test("reduced motion keeps the photographic hero, work and inquiry available", async ({
   page,
 }) => {
