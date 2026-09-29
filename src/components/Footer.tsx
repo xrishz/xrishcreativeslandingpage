@@ -14,10 +14,13 @@ export function Footer() {
           Laguna, Philippines
         </p>
         <nav aria-label="Footer navigation">
-          <Link href="/works">Work</Link>
-          <Link href="/#films">Films</Link>
-          <Link href="/#about">About</Link>
-          <Link href="/experience">Experience</Link>
+          <Link href="/">Home</Link>
+          <Link href="/works">Works</Link>
+          <Link href="/about">About</Link>
+          <Link href="/faq">FAQs</Link>
+          <a href={site.messenger} target="_blank" rel="noopener noreferrer">
+            Message Us <ArrowUpRight size={14} />
+          </a>
           <a href={site.facebook} target="_blank" rel="noopener noreferrer">
             Facebook <ArrowUpRight size={14} />
           </a>

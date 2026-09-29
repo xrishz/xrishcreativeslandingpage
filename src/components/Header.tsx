@@ -31,23 +31,21 @@ export function Header() {
         XRISH<span>CREATIVES</span>
       </Link>
       <nav className="desktop-nav" aria-label="Main navigation">
+        <Link href="/" aria-current={onHome ? "page" : undefined}>
+          Home
+        </Link>
         <Link
           href="/works"
           aria-current={pathname === "/works" ? "page" : undefined}
         >
-          Work
+          Works
         </Link>
-        <Link href="/#films">Films</Link>
-        <Link href="/#about">About</Link>
-        <Link
-          href="/experience"
-          aria-current={pathname === "/experience" ? "page" : undefined}
-        >
-          Experience
+        <Link href="/about" aria-current={pathname === "/about" ? "page" : undefined}>
+          About
         </Link>
       </nav>
       <a
-        href={site.facebook}
+        href={site.messenger}
         className="message-link"
         target="_blank"
         rel="noopener noreferrer"
@@ -71,22 +69,19 @@ export function Header() {
           aria-label="Mobile navigation"
         >
           {[
-            ["Work", "/works"],
-            ["Films", "/#films"],
-            ["About", "/#about"],
-            ["Experience", "/experience"],
-            ["Contact", "/#contact"],
+            ["Home", "/"],
+            ["Works", "/works"],
+            ["About", "/about"],
+            ["FAQs", "/faq"],
+            ["Message Us", site.messenger],
           ].map(([label, href]) => (
             <Link
               key={label}
               href={href}
+              target={href === site.messenger ? "_blank" : undefined}
+              rel={href === site.messenger ? "noopener noreferrer" : undefined}
               onClick={() => setOpen(false)}
-              aria-current={
-                (label === "Experience" && pathname === "/experience") ||
-                (label === "Work" && pathname === "/works")
-                  ? "page"
-                  : undefined
-              }
+              aria-current={href === pathname ? "page" : undefined}
             >
               {label}
               <ArrowUpRight aria-hidden="true" />

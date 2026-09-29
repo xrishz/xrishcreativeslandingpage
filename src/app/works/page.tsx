@@ -133,7 +133,7 @@ export default function WorksPage() {
         >
           <h2 id="works-contact-title">Your event could be next.</h2>
           <a
-            href={site.facebook}
+            href={site.messenger}
             target="_blank"
             rel="noopener noreferrer"
             className="experience-message"

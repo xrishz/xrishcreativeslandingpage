@@ -376,7 +376,7 @@ test("real gallery opens, changes photographs, traps focus and restores it", asy
   await expect(trigger).toBeFocused();
 });
 
-test("all inquiry links use the confirmed Facebook destination", async ({
+test("booking links open Messenger and the homepage answers key questions", async ({
   page,
 }) => {
   await page.goto("/");
@@ -385,8 +385,15 @@ test("all inquiry links use the confirmed Facebook destination", async ({
   for (const link of await links.all())
     await expect(link).toHaveAttribute(
       "href",
-      "https://www.facebook.com/xrishcreatives",
+      "https://m.me/xrishcreatives",
     );
+  await expect(page.locator(".desktop-nav a")).toHaveText(["Home", "Works", "About"]);
+  await expect(page.locator(".faq-preview .faq-item")).toHaveCount(3);
+  await page.locator(".faq-preview summary").first().click();
+  await expect(page.locator(".faq-preview .faq-item").first()).toHaveAttribute("open", "");
+  await expect(page.locator(".faq-preview")).toContainText("₱2,000");
+  await expect(page.locator(".faq-preview .faq-item p a").first()).toHaveAttribute("href", "https://m.me/xrishcreatives");
+  await expect(page.locator(".faq-preview .faq-item p a").first()).toHaveAttribute("target", "_blank");
   await expect(page.getByText("Check Your Date")).toHaveCount(0);
 });
 
@@ -427,7 +434,7 @@ test("hero film, mobile navigation, contact sheet and narrow layout remain usabl
   ).toBeVisible();
   await page
     .getByRole("navigation", { name: "Mobile navigation" })
-    .getByRole("link", { name: "Work", exact: true })
+    .getByRole("link", { name: "Works", exact: true })
     .click();
   await expect(page).toHaveURL(/\/works$/);
   await expect(
@@ -458,22 +465,22 @@ test("hero film, mobile navigation, contact sheet and narrow layout remain usabl
   }
 });
 
-test("The XRISH Experience presents Event Coverage and limits the casual shoot language to debuts", async ({
+test("About combines the team story and the XRISH experience", async ({
   page,
 }) => {
-  await page.goto("/experience");
+  await page.goto("/about");
   await expect(
-    page.getByRole("heading", { level: 1, name: "THE XRISH EXPERIENCE" }),
+    page.getByRole("heading", { level: 1, name: "ABOUT XRISH" }),
   ).toBeVisible();
-  await expect(page.getByText("Event Coverage", { exact: true })).toBeVisible();
+  await expect(page.getByText(/photo and video team based in Laguna/)).toBeVisible();
   await expect(
-    page.getByText(/For debut coverage, the shoot feels fun and chill/),
+    page.getByText(/For debuts, the shoot feels fun and chill/),
   ).toBeVisible();
   await expect(
     page.getByText("Debut coverage feels fun and chill, parang laro lang."),
   ).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Experience", exact: true }).first(),
+    page.getByRole("link", { name: "About", exact: true }).first(),
   ).toHaveAttribute("aria-current", "page");
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
@@ -481,8 +488,20 @@ test("The XRISH Experience presents Event Coverage and limits the casual shoot l
   ).toBeTruthy();
 });
 
-test("the reaction films give the active video the room and restore both on pause", async ({ page }) => {
+test("the full FAQ explains the booking terms and the former Experience URL leads to About", async ({ page }) => {
+  await page.goto("/faq");
+  await expect(page.getByRole("heading", { level: 1, name: "Good questions. Clear answers." })).toBeVisible();
+  await expect(page.locator(".faq-page .faq-item")).toHaveCount(10);
+  await page.locator(".faq-page summary").first().click();
+  await expect(page.locator(".faq-page .faq-item").first()).toContainText("confirm your booking in writing");
+  await expect(page.getByRole("link", { name: "Inquire on Messenger" })).toHaveAttribute("href", "https://m.me/xrishcreatives");
+  await expect(page.getByRole("link", { name: "Read the full terms" })).toHaveCount(0);
   await page.goto("/experience");
+  await expect(page).toHaveURL(/\/about$/);
+});
+
+test("the reaction films give the active video the room and restore both on pause", async ({ page }) => {
+  await page.goto("/about");
   const films = page.locator(".experience-reactions-films .cinematic-film");
   const cherrielle = films.nth(0);
   const khatrina = films.nth(1);
@@ -491,6 +510,10 @@ test("the reaction films give the active video the room and restore both on paus
   await expect(khatrina.locator(".cinematic-stage")).toHaveAttribute("data-inactive", "true");
   await expect.poll(() => khatrina.locator("video").evaluate((video) => (video as HTMLVideoElement).paused)).toBe(true);
   await expect(khatrina.locator(".cinematic-stage")).toHaveCSS("filter", "grayscale(1)");
+  await khatrina.locator("video").evaluate(async (video) => {
+    await (video as HTMLVideoElement).play().catch(() => undefined);
+  });
+  await expect.poll(() => khatrina.locator("video").evaluate((video) => (video as HTMLVideoElement).paused)).toBe(true);
 
   await expect.poll(() => cherrielle.locator("video").evaluate((video) => (video as HTMLVideoElement).paused), { timeout: 30000 }).toBe(false);
   await khatrina.getByRole("button", { name: /Watch Khatrina.*from the beginning/ }).click();

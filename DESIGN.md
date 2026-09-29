@@ -132,7 +132,7 @@ components:
 
 Real films lead the experience. Warm paper and near-black ink frame an immersive opening film, controlled oversized typography and an asymmetric screening sequence. Studio Yanagi’s film-forward restraint informs the direction, while the XRISH wordmark, supplied celebrations and local voice keep the identity specific to XRISH.
 
-The interface stays quiet: short observational copy, micro-labels, fine rules and clear playback controls let real work supply color and feeling. Existing photographic spreads, honest client messages and the Facebook inquiry path remain useful parts of the same world. Route composition is recorded in `.impeccable/homepage-brief.md`, `.impeccable/works-brief.md` and `.impeccable/experience-brief.md`.
+The interface stays quiet: short observational copy, micro-labels, fine rules and clear playback controls let real work supply color and feeling. Existing photographic spreads, honest client messages and the direct Messenger inquiry path remain useful parts of the same world. Route composition is recorded in `.impeccable/homepage-brief.md`, `.impeccable/works-brief.md` and `.impeccable/experience-brief.md`.
 
 **Key Characteristics:**
 
@@ -216,7 +216,7 @@ Use thin rules for division and underlining for text actions. Avoid introducing 
 
 Underlined text and a directional icon provide the primary action language. General text links have a minimum height of (44px), `spacing.text-link-gap` between content and icon, and a (1px) current-color underline. Their icon shifts (3px, -3px) on hover over (0.25s). The larger closing inquiry uses a (5px, -5px) icon shift over (0.3s).
 
-All inquiry calls to action read **Message Us** and point to `https://www.facebook.com/xrishcreatives`. Links opening a new tab carry `rel="noopener noreferrer"`. Film exploration is a content link with its own explicit Facebook label, not an inquiry form.
+Inquiry calls to action point to `https://m.me/xrishcreatives` and open a new tab with `rel="noopener noreferrer"`. Film exploration and social links retain their explicit Facebook destinations.
 
 ### Icon buttons
 
@@ -230,13 +230,15 @@ Fine-pointer desktop devices use a small Gallery Ink camera cursor on a transluc
 
 The `/works` route keeps four anchored chapters: Debuts, Predebuts, Corporate Events and Graduation. Debuts displays Angel and Janelle; Predebuts displays Mirielle and Khatrina using the shared native film component. Desktop pairs are staggered and collapse to one column on mobile. Corporate Events and Graduation retain quiet preparation lines because their supplied Drive masters were not browser-playable. The Graduation area remains ready for two desktop columns, becoming one at 700px and below.
 
-### The XRISH Experience
+### About and FAQs
 
-The /experience route carries the homepage's warm paper and screening-black rhythm into a concise studio story. Its centered two-line title and supplied 2023 origin paragraph identify the studio’s specialization as Event Coverage and lead into a full-width photograph, followed by a dark asymmetric image spread and the closing Facebook inquiry. Casual “fun and chill, parang laro lang” language remains explicitly attached to debut coverage.
+The `/about` route combines the Laguna-based team introduction and The XRISH Experience. Its centered two-line title and supplied 2023 origin paragraph lead into a full-width photograph, a dark asymmetric image spread, debut reaction films, and a closing Messenger inquiry. Casual “fun and chill, parang laro lang” language remains explicitly attached to debut coverage. The old `/experience` URL redirects to `/about`.
+
+The homepage FAQ preview follows the team introduction on the dark surface, with three prominent booking questions. The dedicated `/faq` route uses the existing paper, oversized type, and ruled disclosure rows to explain the full set. Contact phrases inside answers link directly to Messenger. Only summarized answers appear publicly; the full contract is not linked.
 
 ### Navigation
 
-The wordmark is a two-line typographic mark. Desktop navigation provides Work (`/works`), Films (`/#films`), About (`/#about`) and Experience (`/experience`), with a separate Message Us link. Work and Experience expose the current route through `aria-current="page"`. The shared header is sticky at the top of every route, with a nearly opaque Gallery Paper surface and restrained backdrop blur so navigation remains legible over photographs and films. Mobile keeps Message Us visible and replaces the middle navigation with a (44px) menu toggle. Its expanded panel stays attached below the sticky header, uses large ruled links, closes after selection, and closes with Escape while restoring focus to the toggle.
+The wordmark is a two-line typographic mark. Desktop navigation provides Home (`/`), Works (`/works`), and About (`/about`), with a separate Messenger inquiry link. The current route uses `aria-current="page"`. The FAQ route is linked from the homepage and footer. The shared header is sticky at the top of every route, with a nearly opaque Gallery Paper surface and restrained backdrop blur so navigation remains legible over photographs and films. Mobile keeps Message Us visible and adds FAQ access in its expanded menu. That panel stays attached below the sticky header, uses large ruled links, closes after selection, and closes with Escape while restoring focus to the toggle.
 
 ### Story photographs and contact sheet
 
@@ -283,7 +285,7 @@ A paper/ink XRISH wordmark overlays the first visit in a browser session, with a
 ### Do:
 
 - **Do** preserve XRISH CREATIVES as the exact hero headline.
-- **Do** keep inquiry labels as Message Us and point them to the confirmed Facebook page.
+- **Do** send inquiry actions to the confirmed XRISH Messenger conversation in a new tab.
 - **Do** use actual supplied photography with accurate alternative text and responsive image sizing.
 - **Do** preserve warm neutral surfaces, straight image edges and staggered editorial spacing.
 - **Do** keep visible keyboard focus, minimum 44px controls and reduced-motion alternatives.

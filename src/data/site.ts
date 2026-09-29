@@ -4,6 +4,7 @@ export { streamPlayerUrl } from "@/lib/stream";
 export const site = {
   name: "XRISH CREATIVES",
   facebook: "https://www.facebook.com/xrishcreatives",
+  messenger: "https://m.me/xrishcreatives",
   instagram: "https://www.instagram.com/xrishcreatives/",
   tiktok: "https://www.tiktok.com/@xrishcreatives",
   url: (

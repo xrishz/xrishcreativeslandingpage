@@ -32,6 +32,8 @@ import { Photo } from "./Media";
 import { Viewer } from "./Viewer";
 import { LatestFacebookFilm } from "./LatestFacebookFilm";
 import { CinematicFilm } from "./CinematicFilm";
+import { FaqList } from "./FaqList";
+import { faqs } from "@/data/faq";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRotatingHeroFilm } from "@/hooks/useRotatingHeroFilm";
 import { useStreamVideo } from "@/hooks/useStreamVideo";
@@ -624,7 +626,7 @@ export function Portfolio() {
             Your people, together.
           </p>
           <a
-            href={site.facebook}
+            href={site.messenger}
             className="text-link"
             target="_blank"
             rel="noopener noreferrer"
@@ -779,14 +781,9 @@ export function Portfolio() {
             the first preparations to the last frame, we’re there to turn your
             day into something you can come back to.
           </p>
-          <a
-            className="text-link"
-            href={site.facebook}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Message Us <ArrowUpRight size={18} />
-          </a>
+          <Link className="text-link" href="/about">
+            Meet the team <ArrowUpRight size={18} aria-hidden="true" />
+          </Link>
         </div>
         <div className="about-image">
           <Photo
@@ -797,6 +794,20 @@ export function Portfolio() {
         </div>
       </section>
 
+      <section className="faq-preview page-pad" aria-labelledby="faq-preview-title">
+        <div className="faq-preview-heading">
+          <div>
+            <span className="faq-eyebrow">GOOD TO KNOW</span>
+            <h2 id="faq-preview-title">Before the day begins.</h2>
+          </div>
+          <p>From your first message to the finished photographs and films.</p>
+        </div>
+        <FaqList items={faqs.slice(0, 3)} />
+        <Link href="/faq" className="text-link faq-more">
+          See all FAQs <ArrowUpRight size={18} aria-hidden="true" />
+        </Link>
+      </section>
+
       <section
         id="contact"
         className="contact-section page-pad"
@@ -804,7 +815,9 @@ export function Portfolio() {
       >
         <div className="contact-top">
           <p>
-            Tell us what you’re planning.
+            <a href={site.messenger} target="_blank" rel="noopener noreferrer">
+              Tell us what you’re planning.
+            </a>
             <br />
             We’ll take it from there.
           </p>
@@ -816,7 +829,7 @@ export function Portfolio() {
         </h2>
         <a
           className="contact-action"
-          href={site.facebook}
+          href={site.messenger}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -824,7 +837,9 @@ export function Portfolio() {
         </a>
         <div className="contact-note">
           <span>Debut. Predebut. Weddings. Corporate Events. Graduations.</span>
-          <span>Let’s talk on Facebook.</span>
+          <a href={site.messenger} target="_blank" rel="noopener noreferrer">
+            Let’s talk on Messenger.
+          </a>
         </div>
       </section>
       {selected && (

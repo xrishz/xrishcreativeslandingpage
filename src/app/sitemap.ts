@@ -5,7 +5,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ? [
         { url: site.url, changeFrequency: "monthly", priority: 1 },
         {
-          url: site.url + "/experience",
+          url: site.url + "/about",
           changeFrequency: "monthly",
           priority: 0.8,
         },
@@ -13,6 +13,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
           url: site.url + "/works",
           changeFrequency: "monthly",
           priority: 0.9,
+        },
+        {
+          url: site.url + "/faq",
+          changeFrequency: "yearly",
+          priority: 0.7,
         },
       ]
     : [];

@@ -175,7 +175,7 @@ export function CinematicFilm({
           data-film-src={film.src}
           data-stream-id={film.streamVideoId}
           poster={posterUrl}
-          autoPlay={!reduced}
+          autoPlay={!reduced && !inactive}
           muted={muted}
           loop
           playsInline
@@ -189,10 +189,17 @@ export function CinematicFilm({
           onContextMenu={(event) => event.preventDefault()}
           onLoadedData={() => {
             setReadyFrame(true);
-            if (viewing) video.current?.play().then(() => setPaused(false)).catch(() => setPaused(true));
+            if (viewing && !inactive) video.current?.play().then(() => setPaused(false)).catch(() => setPaused(true));
           }}
-          onPlaying={() => setReadyFrame(true)}
+          onPlaying={() => {
+            setReadyFrame(true);
+            if (inactive) video.current?.pause();
+          }}
           onPlay={() => {
+            if (inactive) {
+              video.current?.pause();
+              return;
+            }
             setPaused(false);
             if (viewing || userActivated.current) onViewingChange?.(film.slug, true);
           }}

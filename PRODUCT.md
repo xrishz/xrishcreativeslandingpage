@@ -18,7 +18,7 @@ Show XRISH's real work, create interest, and turn that interest into a conversat
 XRISH CREATIVES is an event photography and film team based in Laguna, Philippines, led by Elrish John Rull. This is a portfolio experience, not a services catalogue or software landing page.
 
 ## Operating Context
-Visitors explore photos, inspect stories, watch directly playable event films, read three client testimonials, discover event coverage, and contact the business on Facebook. The site now includes dedicated Our Works and The XRISH Experience routes in addition to the homepage.
+Visitors explore photos, inspect stories, watch directly playable event films, read three client testimonials, discover event coverage, and inquire through Messenger. The site includes dedicated Our Works, About, and FAQ routes in addition to the homepage.
 
 ## Capabilities and Constraints
 Cloudflare Stream is active for the curated films, including Angel's debut SDE in the homepage film section, plus the corporate, graduation and reaction films. The former Full Pre-debut Film placeholder has been removed. Cloudflare Images serves portfolio photographs and film posters, with responsive quality-90 variants and local files retained as fallbacks.
@@ -31,9 +31,9 @@ The recorded Meta production configuration uses Graph API v26.0 and XRISH CREATI
 
 The Our Works page contains Debuts, Predebuts, Corporate Events, and Graduation. Debut has an honest film-in-preparation note and a path to real celebration photographs; the owner clarified that Angel and Janelle are predebuts. All four approved short films appear in Predebuts. Four Corporate Events and three Graduation films use Cloudflare Stream; muted eight-second previews loop in black and white, then the color player loads when selected. Graduation uses a two-column desktop grid and one column on mobile. The Drive IDs remain as source references, never public players.
 
-The XRISH Experience page identifies the studio's specialization as Event Coverage and preserves the supplied 2023 origin story. The phrase “fun and chill, parang laro lang” applies only to debut coverage.
+The About page combines the team introduction and The XRISH Experience, preserving the supplied 2023 origin story and debut reaction films. The phrase “fun and chill, parang laro lang” applies only to debut coverage. The homepage previews three common FAQs and `/faq` covers booking, payment, coverage, delivery, changes, revisions, files, and portfolio use based on the owner's August 2026 terms. The full contract document is not linked publicly.
 
-All inquiry calls to action say Message Us and link to https://www.facebook.com/xrishcreatives, explicitly confirmed by the user. No inquiry backend or booking availability claims. Source code must be saved in E:\______XRISH CREATIVES SITE and pushed to xrishz/xrishcreativeslandingpage. Reduced motion, touch and keyboard paths are required.
+Booking and inquiry calls to action link to https://m.me/xrishcreatives and open in a new tab; the owner's page and social profile links remain separate. No inquiry backend or booking availability claims. Source code must be saved in E:\______XRISH CREATIVES SITE and pushed to xrishz/xrishcreativeslandingpage. Reduced motion, touch and keyboard paths are required.
 
 ## Brand Commitments
 The hero headline is exactly XRISH CREATIVES. A first-session paper/ink wordmark loader opens into a full-viewport muted native film. Each full refresh chooses among all four approved films and avoids the previous choice when session storage is available. The visual direction is the XRISH cinematic screening room: film-forward restraint inspired by Studio Yanagi, expressed through XRISH work and identity.
