@@ -15,6 +15,22 @@ const graphHeaders = (accessToken: string) => ({
   Authorization: `Bearer ${accessToken}`,
 });
 
+async function graphError(response: Response) {
+  try {
+    const payload = (await response.clone().json()) as {
+      error?: { type?: string; code?: number; error_subcode?: number; is_transient?: boolean };
+    };
+    return {
+      type: payload.error?.type,
+      code: payload.error?.code,
+      subcode: payload.error?.error_subcode,
+      transient: payload.error?.is_transient,
+    };
+  } catch {
+    return {};
+  }
+}
+
 async function resolvePageAccessToken(
   graphVersion: string,
   pageId: string,
@@ -24,13 +40,24 @@ async function resolvePageAccessToken(
   url.searchParams.set("fields", "id,access_token");
   url.searchParams.set("limit", "100");
 
-  const response = await fetch(url, {
-    cache: "no-store",
-    headers: graphHeaders(systemUserToken),
-    signal: AbortSignal.timeout(8000),
-  });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      cache: "no-store",
+      headers: graphHeaders(systemUserToken),
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch (error) {
+    console.error("Facebook Page token lookup failed", {
+      reason: error instanceof Error ? error.name : "unknown",
+    });
+    return undefined;
+  }
   if (!response.ok) {
-    console.error("Facebook Page token lookup failed", { status: response.status });
+    console.error("Facebook Page token lookup failed", {
+      status: response.status,
+      ...(await graphError(response)),
+    });
     return undefined;
   }
 
@@ -102,7 +129,10 @@ export async function GET() {
     // A Meta system-user token may need to be exchanged for the assigned
     // Page token before Page posts can be read. Keep both credentials server-only.
     if (!response.ok) {
-      console.error("Facebook initial Page posts lookup failed", { status: response.status });
+      console.error("Facebook initial Page posts lookup failed", {
+        status: response.status,
+        ...(await graphError(response)),
+      });
       const pageAccessToken = await resolvePageAccessToken(
         graphVersion,
         pageId,
@@ -114,7 +144,10 @@ export async function GET() {
     }
 
     if (!response.ok) {
-      console.error("Facebook Page posts lookup unavailable", { status: response.status });
+      console.error("Facebook Page posts lookup unavailable", {
+        status: response.status,
+        ...(await graphError(response)),
+      });
       return Response.json(
         { status: "unavailable", video: null },
         { status: 502, headers: { "Cache-Control": "no-store" } },
