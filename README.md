@@ -1,56 +1,48 @@
 # XRISH CREATIVES
 
-A portfolio-first event photography and film website built from the supplied XRISH photographs. All **Message Us** links open the owner's confirmed Facebook page: https://www.facebook.com/xrishcreatives.
+A photography and film portfolio for XRISH CREATIVES, led by Elrish John Rull in Laguna, Philippines. The site shows real client work and sends inquiries to the confirmed [XRISH Facebook page](https://www.facebook.com/xrishcreatives).
 
-Portfolio photographs are generated from the original files at up to 3600 × 4800 pixels and WebP quality 90. Next.js serves responsive versions at quality 90 so wide and high-density displays remain sharp without forcing every device to download the largest file.
-
-Live site: https://xrish-creatives-portfolio.netlify.app/ . The Netlify project is connected to `xrishz/xrishcreativeslandingpage` on `main` for automatic deployments. The earlier `xrishcreatives.netlify.app` project remains separate.
+Live site: https://xrishcreatives.com. The [GitHub repository](https://github.com/xrishz/xrishcreativeslandingpage) deploys from `main` to Netlify. `https://xrish-creatives-portfolio.netlify.app` remains an alternate Netlify address.
 
 ## Run locally
 
-Requires Node.js 20.9 or newer and npm.
+Requires Node.js 20.9 or newer.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. For the production build:
+Open http://localhost:3000. For a production build, run `npm run build` and `npm start`. Checks are `npm run lint`, `npm run typecheck`, and `npm test` while the production server is running.
+
+## Site and content
+
+- Next.js App Router, React 19, TypeScript, Tailwind CSS 4, Motion, and an editorial paper/ink design system. The camera cursor appears only for fine-pointer devices; touch uses native input.
+- The homepage leads with a rotating film hero and portfolio photographs. Our Works has Debuts, Predebuts, Corporate Events, and Graduation chapters; The XRISH Experience presents the team's real story. Weddings remain a service, but there is no wedding film chapter until approved footage exists.
+- Four approved short films (Mirielle, Angel, Janelle, and Khatrina) use Cloudflare Stream adaptive playback, with local H.264/AAC files retained as a fallback. The hero changes on each refresh when session storage is available. The full predebut film remains an honest Coming soon placeholder.
+- Four corporate and three graduation films use Cloudflare Stream players. Their small, muted looping previews are grayscale until the visitor selects Play; the full player then appears in color with sound controls. The Google Drive links are retained only as source references, never as public players.
+- The separate latest-Facebook feature reads recent XRISH Page posts through a server-side Meta route, excludes the selected Mirielle and Angel reels, and presents only a candidate whose public embed reports playable video data. When none qualifies or the API is unavailable, it shows a compact link to the Page. This fetch is request-driven and cached; it is not a push notification to an already-open tab.
+- Three named testimonials come from owner-provided screenshots. No awards, ratings, booking availability, event dates, or client facts were invented. All Message Us actions lead to Facebook.
+- Keyboard navigation, focus-managed photo viewer, visible focus, reduced-motion behavior, mobile navigation, image fallback, and video loading/error states are implemented.
+
+## Media delivery
+
+`ASSETS/` holds the local source files and is excluded from Git. `public/portfolio/` holds high-quality WebP photo backups; `public/films/` holds short-film fallbacks, posters, and brief silent previews. `npm run media` regenerates portfolio derivatives from the originals. The original source files stay in the local asset folder.
+
+The 26 portfolio photos and 11 film posters are hosted in Cloudflare Images. Their public IDs are recorded in `src/data/cloudflare-images.json`. `src/lib/cloudflare-images.ts` requests responsive widths at quality 90; the photo component falls back to its local WebP if hosted delivery fails. The site does not expose an Images API credential. Cloudflare Images flexible variants are enabled. Photo and video media remain viewable and retrievable by visitors; browser download-control hints are deterrents, not copy protection.
+
+Cloudflare Stream customer and video IDs are public playback references in `src/data/site.ts`. Do not put an API token in source code or any `NEXT_PUBLIC_` variable. The fullscreen Stream player mounts after a visitor selects Play, while muted ambient previews use small local files. Captions and Stream origin restrictions can be set in the Cloudflare dashboard if required.
+
+## Configuration
+
+The public origin is `https://xrishcreatives.com`. Set `NEXT_PUBLIC_SITE_URL` to that value in hosting, and change it if the primary domain changes. The optional full-predebut placeholder can become a Stream film after an approved full video is uploaded:
 
 ```sh
-npm run build
-npm start
+NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE=18nmsvzvjt4m41a5
+NEXT_PUBLIC_PREDEBUT_STREAM_VIDEO_ID=
 ```
 
-## Architecture
-
-- Next.js App Router, React 19, TypeScript and Tailwind CSS 4.
-- Motion owns DOM scroll motion and photo-viewer transitions; no competing animation library.
-- Fine-pointer devices use a small camera cursor with a restrained attached glow; touch devices keep native input behavior.
-- The /works route presents Debuts, Predebuts, Corporate Events, and Graduation. Its Debut and Predebut chapters use the four approved native H.264/AAC films in staggered editorial pairs.
-- The homepage presents native Mirielle, Angel, Janelle and Khatrina films and adds a separate **Latest from XRISH** feature. A server-only Meta Graph API route finds the newest video among the Page's recent posts, uses a 30-minute cache revalidation window, and falls back to the Facebook Page when Meta is unavailable. The iframe mounts only after the visitor presses Play and includes loading, timeout and retry feedback.
-- Selected Stories rotates three landscape photographs every five seconds, including owner-supplied `STN07143.jpg`. A visible count and Pause/Resume control accompany it; hover and focus pause rotation, and reduced motion keeps the landscape static.
-- The /experience route presents the supplied 2023 XRISH origin story with Event Coverage as the specialization. The phrase “fun and chill, parang laro lang” is limited to debut coverage.
-- `src/data/site.ts` contains portfolio collections, photograph descriptions, the confirmed contact link, and the film content interface.
-- `src/components/Viewer.tsx` provides a native modal dialog with keyboard photograph navigation, Escape close, focus restoration and an on-demand Cloudflare Stream player.
-- `src/app/globals.css` contains the editorial design system and mobile composition.
-- `PRODUCT.md`, `DESIGN.md`, and `.impeccable/` preserve the design decisions and Impeccable context.
-
-## Portfolio content
-
-The web images are real owner-supplied photographs, not stock or generated event imagery. Original files remain untouched in the local `PHOTOS` folder and are deliberately excluded from Git. Optimized WebP files, blur previews and source provenance are committed. On a fresh clone, you already have everything needed to run the website; originals are needed only to regenerate derivatives with `npm run media`.
-
-Collection titles are editorial descriptions. No client dates, ages, locations, reviews, awards, pricing or availability have been invented. Khatrina's first name comes from the supplied filenames.
-
-The only event categories are Debut, Predebut, Weddings, Corporate Events, and Graduations, as confirmed by the owner.
-
-The first-session paper/ink XRISH introduction opens into a native film hero. Each full refresh chooses among Mirielle, Angel, Janelle and Khatrina, avoiding the last session choice when storage is available. Muted previews loop and pause offscreen; reduced motion starts paused. **Watch the film** restarts from zero, unmutes and reveals native timeline, seeking, volume and fullscreen controls. Shared sound coordination includes native unmute and permits one audible native source. The lead film uses a compact left-video/right-story layout; titles align below videos without visible category labels. Native controls use browser download/remote-playback hints, disable picture-in-picture and dragging, and suppress the video context menu. These are deterrents only: public video remains retrievable or recordable. The four H.264/AAC films and their posters live in `public/films`. The separate Full Pre-debut Film placeholder remains unchanged.
-
-### Automatic latest Facebook film
-
-The **Latest from XRISH** feature does not replace or repeat the two selected portfolio films. It reads up to 20 recent XRISH CREATIVES Page posts through Meta's Pages API, excludes the curated Mirielle and Angel reel IDs, skips photo-only posts and invalid Facebook HTTPS permalinks, and checks up to eight remaining video candidates against Facebook's public embedded player. It selects the newest candidate whose player response contains playable video data, so posts Facebook blocks from embedding are skipped. It does not paginate beyond those posts or independently sort their dates. The credential stored in `FACEBOOK_PAGE_ACCESS_TOKEN` stays on the server and is never returned to the browser. The variable accepts the permanent system-user token used by the current Netlify setup; when Meta requires a Page token, the route resolves the assigned Page token server-side through `/me/accounts` and never returns it to the client.
-
-Configure these server-side values locally in `.env.local` and in Netlify:
+The Meta integration uses server-only values:
 
 ```sh
 FACEBOOK_PAGE_ID=113391138358438
@@ -58,47 +50,8 @@ FACEBOOK_PAGE_ACCESS_TOKEN=
 FACEBOOK_GRAPH_API_VERSION=v26.0
 ```
 
-The recorded production setup uses Graph API **v26.0**, Page ID **113391138358438**, and a Meta system user assigned **Page Insights-only access** plus **Test access to the app**, with token permissions `pages_show_list` and `pages_read_engagement`. These are the configured assignments for this integration, not a requirement to grant full Page or business control. Store its permanent system-user credential as Netlify's server-only secret `FACEBOOK_PAGE_ACCESS_TOKEN`; the blank value above is intentional. Never put a token in documentation, source control or a `NEXT_PUBLIC_` variable. Meta credentials are sent in the Graph API `Authorization` header rather than URL query strings.
+Keep the Page token in Netlify's secret environment settings. Missing or failed Meta configuration gives visitors the Page fallback. The public route never returns the token. See `src/app/api/facebook/latest-video/route.ts` for the bounded candidate check.
 
-The public route returns a status and the selected video's ID, title, excerpt, date and Facebook permalink. Its Graph fetch uses 1,800-second revalidation; successful responses use `s-maxage=1800, stale-while-revalidate=86400`. This is request-driven caching, not a scheduled sync or a guaranteed 30-minute publishing deadline. The browser fetches once when the feature mounts and does not poll, so an already-open page needs a reload or remount to request a newer result. Missing configuration and provider failures return uncached fallback responses.
+## Verification
 
-The automatic selector verifies that Facebook's public player response includes video data before presenting a candidate. It also supplies a trusted HTTPS post preview image when available and preserves the complete caption title before the first pipe character; without a pipe, it uses the first sentence. The feature retains a **View post on Facebook** link for a selected result, while missing configuration, API errors, blocked candidates and an empty result show the Page fallback. The iframe mounts only after Play is pressed and presents loading plus a 15-second retry state. Facebook can still change a post's embed eligibility after a cached check, so the recovery link remains visible. The four native curated films remain separate from this automatic selection; the original Mirielle and Angel reel IDs remain excluded by the Facebook selector.
-
-The Our Works page reuses the native Angel/Janelle films for Debuts and Mirielle/Khatrina for Predebuts. The supplied Corporate Events and Graduation Google Drive previews were removed from the public page after live browser checks reached the correct files but Google reported that each video could not be loaded. Direct playback also failed with a media format error. Their source references remain recorded for later transcoding through Cloudflare Stream or another web video service. Graduation retains a two-column desktop film area ready for two web-ready videos and returns to one column on mobile.
-
-Three named client testimonials use the owner's supplied feedback with approved proofreading, including Lara’s compact one-paragraph note. Bordered horizontal cards share typography and a fixed compact height, with swipe, keyboard, indexed and arrow navigation. No ratings or avatars are invented. The About introduction and location metadata say Laguna, Philippines, as confirmed by the owner.
-
-The Films section includes a **Full Pre-debut Film** placeholder using a real portfolio photo, labelled **Coming soon**. Cloudflare Stream is the chosen future video provider; the owner requested the placeholder for now. Until configured, no player is mounted and no request is made to Cloudflare. No video or client identity is fabricated.
-
-To connect the film:
-
-1. Upload the approved film in Cloudflare Stream and wait for it to be ready.
-2. Copy the public customer code and video UID from its Stream embed code.
-3. Set `NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE` and `NEXT_PUBLIC_PREDEBUT_STREAM_VIDEO_ID` in `.env.local` and the hosting environment (see `.env.example`). Use only the customer code, without `customer-` or the domain suffix.
-4. Rebuild. The placeholder automatically becomes **Watch full film** and opens the responsive Stream player in the film viewer.
-
-Video UID and customer code are public playback identifiers, not API keys. Never expose a Cloudflare API token in a `NEXT_PUBLIC_` variable. Playback uses the official customer Stream iframe URL, loaded only after a visitor chooses Watch full film; autoplay is omitted. Configure captions and allowed origins in Stream. Signed/private videos need a server-generated playback token before using this public-portfolio integration.
-
-No paid Cloudflare service or uploaded film has been provisioned by this code change. Replace the About section's portfolio image with an approved team/production image when available.
-
-## Design documentation status
-
-`DESIGN.md`, the route briefs and `.impeccable/design.json` now describe the XRISH cinematic screening room. The sidecar was refreshed after the final SHIP review to match the new hero, first-session introduction, native film controls and preserved paper/ink system.
-
-## Validation
-
-```sh
-npm run lint
-npm run typecheck
-npm run build
-# Start the production server in another terminal first:
-npm test
-```
-
-Browser tests use an installed Google Chrome. Update the channel in `playwright.config.ts` if using Playwright-managed Chromium instead. Tests cover the film hero, gallery navigation/focus, the contact destination, mobile menu and scrolling, narrow layout, reduced motion, and serious/critical automated accessibility findings. `node scripts/inspect.mjs` saves desktop/mobile screenshots for visual review. These are local/emulated checks, not a claim of physical-device or field performance testing.
-
-## Hosting and SEO
-
-This is a standard Next.js deployment. On Netlify, the build uses Netlify's provided `URL` as the canonical origin. Set `NEXT_PUBLIC_SITE_URL` if a different confirmed public origin is needed. Without a confirmed origin, the application emits no invented canonical URL. Open Graph/Messenger artwork is a 1200 × 630 branded homepage-hero capture containing navigation, the XRISH wordmark and copy over an authentic Mirielle film frame. A provenance sidecar records its source. No first-party analytics, forms or database are included. Facebook players are third-party embeds and load only when mounted; the future Cloudflare player is also external.
-
-The Netlify project currently serves its `netlify.app` address. A custom domain can be added later without changing the repository structure.
+`npm test` runs the Playwright browser suite against `http://localhost:3000`, including route/navigation, mobile, film, viewer, fallback, reduced-motion, and accessibility checks. `node scripts/inspect.mjs` saves desktop/mobile screenshots for visual inspection. Confirm a production deploy by checking the custom domain, the Stream player, and Cloudflare-delivered images in a browser; a successful local build alone does not prove the live site.

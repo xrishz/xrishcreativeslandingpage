@@ -13,3 +13,7 @@ export function streamPlayerUrl(film: StreamIdentifiers): string | undefined {
     return;
   return `https://customer-${film.customerCode}.cloudflarestream.com/${film.videoId}/iframe`;
 }
+
+export function streamManifestUrl(film: StreamIdentifiers): string | undefined {
+  return streamPlayerUrl(film)?.replace(/\/iframe$/, "/manifest/video.m3u8");
+}

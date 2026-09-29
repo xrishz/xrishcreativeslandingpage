@@ -35,13 +35,14 @@ export default function ExperiencePage() {
             <p>
               We are <strong>XRISH CREATIVES</strong> by{" "}
               <strong>Elrish John Rull</strong>, a studio specializing in{" "}
-              <strong>Event Coverage</strong>. What started in 2023 as a simple
-              hobby turned into a passion to capture your life events in the
-              most lively and trendy way. Our goal? To deliver not just photos
-              and videos, but memories that last a lifetime. For debut
-              coverage, shooting with us feels fun and chill, parang laro lang,
-              but rest assured, the output is always made with our heart and
-              passion. <em>#thexrishexperience</em>
+              <strong>Event Coverage</strong>. What began as a hobby in 2023
+              became a way to keep the people and moments of your celebration
+              close, in photographs and film.
+            </p>
+            <p>
+              For debut coverage, the shoot feels fun and chill, parang laro
+              lang. We can laugh through a take and still give every frame the
+              care it deserves. <em>#thexrishexperience</em>
             </p>
             <a href="#our-way" className="experience-scroll">
               See how it feels <ArrowDown size={17} aria-hidden="true" />

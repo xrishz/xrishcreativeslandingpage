@@ -1,21 +1,27 @@
-All photographs supplied by the owner of XRISH CREATIVES in PHOTOS. Optimized derivatives only; original photographs remain untouched.
-/portfolio/1.webp <- PHOTOS/1.jpg
-/portfolio/2.webp <- PHOTOS/2.jpg
-/portfolio/3.webp <- PHOTOS/3.jpg
-/portfolio/4.webp <- PHOTOS/4.jpg
-/portfolio/6.webp <- PHOTOS/6.jpg
-/portfolio/7.webp <- PHOTOS/7.jpg
-/portfolio/amber-01094.webp <- PHOTOS/Amber-01094.jpg
-/portfolio/khatrina-06737.webp <- PHOTOS/KHATRINA-06737.jpg
-/portfolio/khatrina-07544.webp <- PHOTOS/KHATRINA-07544.jpg
-/portfolio/khatrina-07643.webp <- PHOTOS/KHATRINA-07643.jpg
-/portfolio/khatrina-07671-1-.webp <- PHOTOS/KHATRINA-07671 (1).jpg
-/portfolio/mirielle-50.webp <- PHOTOS/MIRIELLE-50.jpg
-/portfolio/pat05482.webp <- PHOTOS/PAT05482.jpg
-/portfolio/snp00769.webp <- PHOTOS/SNP00769.jpg
-/portfolio/snp01320.webp <- PHOTOS/SNP01320.jpg
-/portfolio/snp01339.webp <- PHOTOS/SNP01339.jpg
-/portfolio/stn06660.webp <- PHOTOS/STN06660.jpg
-/portfolio/stn06826.webp <- PHOTOS/STN06826.jpg
-/portfolio/stn06964.webp <- PHOTOS/STN06964.jpg
-/portfolio/stn07143.webp <- PHOTOS/STN07143.jpg
+Owner-supplied XRISH CREATIVES photographs. Optimized derivatives only; source photographs are stored in ASSETS/photos.
+/portfolio/1.webp <- ASSETS/photos/original/1.jpg
+/portfolio/2.webp <- ASSETS/photos/original/2.jpg
+/portfolio/3.webp <- ASSETS/photos/original/3.jpg
+/portfolio/4.webp <- ASSETS/photos/original/4.jpg
+/portfolio/6.webp <- ASSETS/photos/original/6.jpg
+/portfolio/7.webp <- ASSETS/photos/original/7.jpg
+/portfolio/amber-01094.webp <- ASSETS/photos/original/Amber-01094.jpg
+/portfolio/khatrina-06737.webp <- ASSETS/photos/original/KHATRINA-06737.jpg
+/portfolio/khatrina-07544.webp <- ASSETS/photos/original/KHATRINA-07544.jpg
+/portfolio/khatrina-07643.webp <- ASSETS/photos/original/KHATRINA-07643.jpg
+/portfolio/khatrina-07671-1-.webp <- ASSETS/photos/original/KHATRINA-07671 (1).jpg
+/portfolio/mirielle-50.webp <- ASSETS/photos/original/MIRIELLE-50.jpg
+/portfolio/pat05482.webp <- ASSETS/photos/original/PAT05482.jpg
+/portfolio/snp00769.webp <- ASSETS/photos/original/SNP00769.jpg
+/portfolio/snp01320.webp <- ASSETS/photos/original/SNP01320.jpg
+/portfolio/snp01339.webp <- ASSETS/photos/original/SNP01339.jpg
+/portfolio/stn06660.webp <- ASSETS/photos/original/STN06660.jpg
+/portfolio/stn06826.webp <- ASSETS/photos/original/STN06826.jpg
+/portfolio/stn06964.webp <- ASSETS/photos/original/STN06964.jpg
+/portfolio/stn07143.webp <- ASSETS/photos/original/STN07143.jpg
+/portfolio/cherrielle-07346.webp <- ASSETS/photos/cherrielle/Cherrielle-07346.jpg
+/portfolio/cherrielle-07806.webp <- ASSETS/photos/cherrielle/Cherrielle-07806.jpg
+/portfolio/cherrielle-08025.webp <- ASSETS/photos/cherrielle/Cherrielle-08025.jpg
+/portfolio/cherrielle-08096.webp <- ASSETS/photos/cherrielle/Cherrielle-08096.jpg
+/portfolio/cherrielle-08108.webp <- ASSETS/photos/cherrielle/Cherrielle-08108.jpg
+/portfolio/cherrielle-09211.webp <- ASSETS/photos/cherrielle/Cherrielle-09211.jpg

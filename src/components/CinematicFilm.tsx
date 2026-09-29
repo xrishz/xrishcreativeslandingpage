@@ -3,9 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { motion } from "motion/react";
-import type { PreviewFilm } from "@/data/site";
+import { streamCustomerCode, type PreviewFilm } from "@/data/site";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useStreamVideo } from "@/hooks/useStreamVideo";
 import { claimVideoSound, VIDEO_SOUND_EVENT } from "@/lib/video-coordination";
+import { hostedImageUrl } from "@/lib/cloudflare-images";
 
 type CinematicFilmProps = {
   film: PreviewFilm;
@@ -22,6 +24,7 @@ export function CinematicFilm({ film, priority = false }: CinematicFilmProps) {
   const [viewing, setViewing] = useState(false);
   const manuallyPaused = useRef(false);
   const pausedByViewport = useRef(false);
+  useStreamVideo(video, film.streamVideoId, streamCustomerCode, film.src, ready);
 
   useEffect(() => {
     if (!reduced) return;
@@ -124,8 +127,8 @@ export function CinematicFilm({ film, priority = false }: CinematicFilmProps) {
         <video
           ref={video}
           data-film-src={film.src}
-          src={ready ? film.src : undefined}
-          poster={film.poster}
+          data-stream-id={film.streamVideoId}
+          poster={hostedImageUrl(film.poster, 1600) ?? film.poster}
           autoPlay={!reduced}
           muted
           loop

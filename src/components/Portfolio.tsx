@@ -20,11 +20,13 @@ import {
   stories,
   contactSheet,
   eventTypes,
+  heroPortrait,
   films,
   previewFilms,
   testimonials,
   streamPlayerUrl,
   site,
+  streamCustomerCode,
   type Story,
   type Film,
 } from "@/data/site";
@@ -34,7 +36,9 @@ import { LatestFacebookFilm } from "./LatestFacebookFilm";
 import { CinematicFilm } from "./CinematicFilm";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRotatingHeroFilm } from "@/hooks/useRotatingHeroFilm";
+import { useStreamVideo } from "@/hooks/useStreamVideo";
 import { claimVideoSound, VIDEO_SOUND_EVENT } from "@/lib/video-coordination";
+import { hostedImageUrl } from "@/lib/cloudflare-images";
 
 export function Portfolio() {
   const [selected, setSelected] = useState<Story>();
@@ -46,7 +50,13 @@ export function Portfolio() {
   const [heroMuted, setHeroMuted] = useState(true);
   const [heroPaused, setHeroPaused] = useState(false);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const [stripPaused, setStripPaused] = useState(false);
   const strip = useRef<HTMLDivElement>(null);
+  const stripManuallyPaused = useRef(false);
+  const stripHovered = useRef(false);
+  const stripFocused = useRef(false);
+  const stripPauseUntil = useRef(0);
+  const stripDrag = useRef<{ pointerId: number; lastX: number } | null>(null);
   const testimonialTrack = useRef<HTMLDivElement>(null);
   const testimonialScrollLocked = useRef(false);
   const testimonialUnlockTimer = useRef<number | undefined>(undefined);
@@ -55,6 +65,7 @@ export function Portfolio() {
   const heroManuallyPaused = useRef(false);
   const reduced = useHydratedReducedMotion();
   const heroFilm = useRotatingHeroFilm();
+  useStreamVideo(heroVideo, heroFilm.streamVideoId, streamCustomerCode, heroFilm.src, true);
   const heroAppearsPaused = reduced || heroPaused;
   const showTestimonial = (index: number) => {
     const next = (index + testimonials.length) % testimonials.length;
@@ -82,6 +93,64 @@ export function Portfolio() {
   useEffect(() => {
     if (!reduced) return;
     heroVideo.current?.pause();
+  }, [reduced]);
+  useEffect(() => {
+    const track = strip.current;
+    if (!track) return;
+    let cycleWidth = 0;
+    let frame = 0;
+    let lastFrame = 0;
+
+    const measure = () => {
+      const first = track.children[0] as HTMLElement | undefined;
+      const repeat = track.children[contactSheet.length] as HTMLElement | undefined;
+      if (!first || !repeat) return;
+      const nextWidth = repeat.offsetLeft - first.offsetLeft;
+      if (nextWidth <= 0 || nextWidth === cycleWidth) return;
+      const previousWidth = cycleWidth;
+      cycleWidth = nextWidth;
+      track.scrollLeft = previousWidth
+        ? track.scrollLeft + nextWidth - previousWidth
+        : nextWidth;
+    };
+    const wrap = () => {
+      if (!cycleWidth) return;
+      if (track.scrollLeft < cycleWidth) track.scrollLeft += cycleWidth;
+      else if (track.scrollLeft >= cycleWidth * 2)
+        track.scrollLeft -= cycleWidth;
+    };
+    const tick = (now: number) => {
+      const elapsed = Math.min(now - lastFrame, 64);
+      lastFrame = now;
+      if (
+        !document.hidden &&
+        !stripHovered.current &&
+        !stripFocused.current &&
+        !stripManuallyPaused.current &&
+        !stripDrag.current &&
+        now > stripPauseUntil.current
+      )
+        track.scrollLeft += elapsed * 0.028;
+      frame = window.requestAnimationFrame(tick);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      window.cancelAnimationFrame(frame);
+      if (entry.isIntersecting && !reduced) {
+        lastFrame = performance.now();
+        frame = window.requestAnimationFrame(tick);
+      }
+    });
+    const resize = new ResizeObserver(measure);
+    measure();
+    resize.observe(track);
+    track.addEventListener("scroll", wrap, { passive: true });
+    observer.observe(track);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+      resize.disconnect();
+      track.removeEventListener("scroll", wrap);
+    };
   }, [reduced]);
   useEffect(() => {
     const muteWhenAnotherFilmSpeaks = (event: Event) => {
@@ -133,6 +202,19 @@ export function Portfolio() {
     reduced,
   ]);
   const leadPhoto = leadLandscapes[leadPhotoIndex] ?? stories[0].cover;
+  const scrollStrip = (distance: number) => {
+    stripPauseUntil.current = performance.now() + 1200;
+    strip.current?.scrollBy({
+      left: distance,
+      behavior: reduced ? "instant" : "smooth",
+    });
+  };
+  const finishStripDrag = (pointerId: number, target: HTMLDivElement) => {
+    if (stripDrag.current?.pointerId !== pointerId) return;
+    stripDrag.current = null;
+    stripPauseUntil.current = performance.now() + 1200;
+    if (target.hasPointerCapture(pointerId)) target.releasePointerCapture(pointerId);
+  };
   return (
     <>
       <section
@@ -144,8 +226,9 @@ export function Portfolio() {
           <video
             key={heroFilm.src}
             ref={heroVideo}
-            src={heroFilm.src}
-            poster={heroFilm.poster}
+            data-film-src={heroFilm.src}
+            data-stream-id={heroFilm.streamVideoId}
+            poster={hostedImageUrl(heroFilm.poster, 1920) ?? heroFilm.poster}
             autoPlay={!reduced}
             muted
             loop
@@ -485,26 +568,28 @@ export function Portfolio() {
         <div className="strip-title page-pad">
           <span>A DAY IN FRAMES</span>
           <div>
+            {!reduced && (
+              <button
+                className="icon-button"
+                onClick={() => {
+                  stripManuallyPaused.current = !stripManuallyPaused.current;
+                  setStripPaused(stripManuallyPaused.current);
+                }}
+                aria-label={stripPaused ? "Resume photo carousel" : "Pause photo carousel"}
+              >
+                {stripPaused ? <Play /> : <Pause />}
+              </button>
+            )}
             <button
               className="icon-button"
-              onClick={() =>
-                strip.current?.scrollBy({
-                  left: -360,
-                  behavior: reduced ? "instant" : "smooth",
-                })
-              }
+              onClick={() => scrollStrip(-360)}
               aria-label="Scroll photographs left"
             >
               <ArrowLeft />
             </button>
             <button
               className="icon-button"
-              onClick={() =>
-                strip.current?.scrollBy({
-                  left: 360,
-                  behavior: reduced ? "instant" : "smooth",
-                })
-              }
+              onClick={() => scrollStrip(360)}
               aria-label="Scroll photographs right"
             >
               <ArrowRight />
@@ -515,10 +600,44 @@ export function Portfolio() {
           ref={strip}
           className="photo-strip"
           tabIndex={0}
-          aria-label="A day in frames, horizontally scrollable photographs"
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="A day in frames; drag or use the arrows to browse photographs"
+          onPointerEnter={(event) => {
+            if (event.pointerType === "mouse") stripHovered.current = true;
+          }}
+          onPointerLeave={(event) => {
+            if (event.pointerType === "mouse") stripHovered.current = false;
+          }}
+          onFocus={() => (stripFocused.current = true)}
+          onBlur={() => (stripFocused.current = false)}
+          onWheel={() => (stripPauseUntil.current = performance.now() + 1200)}
+          onPointerDown={(event) => {
+            if (event.pointerType === "touch") {
+              stripPauseUntil.current = performance.now() + 1200;
+              return;
+            }
+            if (event.button !== 0) return;
+            stripDrag.current = { pointerId: event.pointerId, lastX: event.clientX };
+            event.currentTarget.setPointerCapture(event.pointerId);
+            event.preventDefault();
+          }}
+          onPointerMove={(event) => {
+            const drag = stripDrag.current;
+            if (drag?.pointerId !== event.pointerId) return;
+            event.currentTarget.scrollLeft -= event.clientX - drag.lastX;
+            drag.lastX = event.clientX;
+          }}
+          onPointerUp={(event) =>
+            finishStripDrag(event.pointerId, event.currentTarget)
+          }
+          onPointerCancel={(event) =>
+            finishStripDrag(event.pointerId, event.currentTarget)
+          }
         >
-          {contactSheet.map((frame, index) => (
-            <figure key={frame.image.src}>
+          {Array.from({ length: 3 }, (_, cycle) =>
+            contactSheet.map((frame, index) => (
+            <figure key={`${cycle}-${frame.image.src}`} aria-hidden={cycle !== 1}>
               <div className="strip-photo">
                 <Photo frame={frame} sizes="(max-width: 700px) 72vw, 320px" />
               </div>
@@ -538,7 +657,7 @@ export function Portfolio() {
                 }
               </figcaption>
             </figure>
-          ))}
+          ))) }
         </div>
       </section>
 
@@ -565,19 +684,37 @@ export function Portfolio() {
           >
             Message Us <ArrowUpRight size={18} />
           </a>
+          <Link
+            href="/works#predebuts"
+            className="coverage-image"
+            aria-label="Explore predebut films"
+          >
+            <Photo frame={heroPortrait} sizes="(max-width: 700px) 90vw, 40vw" />
+            <span>
+              Explore the films <ArrowUpRight size={18} aria-hidden="true" />
+            </span>
+          </Link>
         </div>
         <div className="event-list">
-          {eventTypes.map((type) => (
+          {eventTypes.map((type) => {
+            const href = `/works#${
+                  {
+                    Debut: "debuts",
+                    Predebut: "predebuts",
+                    "Corporate Events": "corporate-events",
+                    Graduations: "graduation",
+                  }[type]
+                }`;
+            return (
             <a
               key={type}
-              href={site.facebook}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={href}
+              aria-label={`Explore ${type} films`}
             >
               <span>{type}</span>
               <ArrowUpRight size={24} aria-hidden="true" />
             </a>
-          ))}
+          )})}
         </div>
       </section>
 

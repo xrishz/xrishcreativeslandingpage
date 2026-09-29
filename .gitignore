@@ -8,6 +8,8 @@ PHOTOS/
 test-results/
 playwright-report/
 .tmp-drive-videos/
+ASSETS/
+.tmp-tools/
 *.log
 next-env.d.ts
 tsconfig.tsbuildinfo

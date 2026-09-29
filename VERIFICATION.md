@@ -1,5 +1,13 @@
 # Verification — current screening-room release, 29 September 2026
 
+## Cloudflare media and site-wide refinement — 29 September
+
+This release adds Cloudflare Images delivery for 26 portfolio photographs and 11 film posters, Cloudflare Stream playback for four short films and seven corporate/graduation films, a new PUP Sto. Tomas commencement film, moving grayscale preview loops for the long films, and a compact, clearer Our Works entry. The local original assets remain under the ignored `ASSETS/` folder; optimized local copies provide a backup. The full predebut film remains Coming soon until the owner provides it.
+
+Fresh local checks: ESLint, TypeScript, production build, and all **17 Playwright tests passed**. Direct Cloudflare checks returned valid image responses for all 37 hosted image IDs and HTTP 200 manifests for all 11 Stream video IDs. A real Chrome review at desktop and mobile sizes confirmed the corporate previews advance, remain grayscale before selection, and open an advancing color Stream player after selection. The photographed homepage asset loaded through a Cloudflare `imagedelivery.net` responsive URL on both widths. A 15-case route audit across 320, 390, 768, 1440, and 1920 pixel viewports found no horizontal overflow, missing same-page anchors, dead `#` links, page errors, or serious/critical automated accessibility findings on the three routes. The category jump placed its heading below the sticky header on mobile and desktop.
+
+The local Meta route returned a fallback HTTP 503 because no local Page token is configured. Production still needs fresh verification after the Netlify deployment; a local build and browser run do not establish live behavior. The Impeccable detector's remaining `broken-image` warning points to a regular expression that parses Facebook embed HTML, not an image element, and its typography/color notices compare against an older design-document ramp.
+
 ## Final refinement — 29 September
 
 The coordinating agent reports **TypeScript, ESLint and the production build passed**, **all 16 Playwright tests passed**, including no-JavaScript and unavailable-session-storage loader coverage, and the final reviewer returned **SHIP**. Production-build testimonial measurements found **zero card overflow at 1440px, 390px and 320px**. The post-audit loader fix guards sessionStorage access and adds a noscript escape so the decorative overlay cannot block the portfolio when JavaScript is disabled. Typecheck, lint and build passed again after this fix. These are the supplied final validation results; this documentation-only pass did not rerun the checks or establish a new deployment.

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CinematicFilm } from "@/components/CinematicFilm";
-import { previewFilms, site } from "@/data/site";
+import { InlineFilm } from "@/components/InlineFilm";
+import { driveFilms, previewFilms, site, streamCustomerCode, streamPlayerUrl } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Our Works — XRISH CREATIVES",
@@ -19,12 +21,14 @@ export const metadata: Metadata = {
 };
 
 export default function WorksPage() {
-  const debutFilms = previewFilms.filter((film) =>
-    ["Debut", "Same Day Edit"].includes(film.category),
-  );
   const predebutFilms = previewFilms.filter((film) =>
     ["Predebut", "Portrait Film"].includes(film.category),
   );
+  const sourceFor = (film: { id: string; streamVideoId?: string }) =>
+    streamPlayerUrl({
+      videoId: film.streamVideoId,
+      customerCode: streamCustomerCode,
+    }) || `https://drive.google.com/file/d/${film.id}/preview`;
   return (
     <div id="top">
       <Header />
@@ -59,10 +63,9 @@ export default function WorksPage() {
               parang laro lang.
             </p>
           </div>
-          <div className="works-native-films">
-            {debutFilms.map((film, index) => (
-              <CinematicFilm key={film.slug} film={film} priority={index === 0} />
-            ))}
+          <div className="works-debut-note">
+            <p>Debut films are in preparation. Explore the celebration portraits while we finish them.</p>
+            <Link href="/#work">View the photographs <ArrowUpRight size={16} aria-hidden="true" /></Link>
           </div>
         </section>
 
@@ -76,8 +79,8 @@ export default function WorksPage() {
             <p>A day to explore locations and make the portraits your own.</p>
           </div>
           <div className="works-native-films">
-            {predebutFilms.map((film) => (
-              <CinematicFilm key={film.slug} film={film} />
+            {predebutFilms.map((film, index) => (
+              <CinematicFilm key={film.slug} film={film} priority={index === 0} />
             ))}
           </div>
         </section>
@@ -89,7 +92,17 @@ export default function WorksPage() {
             <p>Event coverage for teams, launches, and milestones.</p>
           </div>
           <div className="works-film-list page-pad" aria-label="Corporate films">
-            <p className="works-pending">Films in preparation.</p>
+            {driveFilms.corporate.map((film, index) => (
+              <InlineFilm
+                key={film.id}
+                src={sourceFor(film)}
+                title={film.title}
+                poster={film.poster}
+                preview={film.preview}
+                posterOrigin={site.url}
+                priority={index === 0}
+              />
+            ))}
           </div>
         </section>
 
@@ -106,7 +119,16 @@ export default function WorksPage() {
             className="works-film-list works-film-list-single page-pad"
             aria-label="Graduation films"
           >
-            <p className="works-pending">Film in preparation.</p>
+            {driveFilms.graduation.map((film) => (
+              <InlineFilm
+                key={film.id}
+                src={sourceFor(film)}
+                title={film.title}
+                poster={film.poster}
+                preview={film.preview}
+                posterOrigin={site.url}
+              />
+            ))}
           </div>
         </section>
 

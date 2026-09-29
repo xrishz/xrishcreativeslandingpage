@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { streamPlayerUrl } from "../src/lib/stream";
 import {
+  facebookEmbedPreview,
   findLatestFacebookVideo,
   isCuratedFacebookFilm,
 } from "../src/lib/facebook";
@@ -80,14 +81,9 @@ test("the decorative loader clears when session storage is unavailable", async (
   await context.close();
 });
 
-test("Stream placeholder makes no Stream request and lists only the five events", async ({
+test("full-film placeholder remains pending and lists only available film categories", async ({
   page,
 }) => {
-  const videoRequests: string[] = [];
-  page.on("request", (request) => {
-    if (request.url().includes("cloudflarestream.com"))
-      videoRequests.push(request.url());
-  });
   await page.goto("/");
   await page.locator(".camera-cursor").waitFor({ state: "attached" });
   await page.mouse.move(180, 160);
@@ -151,11 +147,9 @@ test("Stream placeholder makes no Stream request and lists only the five events"
   await expect(
     page.getByTitle("A fresh XRISH film. — latest XRISH Facebook film"),
   ).toHaveAttribute("src", /plugins\/video\.php.*123456789/);
-  expect(videoRequests).toEqual([]);
   await expect(page.locator(".event-list a")).toHaveText([
     "Debut",
     "Predebut",
-    "Weddings",
     "Corporate Events",
     "Graduations",
   ]);
@@ -216,6 +210,18 @@ test("latest Facebook selector skips non-video posts and unsafe URLs", () => {
   ).toBe(false);
 });
 
+test("Facebook film preview uses the playable embed's trusted image", () => {
+  const embed = (src: string) =>
+    `<video height="314" width="560"></video><div><img src="${src}" alt="" /></div>`;
+  expect(
+    facebookEmbedPreview(
+      embed("https://scontent.fmnl1-1.fna.fbcdn.net/film.jpg?a=1&amp;b=2"),
+    ),
+  ).toBe("https://scontent.fmnl1-1.fna.fbcdn.net/film.jpg?a=1&b=2");
+  expect(facebookEmbedPreview(embed("https://example.com/film.jpg"))).toBeUndefined();
+  expect(facebookEmbedPreview('<img src="https://example.com/film.jpg" />')).toBeUndefined();
+});
+
 test("Stream playback URLs accept only valid public identifiers", () => {
   expect(streamPlayerUrl({ videoId: undefined })).toBeUndefined();
   expect(
@@ -240,7 +246,7 @@ test("Stream playback URLs accept only valid public identifiers", () => {
   ).toBeUndefined();
 });
 
-test("client notes and all four native films appear directly on the page", async ({
+test("client notes and all four Stream-backed films appear directly on the page", async ({
   page,
 }) => {
   await page.goto("/");
@@ -263,8 +269,8 @@ test("client notes and all four native films appear directly on the page", async
   await expect(page.locator(".reel-frame iframe")).toHaveCount(0);
   await expect(page.locator(".cinematic-film video")).toHaveCount(4);
   for (const film of ["mirielle", "angel", "janelle", "khatrina"])
-    await expect(page.locator(`video[data-film-src="/films/${film}.mp4"]`)).toHaveCount(1);
-  const mirielle = page.locator('video[data-film-src="/films/mirielle.mp4"]');
+    await expect(page.locator(`.cinematic-film video[data-film-src="/films/${film}.mp4"]`)).toHaveCount(1);
+  const mirielle = page.locator('.cinematic-film video[data-film-src="/films/mirielle.mp4"]');
   await expect(mirielle).toHaveAttribute("controlslist", /nodownload/);
   await expect(mirielle).toHaveAttribute("disablepictureinpicture", "");
   await expect(mirielle).toHaveAttribute("disableremoteplayback", "");
@@ -278,7 +284,7 @@ test("client notes and all four native films appear directly on the page", async
     const video = node as HTMLVideoElement;
     return { muted: video.muted, time: video.currentTime };
   })).toMatchObject({ muted: false });
-  const angel = page.locator('video[data-film-src="/films/angel.mp4"]');
+  const angel = page.locator('.cinematic-film video[data-film-src="/films/angel.mp4"]');
   await page.getByRole("button", { name: "Watch Angel from the beginning" }).click();
   await expect.poll(() => mirielle.evaluate((node) => (node as HTMLVideoElement).muted)).toBe(true);
   await mirielle.evaluate((node) => {
@@ -398,13 +404,17 @@ test("hero film, mobile navigation, contact sheet and narrow layout remain usabl
     "/films/janelle.mp4",
     "/films/khatrina.mp4",
   ];
-  const firstHeroSource = await page.locator(".hero-film video").getAttribute("src");
+  await expect.poll(() => page.evaluate(() => sessionStorage.getItem("xrish-last-hero-film"))).not.toBeNull();
+  const firstHeroIndex = await page.evaluate(() => sessionStorage.getItem("xrish-last-hero-film"));
+  await expect(page.locator(".hero-film video")).toHaveAttribute("data-film-src", approvedHeroSources[Number(firstHeroIndex)]);
+  const firstHeroSource = await page.locator(".hero-film video").getAttribute("data-film-src");
   expect(approvedHeroSources).toContain(firstHeroSource);
   await page.reload({ waitUntil: "domcontentloaded" });
+  await expect.poll(() => page.evaluate(() => sessionStorage.getItem("xrish-last-hero-film"))).not.toBe(firstHeroIndex);
   await expect.poll(
-    () => page.locator(".hero-film video").getAttribute("src"),
+    () => page.locator(".hero-film video").getAttribute("data-film-src"),
   ).not.toBe(firstHeroSource);
-  const nextHeroSource = await page.locator(".hero-film video").getAttribute("src");
+  const nextHeroSource = await page.locator(".hero-film video").getAttribute("data-film-src");
   expect(approvedHeroSources).toContain(nextHeroSource);
   await expect(page.getByRole("button", { name: "Pause hero film" })).toBeVisible();
   await expect(page.locator("canvas")).toHaveCount(0);
@@ -445,7 +455,7 @@ test("The XRISH Experience presents Event Coverage and limits the casual shoot l
   ).toBeVisible();
   await expect(page.getByText("Event Coverage", { exact: true })).toBeVisible();
   await expect(
-    page.getByText(/For debut coverage, shooting with us feels fun and chill/),
+    page.getByText(/For debut coverage, the shoot feels fun and chill/),
   ).toBeVisible();
   await expect(
     page.getByText("Debut coverage feels fun and chill, parang laro lang."),
@@ -459,7 +469,7 @@ test("The XRISH Experience presents Event Coverage and limits the casual shoot l
   ).toBeTruthy();
 });
 
-test("Our Works presents all four supplied films as native players", async ({
+test("Our Works presents predebut films and playable corporate and graduation embeds", async ({
   page,
 }) => {
   await page.goto("/works");
@@ -477,10 +487,24 @@ test("Our Works presents all four supplied films as native players", async ({
     ).toBeVisible();
   const filmTitles = ["Angel", "Janelle", "Mirielle", "Khatrina"];
   await expect(page.locator(".works-native-films .cinematic-film")).toHaveCount(4);
+  await expect(page.locator("#debuts .cinematic-film")).toHaveCount(0);
+  await expect(page.locator("#predebuts .cinematic-film")).toHaveCount(4);
+  await expect(page.locator(".works-film-preview")).toHaveCount(7);
+  await expect(page.getByRole("button", { name: /^Play (?:C&E|CE Logic|Nippon|BNI|PUP)/ })).toHaveCount(7);
   await expect(page.locator(".works-film iframe")).toHaveCount(0);
   for (const title of filmTitles)
     await expect(page.getByText(title, { exact: true })).toBeVisible();
-  await expect(page.locator('.works-film iframe[src*="drive.google.com"]')).toHaveCount(0);
+  const firstPreview = page.locator(".works-film-preview").first();
+  await firstPreview.scrollIntoViewIfNeeded();
+  await expect.poll(() => firstPreview.evaluate((video) => (video as HTMLVideoElement).currentTime)).toBeGreaterThan(0);
+  await expect(firstPreview).toHaveCSS("filter", /grayscale\(1\)/);
+  await page.getByRole("button", { name: "Play C&E EDConnect 2026" }).click();
+  await expect(page.locator('.works-film iframe[src*="cloudflarestream.com"]')).toHaveCount(1);
+  await expect(page.locator('nav[aria-label="Work categories"] a[href*="wedding"]')).toHaveCount(0);
+  await expect(page.locator(".works-film-poster")).toHaveCount(7);
+  await expect(page.getByText("BNI Hinirang — Chartering & Launch")).toBeVisible();
+  await expect(page.getByText("PUP 30th Commencement")).toBeVisible();
+  await expect(page.getByText("PUP Sto. Tomas — Commencement Exercises")).toBeVisible();
   await expect(
     page.locator(
       '.works-page a[href*="drive.google.com"], .works-page a[href*="facebook.com/reel"]',
@@ -492,7 +516,7 @@ test("Our Works presents all four supplied films as native players", async ({
       (element) => getComputedStyle(element).gridTemplateColumns.split(" ").length,
     ),
   ).toBe(2);
-  await expect(graduationGrid.getByText("Film in preparation.")).toBeVisible();
+  await expect(graduationGrid.locator(".works-film")).toHaveCount(3);
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
     await graduationGrid.evaluate(

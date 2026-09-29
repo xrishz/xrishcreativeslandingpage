@@ -7,9 +7,12 @@ export const site = {
   url: (
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.URL ||
-    "https://xrish-creatives-portfolio.netlify.app"
+    "https://xrishcreatives.com"
   ).replace(/\/$/, ""),
 };
+
+// Stream playback identifiers are public. Account API credentials remain server-only.
+export const streamCustomerCode = "18nmsvzvjt4m41a5";
 
 export function photo(name: string) {
   const item = media.find((image) => image.src === `/portfolio/${name}.webp`);
@@ -62,22 +65,55 @@ export const experiencePhotos = {
 export const driveFilms = {
   corporate: [
     {
-      id: "1XLKA9FRPGei4L4iz4WNxLoG86p4hIOp4",
-      title: "Corporate Event Film 01",
+      id: "1T2JLzFtIdo-iFNTVo2jPT4YmZRsi27DI",
+      title: "C&E EDConnect 2026",
+      poster: "/films/ce-edconnect-2026-poster.jpg",
+      preview: "/films/ce-edconnect-2026-preview.mp4",
+      streamVideoId: "5bcbbafd2f55350ff7b05da4dc25d43a",
     },
     {
-      id: "1Bp_mM1BoQxZMqmUeWNeSG75C0xQK2LOZ",
-      title: "Corporate Event Film 02",
+      id: "1B2JNzDVtbN2yLdbpMlDGV_owS5f2a-ej",
+      title: "CE Logic NatCon",
+      poster: "/films/ce-logic-natcon-poster.jpg",
+      preview: "/films/ce-logic-natcon-preview.mp4",
+      streamVideoId: "918e874f902cb4dce13b23aec48302a2",
     },
     {
-      id: "1lxFGs7u_uV8RYVtOICCw4cMVLkEMUmtE",
-      title: "Corporate Event Film 03",
+      id: "11ztYxUgP6KjbkIEHMuRmHcvp4RSiIKws",
+      title: "Nippon Paint",
+      poster: "/films/nippon-paint-poster.jpg",
+      preview: "/films/nippon-paint-preview.mp4",
+      streamVideoId: "f88019a5ad0aa3a911177f1f248a8798",
+    },
+    {
+      id: "14dkonuawsUyhOREORoNLCm7VaX39OJaV",
+      title: "BNI Hinirang — Chartering & Launch",
+      poster: "/films/bni-hinirang-poster.jpg",
+      preview: "/films/bni-hinirang-preview.mp4",
+      streamVideoId: "57cfa170c31e68770b18a501a07dbf3d",
     },
   ],
   graduation: [
     {
-      id: "1Xx-_JJw9JQcVl5MD2rfdmbjGbPzizFgv",
-      title: "Graduation Film",
+      id: "12034kz466i4nRlzF8TXXJK1FTs42691S",
+      title: "PUP Sto. Tomas — Commencement Exercises",
+      poster: "/films/pup-sto-tomas-commencement-poster.jpg",
+      preview: "/films/pup-sto-tomas-commencement-preview.mp4",
+      streamVideoId: "29dcc83e594acf31837495a7cbc2363d",
+    },
+    {
+      id: "1gsIWbWPwhcIYc_Gw-PVr5SdkgNFiKtaw",
+      title: "PUP 31st Recognition",
+      poster: "/films/pup-31st-recognition-poster.jpg",
+      preview: "/films/pup-31st-recognition-preview.mp4",
+      streamVideoId: "8d81b4067a726b3894ff79cb63ccc368",
+    },
+    {
+      id: "14wPm5A805qgQQfxkNy4QLBEAd1UaY8QA",
+      title: "PUP 30th Commencement",
+      poster: "/films/pup-30th-commencement-poster.jpg",
+      preview: "/films/pup-30th-commencement-preview.mp4",
+      streamVideoId: "6fbac06f7300792374310d0c3e5c048f",
     },
   ],
 } as const;
@@ -155,29 +191,50 @@ export const stories: Story[] = [
       ),
     ],
   },
+  {
+    slug: "cherrielle-in-color",
+    title: "Cherrielle, in color.",
+    subtitle: "Portraits & celebration",
+    description:
+      "Warm afternoon light, quiet portraits, and a red gown that changed the whole frame. Cherrielle's celebration, from the details to everyone gathered around her.",
+    cover: frame(
+      "cherrielle-08096",
+      "Cherrielle turning on a staircase in a sweeping red gown",
+      "50% 57%",
+    ),
+    gallery: [
+      frame("cherrielle-08096", "Cherrielle in a sweeping red gown on a staircase"),
+      frame("cherrielle-07806", "Cherrielle in pink framed by green leaves"),
+      frame("cherrielle-07346", "Cherrielle in warm light with a rainbow flare"),
+      frame("cherrielle-08025", "A close portrait of Cherrielle outdoors"),
+      frame("cherrielle-08108", "Cherrielle in red looking back toward the camera"),
+      frame("cherrielle-09211", "Cherrielle with family and friends at her celebration"),
+    ],
+  },
 ];
 
 export const contactSheet: Frame[] = [
   frame(
     "pat05482",
-    "Angel having her makeup finished before her debut celebration",
+    "Angel having her makeup finished before her portrait session",
+    "0% 50%",
   ),
   frame("khatrina-06737", "Fingers resting on a bright sunflower"),
   frame("2", "A portrait against a vivid yellow background"),
-  frame("snp01339", "A quiet close-up in a pink gown"),
-  frame("3", "A red-lit portrait in silhouette"),
-  frame("khatrina-07544", "Khatrina under the evening lights"),
+  frame("snp01339", "A quiet close-up in a pink gown", "50% 12%"),
+  frame("3", "A red-lit portrait in silhouette", "65% 50%"),
+  frame("khatrina-07544", "Khatrina under the evening lights", "55% 50%"),
   frame("stn06964", "A celebration portrait among golden lights and flowers"),
   frame(
     "amber-01094",
     "Amber reflected in a dark arched mirror wearing a red gown",
+    "75% 50%",
   ),
 ];
 
 export const eventTypes = [
   "Debut",
   "Predebut",
-  "Weddings",
   "Corporate Events",
   "Graduations",
 ];
@@ -189,6 +246,7 @@ export type PreviewFilm = {
   description: string;
   src: string;
   poster: string;
+  streamVideoId: string;
 };
 
 export const previewFilms: PreviewFilm[] = [
@@ -199,22 +257,25 @@ export const previewFilms: PreviewFilm[] = [
     description: "A predebut portrait in motion.",
     src: "/films/mirielle.mp4",
     poster: "/films/mirielle-poster.jpg",
+    streamVideoId: "c6198ca7b49e6f7f81384bcf5a270de0",
   },
   {
     slug: "angel",
     title: "Angel",
-    category: "Debut",
-    description: "A debut story, shaped as it happened.",
+    category: "Predebut",
+    description: "A predebut portrait, shaped in the moment.",
     src: "/films/angel.mp4",
     poster: "/films/angel-poster.jpg",
+    streamVideoId: "780f3d685a6c1a8b620486e78b738662",
   },
   {
     slug: "janelle",
     title: "Janelle",
-    category: "Same Day Edit",
-    description: "The celebration, returned to the room while it is still unfolding.",
+    category: "Predebut",
+    description: "A predebut film with room to play.",
     src: "/films/janelle.mp4",
     poster: "/films/janelle-poster.jpg",
+    streamVideoId: "3c0989c17f02d7b810b216636d567dc3",
   },
   {
     slug: "khatrina",
@@ -223,6 +284,7 @@ export const previewFilms: PreviewFilm[] = [
     description: "Late light, open gardens, and an evening portrait.",
     src: "/films/khatrina.mp4",
     poster: "/films/khatrina-poster.jpg",
+    streamVideoId: "e02911b66deea1666ca2de75b3953cc5",
   },
 ];
 
@@ -241,8 +303,8 @@ export const reels: Reel[] = [
     embeddable: true,
   },
   {
-    title: "Angel — Debut Same Day Edit",
-    category: "Debut",
+    title: "Angel — Predebut Film",
+    category: "Predebut",
     url: "https://www.facebook.com/reel/4579322825726121",
     embeddable: true,
   },
@@ -289,6 +351,6 @@ export const films: Film[] = [
       "A portrait beneath golden lights and flowers, used as the upcoming film poster",
     ),
     videoId: process.env.NEXT_PUBLIC_PREDEBUT_STREAM_VIDEO_ID,
-    customerCode: process.env.NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE,
+    customerCode: process.env.NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE || streamCustomerCode,
   },
 ];

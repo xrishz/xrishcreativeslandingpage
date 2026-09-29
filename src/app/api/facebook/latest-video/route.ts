@@ -1,7 +1,7 @@
 import {
+  facebookEmbedPreview,
   findFacebookVideos,
   isCuratedFacebookFilm,
-  safeFacebookImage,
   type FacebookPost,
   type LatestFacebookVideo,
 } from "@/lib/facebook";
@@ -65,42 +65,14 @@ async function canEmbedOnFacebook(video: LatestFacebookVideo) {
       next: { revalidate: 1800 },
       signal: AbortSignal.timeout(6000),
     });
-    if (!response.ok) return false;
+    if (!response.ok) return { playable: false };
     const html = await response.text();
-    return html.includes('"videoData"');
+    return {
+      playable: html.includes('"videoData"'),
+      previewUrl: facebookEmbedPreview(html),
+    };
   } catch {
-    return false;
-  }
-}
-
-async function getPostPreview(
-  graphVersion: string,
-  postId: string,
-  accessToken: string,
-) {
-  try {
-    const url = new URL(
-      `https://graph.facebook.com/${graphVersion}/${encodeURIComponent(postId)}`,
-    );
-    url.searchParams.set("fields", "full_picture");
-    const response = await fetch(url, {
-      headers: graphHeaders(accessToken),
-      next: { revalidate: 1800 },
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!response.ok) {
-      console.error("Facebook post preview lookup failed", {
-        status: response.status,
-      });
-      return undefined;
-    }
-    const post = (await response.json()) as { full_picture?: string };
-    return safeFacebookImage(post.full_picture);
-  } catch (error) {
-    console.error("Facebook post preview lookup failed", {
-      reason: error instanceof Error ? error.name : "unknown",
-    });
-    return undefined;
+    return { playable: false };
   }
 }
 
@@ -125,7 +97,6 @@ export async function GET() {
   url.searchParams.set("limit", "20");
 
   try {
-    let effectiveAccessToken = accessToken;
     let response = await fetchPagePosts(url, accessToken);
 
     // A Meta system-user token may need to be exchanged for the assigned
@@ -138,7 +109,6 @@ export async function GET() {
         accessToken,
       );
       if (pageAccessToken) {
-        effectiveAccessToken = pageAccessToken;
         response = await fetchPagePosts(url, pageAccessToken);
       }
     }
@@ -156,14 +126,10 @@ export async function GET() {
       .filter((video) => !isCuratedFacebookFilm(video))
       .slice(0, 8);
     const embedChecks = await Promise.all(candidates.map(canEmbedOnFacebook));
-    const video = candidates.find((_, index) => embedChecks[index]);
-    if (video && !video.previewUrl) {
-      video.previewUrl = await getPostPreview(
-        graphVersion,
-        video.id,
-        effectiveAccessToken,
-      );
-    }
+    const selectedIndex = embedChecks.findIndex((result) => result.playable);
+    const video = selectedIndex >= 0 ? candidates[selectedIndex] : undefined;
+    if (video && !video.previewUrl)
+      video.previewUrl = embedChecks[selectedIndex].previewUrl;
     return Response.json(
       { status: video ? "ready" : "empty", video: video ?? null },
       { headers: CACHE_HEADERS },

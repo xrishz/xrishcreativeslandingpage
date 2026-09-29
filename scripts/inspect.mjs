@@ -20,7 +20,7 @@ for (const [name, width, height] of [
   await page.route("https://www.facebook.com/plugins/video.php**", (route) =>
     route.abort(),
   );
-  await page.goto("http://localhost:3000", { waitUntil: "networkidle" });
+  await page.goto("http://localhost:3000", { waitUntil: "domcontentloaded" });
   await page.addStyleTag({
     content: "html { scroll-behavior: auto !important; }",
   });
@@ -61,7 +61,7 @@ for (const [name, width, height] of [
     overflow: await page.evaluate(
       () => document.documentElement.scrollWidth > innerWidth,
     ),
-    heroPortrait: await page.locator(".hero-portrait img").getAttribute("src"),
+    heroFilm: await page.locator(".hero-film video").getAttribute("data-film-src"),
   });
   await page.close();
 }

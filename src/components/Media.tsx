@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import type { Frame } from "@/data/site";
+import { hostedImageUrl } from "@/lib/cloudflare-images";
 
 export function Photo({
   frame,
@@ -15,6 +16,8 @@ export function Photo({
   className?: string;
 }) {
   const [failed, setFailed] = useState(false);
+  const [useLocal, setUseLocal] = useState(false);
+  const hosted = hostedImageUrl(frame.image.src, 1200);
   if (failed)
     return (
       <div
@@ -28,8 +31,10 @@ export function Photo({
     );
   return (
     <Image
+      key={useLocal ? "local" : "cloudflare"}
       className={className}
       src={frame.image.src}
+      loader={hosted && !useLocal ? ({ src, width }) => hostedImageUrl(src, width) ?? src : undefined}
       alt={frame.alt}
       fill
       sizes={sizes}
@@ -41,7 +46,10 @@ export function Photo({
         objectFit: "cover",
         objectPosition: frame.position ?? "50% 50%",
       }}
-      onError={() => setFailed(true)}
+      onError={() => {
+        if (hosted && !useLocal) setUseLocal(true);
+        else setFailed(true);
+      }}
     />
   );
 }

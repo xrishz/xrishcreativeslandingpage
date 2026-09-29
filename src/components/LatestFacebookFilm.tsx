@@ -67,7 +67,7 @@ export function LatestFacebookFilm() {
 
   const video = result?.video;
   return (
-    <section className="latest-facebook page-pad" aria-labelledby="latest-facebook-title">
+    <section className={`latest-facebook page-pad${result && !video ? " latest-facebook-empty" : ""}`} aria-labelledby="latest-facebook-title">
       <div className="latest-facebook-intro">
         <h3 id="latest-facebook-title">Fresh from the page.</h3>
         <p>Recent work from our Facebook page.</p>

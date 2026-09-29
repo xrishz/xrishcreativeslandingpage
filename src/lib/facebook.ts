@@ -26,7 +26,7 @@ export type LatestFacebookVideo = {
 
 const CURATED_FACEBOOK_FILM_IDS = new Set([
   "1032666439513604", // Mirielle — Pre-debut Film
-  "4579322825726121", // Angel — Debut Same Day Edit
+  "4579322825726121", // Angel — selected predebut film
 ]);
 
 export const isCuratedFacebookFilm = (video: LatestFacebookVideo) => {
@@ -78,6 +78,13 @@ export const safeFacebookImage = (value: string | undefined) => {
   } catch {
     return undefined;
   }
+};
+
+export const facebookEmbedPreview = (html: string) => {
+  const src = html
+    .match(/<video\b[^>]*><\/video>[\s\S]{0,800}?<img\b[^>]*\bsrc="([^"]+)"/i)?.[1]
+    ?.replaceAll("&amp;", "&");
+  return safeFacebookImage(src);
 };
 
 const attachmentPreview = (
