@@ -4,6 +4,8 @@ export { streamPlayerUrl } from "@/lib/stream";
 export const site = {
   name: "XRISH CREATIVES",
   facebook: "https://www.facebook.com/xrishcreatives",
+  instagram: "https://www.instagram.com/xrishcreatives/",
+  tiktok: "https://www.tiktok.com/@xrishcreatives",
   url: (
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.URL ||
@@ -285,6 +287,48 @@ export const previewFilms: PreviewFilm[] = [
     src: "/films/khatrina.mp4",
     poster: "/films/khatrina-poster.jpg",
     streamVideoId: "e02911b66deea1666ca2de75b3953cc5",
+  },
+];
+
+export const debutFilms: PreviewFilm[] = [
+  {
+    slug: "angel-debut-sde",
+    title: "Angel — Debut SDE",
+    category: "Same Day Edit",
+    description: "The celebration, cut while the day was still unfolding.",
+    src: "/films/angel-debut-sde-preview.mp4",
+    poster: "/films/angel-debut-sde-poster.jpg",
+    streamVideoId: "40c454046d0f8bec8c91e48f6f0cd646",
+  },
+  {
+    slug: "khatrina-debut-sde",
+    title: "Khatrina — Debut SDE",
+    category: "Same Day Edit",
+    description: "A look back at Khatrina's debut, shown on the same day.",
+    src: "/films/khatrina-debut-sde-preview.mp4",
+    poster: "/films/khatrina-debut-sde-poster.jpg",
+    streamVideoId: "ed21b04fca4f6e601c8b6cea19054d39",
+  },
+];
+
+export const reactionFilms: PreviewFilm[] = [
+  {
+    slug: "cherrielle-reaction",
+    title: "Cherrielle — the first watch",
+    category: "Debut",
+    description: "Her same-day film, and the moment she saw it with everyone.",
+    src: "/films/cherrielle-reaction-preview.mp4",
+    poster: "/films/cherrielle-reaction-poster.jpg",
+    streamVideoId: "97f751185389ada0d9d0da08adf4085f",
+  },
+  {
+    slug: "khatrina-reaction",
+    title: "Khatrina — the first watch",
+    category: "Debut",
+    description: "The film and the reaction it brought back into the room.",
+    src: "/films/khatrina-reaction-preview.mp4",
+    poster: "/films/khatrina-reaction-poster.jpg",
+    streamVideoId: "d212f41cbaf1803b266d17be399f2b06",
   },
 ];
 

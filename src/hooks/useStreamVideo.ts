@@ -7,8 +7,9 @@ export function useStreamVideo(
   videoRef: RefObject<HTMLVideoElement | null>,
   videoId: string,
   customerCode: string,
-  fallbackSrc: string,
+  fallbackSrc: string | undefined,
   active: boolean,
+  onFatalError?: () => void,
 ) {
   useEffect(() => {
     const video = videoRef.current;
@@ -21,6 +22,10 @@ export function useStreamVideo(
       if (disposed) return;
       stream?.destroy();
       stream = undefined;
+      if (!fallbackSrc) {
+        onFatalError?.();
+        return;
+      }
       video.src = fallbackSrc;
       video.load();
       if (video.autoplay) video.play().catch(() => undefined);
@@ -60,5 +65,5 @@ export function useStreamVideo(
       video.removeAttribute("src");
       video.load();
     };
-  }, [videoRef, videoId, customerCode, fallbackSrc, active]);
+  }, [videoRef, videoId, customerCode, fallbackSrc, active, onFatalError]);
 }

@@ -21,6 +21,12 @@ export function Footer() {
           <a href={site.facebook} target="_blank" rel="noopener noreferrer">
             Facebook <ArrowUpRight size={14} />
           </a>
+          <a href={site.instagram} target="_blank" rel="noopener noreferrer">
+            Instagram <ArrowUpRight size={14} />
+          </a>
+          <a href={site.tiktok} target="_blank" rel="noopener noreferrer">
+            TikTok <ArrowUpRight size={14} />
+          </a>
         </nav>
         <a href="#top" className="back-top" aria-label="Back to top">
           <ArrowUp size={20} />

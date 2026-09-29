@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CinematicFilm } from "@/components/CinematicFilm";
 import { InlineFilm } from "@/components/InlineFilm";
-import { driveFilms, previewFilms, site, streamCustomerCode, streamPlayerUrl } from "@/data/site";
+import { debutFilms, driveFilms, previewFilms, site, streamCustomerCode } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Our Works — XRISH CREATIVES",
@@ -24,11 +23,6 @@ export default function WorksPage() {
   const predebutFilms = previewFilms.filter((film) =>
     ["Predebut", "Portrait Film"].includes(film.category),
   );
-  const sourceFor = (film: { id: string; streamVideoId?: string }) =>
-    streamPlayerUrl({
-      videoId: film.streamVideoId,
-      customerCode: streamCustomerCode,
-    }) || `https://drive.google.com/file/d/${film.id}/preview`;
   return (
     <div id="top">
       <Header />
@@ -63,9 +57,10 @@ export default function WorksPage() {
               parang laro lang.
             </p>
           </div>
-          <div className="works-debut-note">
-            <p>Debut films are in preparation. Explore the celebration portraits while we finish them.</p>
-            <Link href="/#work">View the photographs <ArrowUpRight size={16} aria-hidden="true" /></Link>
+          <div className="works-native-films">
+            {debutFilms.map((film, index) => (
+              <CinematicFilm key={film.slug} film={film} priority={index === 0} />
+            ))}
           </div>
         </section>
 
@@ -95,11 +90,11 @@ export default function WorksPage() {
             {driveFilms.corporate.map((film, index) => (
               <InlineFilm
                 key={film.id}
-                src={sourceFor(film)}
+                streamVideoId={film.streamVideoId}
+                customerCode={streamCustomerCode}
                 title={film.title}
                 poster={film.poster}
                 preview={film.preview}
-                posterOrigin={site.url}
                 priority={index === 0}
               />
             ))}
@@ -122,11 +117,11 @@ export default function WorksPage() {
             {driveFilms.graduation.map((film) => (
               <InlineFilm
                 key={film.id}
-                src={sourceFor(film)}
+                streamVideoId={film.streamVideoId}
+                customerCode={streamCustomerCode}
                 title={film.title}
                 poster={film.poster}
                 preview={film.preview}
-                posterOrigin={site.url}
               />
             ))}
           </div>

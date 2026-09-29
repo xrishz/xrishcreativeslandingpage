@@ -42,7 +42,7 @@ export default function RootLayout({
       addressRegion: "Laguna",
       addressCountry: "PH",
     },
-    sameAs: [site.facebook],
+    sameAs: [site.facebook, site.instagram, site.tiktok],
     ...(site.url ? { url: site.url } : {}),
   };
   return (

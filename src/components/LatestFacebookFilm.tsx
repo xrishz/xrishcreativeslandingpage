@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Play, RotateCcw } from "lucide-react";
 import type { LatestFacebookVideo } from "@/lib/facebook";
-import { site } from "@/data/site";
+import { driveFilms, site, streamCustomerCode } from "@/data/site";
+import { InlineFilm } from "@/components/InlineFilm";
 
 type LatestResponse = {
   status: "ready" | "empty" | "unconfigured" | "unavailable";
@@ -67,17 +68,13 @@ export function LatestFacebookFilm() {
 
   const video = result?.video;
   return (
-    <section className={`latest-facebook page-pad${result && !video ? " latest-facebook-empty" : ""}`} aria-labelledby="latest-facebook-title">
+    <section className="latest-facebook page-pad" aria-labelledby="latest-facebook-title">
       <div className="latest-facebook-intro">
         <h3 id="latest-facebook-title">Fresh from the page.</h3>
         <p>Recent work from our Facebook page.</p>
       </div>
 
-      {!result ? (
-        <div className="latest-facebook-state" role="status">
-          Checking for new work…
-        </div>
-      ) : video ? (
+      {video ? (
         <article className="latest-facebook-film">
           <div className="latest-facebook-frame">
             {!playerActive ? (
@@ -144,12 +141,25 @@ export function LatestFacebookFilm() {
           </div>
         </article>
       ) : (
-        <div className="latest-facebook-state">
-          <p>Our newest work is on Facebook.</p>
-          <a href={site.facebook} target="_blank" rel="noopener noreferrer">
-            Visit XRISH CREATIVES <ArrowUpRight size={16} aria-hidden="true" />
-          </a>
-        </div>
+        <article className="latest-facebook-film latest-facebook-fallback">
+          <div className="latest-facebook-frame">
+            <InlineFilm
+              streamVideoId={driveFilms.graduation[0].streamVideoId}
+              customerCode={streamCustomerCode}
+              title={driveFilms.graduation[0].title}
+              poster={driveFilms.graduation[0].poster}
+              preview={driveFilms.graduation[0].preview}
+            />
+          </div>
+          <div className="latest-facebook-copy">
+            <span>Recent work</span>
+            <h4>{driveFilms.graduation[0].title}</h4>
+            <p>Commencement day in Sto. Tomas, held in motion.</p>
+            <a href={site.facebook} target="_blank" rel="noopener noreferrer">
+              View the XRISH page <ArrowUpRight size={16} aria-hidden="true" />
+            </a>
+          </div>
+        </article>
       )}
     </section>
   );

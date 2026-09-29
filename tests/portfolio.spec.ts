@@ -432,10 +432,20 @@ test("hero film, mobile navigation, contact sheet and narrow layout remain usabl
     page.getByRole("navigation", { name: "Mobile navigation" }),
   ).toHaveCount(0);
   await page.goto("/");
-  await page.getByRole("button", { name: "Scroll photographs right" }).click();
+  const photoStrip = page.locator(".photo-strip");
+  await photoStrip.scrollIntoViewIfNeeded();
+  await photoStrip.hover();
+  const start = await photoStrip.evaluate((el) => el.scrollLeft);
   await expect
-    .poll(() => page.locator(".photo-strip").evaluate((el) => el.scrollLeft))
-    .toBeGreaterThan(100);
+    .poll(() => photoStrip.evaluate((el) => el.scrollLeft))
+    .toBeGreaterThan(start + 30);
+  await expect(page.getByRole("button", { name: /photo carousel|Scroll photographs/ })).toHaveCount(0);
+  await photoStrip.focus();
+  const beforeKey = await photoStrip.evaluate((el) => el.scrollLeft);
+  await photoStrip.press("ArrowRight");
+  await expect
+    .poll(() => photoStrip.evaluate((el) => el.scrollLeft))
+    .toBeGreaterThan(beforeKey + 100);
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 844 });
     expect(
@@ -469,7 +479,7 @@ test("The XRISH Experience presents Event Coverage and limits the casual shoot l
   ).toBeTruthy();
 });
 
-test("Our Works presents predebut films and playable corporate and graduation embeds", async ({
+test("Our Works presents predebut films and preloaded corporate and graduation players", async ({
   page,
 }) => {
   await page.goto("/works");
@@ -486,11 +496,12 @@ test("Our Works presents predebut films and playable corporate and graduation em
       page.getByRole("heading", { name: heading, exact: true }),
     ).toBeVisible();
   const filmTitles = ["Angel", "Janelle", "Mirielle", "Khatrina"];
-  await expect(page.locator(".works-native-films .cinematic-film")).toHaveCount(4);
-  await expect(page.locator("#debuts .cinematic-film")).toHaveCount(0);
+  await expect(page.locator(".works-native-films .cinematic-film")).toHaveCount(6);
+  await expect(page.locator("#debuts .cinematic-film")).toHaveCount(2);
   await expect(page.locator("#predebuts .cinematic-film")).toHaveCount(4);
   await expect(page.locator(".works-film-preview")).toHaveCount(7);
   await expect(page.getByRole("button", { name: /^Play (?:C&E|CE Logic|Nippon|BNI|PUP)/ })).toHaveCount(7);
+  await expect(page.locator(".works-film-player")).toHaveCount(7);
   await expect(page.locator(".works-film iframe")).toHaveCount(0);
   for (const title of filmTitles)
     await expect(page.getByText(title, { exact: true })).toBeVisible();
@@ -499,12 +510,16 @@ test("Our Works presents predebut films and playable corporate and graduation em
   await expect.poll(() => firstPreview.evaluate((video) => (video as HTMLVideoElement).currentTime)).toBeGreaterThan(0);
   await expect(firstPreview).toHaveCSS("filter", /grayscale\(1\)/);
   await page.getByRole("button", { name: "Play C&E EDConnect 2026" }).click();
-  await expect(page.locator('.works-film iframe[src*="cloudflarestream.com"]')).toHaveCount(1);
+  const firstFilm = page.locator(".works-film").first();
+  await expect(firstFilm.locator(".works-film-stage")).toHaveAttribute("data-playing", "true", { timeout: 30000 });
+  await expect.poll(() => firstFilm.locator(".works-film-player").evaluate((video) => (video as HTMLVideoElement).currentTime)).toBeGreaterThan(0);
   await expect(page.locator('nav[aria-label="Work categories"] a[href*="wedding"]')).toHaveCount(0);
   await expect(page.locator(".works-film-poster")).toHaveCount(7);
   await expect(page.getByText("BNI Hinirang — Chartering & Launch")).toBeVisible();
   await expect(page.getByText("PUP 30th Commencement")).toBeVisible();
   await expect(page.getByText("PUP Sto. Tomas — Commencement Exercises")).toBeVisible();
+  await expect(page.getByText("Angel — Debut SDE")).toBeVisible();
+  await expect(page.getByText("Khatrina — Debut SDE")).toBeVisible();
   await expect(
     page.locator(
       '.works-page a[href*="drive.google.com"], .works-page a[href*="facebook.com/reel"]',

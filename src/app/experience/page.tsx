@@ -3,7 +3,8 @@ import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Photo } from "@/components/Media";
-import { experiencePhotos, site } from "@/data/site";
+import { CinematicFilm } from "@/components/CinematicFilm";
+import { experiencePhotos, reactionFilms, site } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "The XRISH Experience — XRISH CREATIVES",
@@ -89,6 +90,19 @@ export default function ExperiencePage() {
                 />
               </figure>
             </div>
+          </div>
+        </section>
+
+        <section className="experience-reactions page-pad" aria-labelledby="reactions-title">
+          <div className="experience-reactions-intro">
+            <span>THE FIRST WATCH</span>
+            <h2 id="reactions-title">Then they see it.</h2>
+            <p>That moment when the same-day edit plays back in the room.</p>
+          </div>
+          <div className="experience-reactions-films">
+            {reactionFilms.map((film) => (
+              <CinematicFilm key={film.slug} film={film} posterPriority />
+            ))}
           </div>
         </section>
 

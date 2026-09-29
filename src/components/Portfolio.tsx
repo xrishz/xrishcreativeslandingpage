@@ -53,10 +53,9 @@ export function Portfolio() {
   const [stripPaused, setStripPaused] = useState(false);
   const strip = useRef<HTMLDivElement>(null);
   const stripManuallyPaused = useRef(false);
-  const stripHovered = useRef(false);
-  const stripFocused = useRef(false);
   const stripPauseUntil = useRef(0);
   const stripDrag = useRef<{ pointerId: number; lastX: number } | null>(null);
+  const stripTouchActive = useRef(false);
   const testimonialTrack = useRef<HTMLDivElement>(null);
   const testimonialScrollLocked = useRef(false);
   const testimonialUnlockTimer = useRef<number | undefined>(undefined);
@@ -100,6 +99,7 @@ export function Portfolio() {
     let cycleWidth = 0;
     let frame = 0;
     let lastFrame = 0;
+    let scrollPosition = track.scrollLeft;
 
     const measure = () => {
       const first = track.children[0] as HTMLElement | undefined;
@@ -112,30 +112,37 @@ export function Portfolio() {
       track.scrollLeft = previousWidth
         ? track.scrollLeft + nextWidth - previousWidth
         : nextWidth;
+      scrollPosition = track.scrollLeft;
     };
     const wrap = () => {
       if (!cycleWidth) return;
-      if (track.scrollLeft < cycleWidth) track.scrollLeft += cycleWidth;
-      else if (track.scrollLeft >= cycleWidth * 2)
+      if (track.scrollLeft < cycleWidth) {
+        track.scrollLeft += cycleWidth;
+        scrollPosition = track.scrollLeft;
+      } else if (track.scrollLeft >= cycleWidth * 2) {
         track.scrollLeft -= cycleWidth;
+        scrollPosition = track.scrollLeft;
+      }
     };
     const tick = (now: number) => {
       const elapsed = Math.min(now - lastFrame, 64);
       lastFrame = now;
       if (
         !document.hidden &&
-        !stripHovered.current &&
-        !stripFocused.current &&
         !stripManuallyPaused.current &&
         !stripDrag.current &&
+        !stripTouchActive.current &&
         now > stripPauseUntil.current
-      )
-        track.scrollLeft += elapsed * 0.028;
+      ) {
+        scrollPosition += elapsed * 0.06;
+        track.scrollLeft = scrollPosition;
+      } else scrollPosition = track.scrollLeft;
       frame = window.requestAnimationFrame(tick);
     };
     const observer = new IntersectionObserver(([entry]) => {
       window.cancelAnimationFrame(frame);
       if (entry.isIntersecting && !reduced) {
+        scrollPosition = track.scrollLeft;
         lastFrame = performance.now();
         frame = window.requestAnimationFrame(tick);
       }
@@ -567,34 +574,6 @@ export function Portfolio() {
         </div>
         <div className="strip-title page-pad">
           <span>A DAY IN FRAMES</span>
-          <div>
-            {!reduced && (
-              <button
-                className="icon-button"
-                onClick={() => {
-                  stripManuallyPaused.current = !stripManuallyPaused.current;
-                  setStripPaused(stripManuallyPaused.current);
-                }}
-                aria-label={stripPaused ? "Resume photo carousel" : "Pause photo carousel"}
-              >
-                {stripPaused ? <Play /> : <Pause />}
-              </button>
-            )}
-            <button
-              className="icon-button"
-              onClick={() => scrollStrip(-360)}
-              aria-label="Scroll photographs left"
-            >
-              <ArrowLeft />
-            </button>
-            <button
-              className="icon-button"
-              onClick={() => scrollStrip(360)}
-              aria-label="Scroll photographs right"
-            >
-              <ArrowRight />
-            </button>
-          </div>
         </div>
         <div
           ref={strip}
@@ -602,19 +581,22 @@ export function Portfolio() {
           tabIndex={0}
           role="region"
           aria-roledescription="carousel"
-          aria-label="A day in frames; drag or use the arrows to browse photographs"
-          onPointerEnter={(event) => {
-            if (event.pointerType === "mouse") stripHovered.current = true;
+          aria-label={`A day in frames. Drag or swipe to browse. Press Space to ${stripPaused ? "resume" : "pause"} the moving photographs, or use the arrow keys.`}
+          aria-keyshortcuts="Space ArrowLeft ArrowRight"
+          onKeyDown={(event) => {
+            if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+              event.preventDefault();
+              scrollStrip(event.key === "ArrowLeft" ? -360 : 360);
+            } else if (event.key === " ") {
+              event.preventDefault();
+              stripManuallyPaused.current = !stripManuallyPaused.current;
+              setStripPaused(stripManuallyPaused.current);
+            }
           }}
-          onPointerLeave={(event) => {
-            if (event.pointerType === "mouse") stripHovered.current = false;
-          }}
-          onFocus={() => (stripFocused.current = true)}
-          onBlur={() => (stripFocused.current = false)}
           onWheel={() => (stripPauseUntil.current = performance.now() + 1200)}
           onPointerDown={(event) => {
             if (event.pointerType === "touch") {
-              stripPauseUntil.current = performance.now() + 1200;
+              stripTouchActive.current = true;
               return;
             }
             if (event.button !== 0) return;
@@ -628,12 +610,18 @@ export function Portfolio() {
             event.currentTarget.scrollLeft -= event.clientX - drag.lastX;
             drag.lastX = event.clientX;
           }}
-          onPointerUp={(event) =>
-            finishStripDrag(event.pointerId, event.currentTarget)
-          }
-          onPointerCancel={(event) =>
-            finishStripDrag(event.pointerId, event.currentTarget)
-          }
+          onPointerUp={(event) => {
+            if (event.pointerType === "touch") {
+              stripTouchActive.current = false;
+              stripPauseUntil.current = performance.now() + 1200;
+            } else finishStripDrag(event.pointerId, event.currentTarget);
+          }}
+          onPointerCancel={(event) => {
+            if (event.pointerType === "touch") {
+              stripTouchActive.current = false;
+              stripPauseUntil.current = performance.now() + 1200;
+            } else finishStripDrag(event.pointerId, event.currentTarget);
+          }}
         >
           {Array.from({ length: 3 }, (_, cycle) =>
             contactSheet.map((frame, index) => (

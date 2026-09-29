@@ -42,6 +42,9 @@ export function Photo({
       preload={priority}
       placeholder="blur"
       blurDataURL={frame.image.blurDataURL}
+      draggable={false}
+      onDragStart={(event) => event.preventDefault()}
+      onContextMenu={(event) => event.preventDefault()}
       style={{
         objectFit: "cover",
         objectPosition: frame.position ?? "50% 50%",

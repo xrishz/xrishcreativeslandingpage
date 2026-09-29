@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { motion } from "motion/react";
 import { streamCustomerCode, type PreviewFilm } from "@/data/site";
@@ -12,9 +13,10 @@ import { hostedImageUrl } from "@/lib/cloudflare-images";
 type CinematicFilmProps = {
   film: PreviewFilm;
   priority?: boolean;
+  posterPriority?: boolean;
 };
 
-export function CinematicFilm({ film, priority = false }: CinematicFilmProps) {
+export function CinematicFilm({ film, priority = false, posterPriority = false }: CinematicFilmProps) {
   const video = useRef<HTMLVideoElement>(null);
   const root = useRef<HTMLElement>(null);
   const reduced = useHydratedReducedMotion();
@@ -22,8 +24,10 @@ export function CinematicFilm({ film, priority = false }: CinematicFilmProps) {
   const [muted, setMuted] = useState(true);
   const [paused, setPaused] = useState(false);
   const [viewing, setViewing] = useState(false);
+  const [readyFrame, setReadyFrame] = useState(false);
   const manuallyPaused = useRef(false);
   const pausedByViewport = useRef(false);
+  const posterUrl = hostedImageUrl(film.poster, 1600) ?? film.poster;
   useStreamVideo(video, film.streamVideoId, streamCustomerCode, film.src, ready);
 
   useEffect(() => {
@@ -123,12 +127,24 @@ export function CinematicFilm({ film, priority = false }: CinematicFilmProps) {
       viewport={{ once: true, amount: 0.18 }}
       transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="cinematic-stage">
+      <div className="cinematic-stage" data-ready-frame={readyFrame}>
+        <Image
+          src={posterUrl}
+          alt=""
+          fill
+          unoptimized
+          priority={priority || posterPriority}
+          sizes="(max-width: 700px) 90vw, 50vw"
+          className="cinematic-poster"
+          draggable={false}
+          onDragStart={(event) => event.preventDefault()}
+          onContextMenu={(event) => event.preventDefault()}
+        />
         <video
           ref={video}
           data-film-src={film.src}
           data-stream-id={film.streamVideoId}
-          poster={hostedImageUrl(film.poster, 1600) ?? film.poster}
+          poster={posterUrl}
           autoPlay={!reduced}
           muted
           loop
@@ -141,6 +157,8 @@ export function CinematicFilm({ film, priority = false }: CinematicFilmProps) {
           draggable={false}
           aria-label={`${film.title} — ${film.category}`}
           onContextMenu={(event) => event.preventDefault()}
+          onLoadedData={() => setReadyFrame(true)}
+          onPlaying={() => setReadyFrame(true)}
           onPlay={() => setPaused(false)}
           onPause={() => setPaused(true)}
           onVolumeChange={(event) => {
