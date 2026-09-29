@@ -786,8 +786,9 @@ test("internal pages use the curtain while hash, modified clicks and history sta
   await newPage.waitForLoadState("domcontentloaded");
   expect(page.url()).toBe(original);
   await newPage.close();
-  await page.getByRole("link", { name: "Explore predebut films", exact: true }).click();
-  await expect(page).toHaveURL(/\/works#predebuts$/);
+  await page.getByRole("link", { name: "Explore debut films", exact: true }).click();
+  await expect(page).toHaveURL(/\/works#debuts$/);
+  await expect(page.locator("#debuts").getByRole("heading", { name: "DEBUTS" })).toBeInViewport();
 });
 
 test("unmatched URLs show the XRISH 404 with working recovery links", async ({ page }) => {

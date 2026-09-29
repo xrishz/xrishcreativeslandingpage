@@ -722,9 +722,9 @@ export function Portfolio() {
             Message Us <ArrowUpRight size={18} />
           </a>
           <Link
-            href="/works#predebuts"
+            href="/works#debuts"
             className="coverage-image"
-            aria-label="Explore predebut films"
+            aria-label="Explore debut films"
           >
             <ImageReveal><Photo frame={heroPortrait} sizes="(max-width: 700px) 90vw, 40vw" /></ImageReveal>
             <span>
