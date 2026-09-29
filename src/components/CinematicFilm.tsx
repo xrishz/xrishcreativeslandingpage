@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { motion } from "motion/react";
@@ -16,10 +16,15 @@ type CinematicFilmProps = {
   posterPriority?: boolean;
 };
 
+const subscribeHydration = () => () => undefined;
+const clientIsHydrated = () => true;
+const serverIsHydrated = () => false;
+
 export function CinematicFilm({ film, priority = false, posterPriority = false }: CinematicFilmProps) {
   const video = useRef<HTMLVideoElement>(null);
   const root = useRef<HTMLElement>(null);
   const reduced = useHydratedReducedMotion();
+  const hydrated = useSyncExternalStore(subscribeHydration, clientIsHydrated, serverIsHydrated);
   const [ready, setReady] = useState(priority);
   const [muted, setMuted] = useState(true);
   const [paused, setPaused] = useState(false);
@@ -146,7 +151,7 @@ export function CinematicFilm({ film, priority = false, posterPriority = false }
           data-stream-id={film.streamVideoId}
           poster={posterUrl}
           autoPlay={!reduced}
-          muted
+          muted={muted}
           loop
           playsInline
           preload={priority ? "auto" : "metadata"}
@@ -157,7 +162,10 @@ export function CinematicFilm({ film, priority = false, posterPriority = false }
           draggable={false}
           aria-label={`${film.title} — ${film.category}`}
           onContextMenu={(event) => event.preventDefault()}
-          onLoadedData={() => setReadyFrame(true)}
+          onLoadedData={() => {
+            setReadyFrame(true);
+            if (viewing) video.current?.play().then(() => setPaused(false)).catch(() => setPaused(true));
+          }}
           onPlaying={() => setReadyFrame(true)}
           onPlay={() => setPaused(false)}
           onPause={() => setPaused(true)}
@@ -168,7 +176,7 @@ export function CinematicFilm({ film, priority = false, posterPriority = false }
           }}
         />
         <div className="cinematic-scrim" aria-hidden="true" />
-        {!viewing && <div className="cinematic-controls">
+        {hydrated && !viewing && <div className="cinematic-controls">
           <button
             type="button"
             onClick={() => {

@@ -31,18 +31,25 @@ export function useStreamVideo(
       if (video.autoplay) video.play().catch(() => undefined);
     };
 
-    if (!manifest) {
-      fallback();
-    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    const playNatively = () => {
+      if (disposed) return;
+      if (!manifest || !video.canPlayType("application/vnd.apple.mpegurl")) {
+        fallback();
+        return;
+      }
       video.src = manifest;
       video.load();
       if (video.autoplay) video.play().catch(() => undefined);
+    };
+
+    if (!manifest) {
+      fallback();
     } else {
       import("hls.js")
         .then(({ default: Hls }) => {
           if (disposed) return;
           if (!Hls.isSupported()) {
-            fallback();
+            playNatively();
             return;
           }
           stream = new Hls({ maxBufferLength: 30 });
@@ -55,7 +62,7 @@ export function useStreamVideo(
           stream.loadSource(manifest);
           stream.attachMedia(video);
         })
-        .catch(fallback);
+        .catch(playNatively);
     }
 
     return () => {

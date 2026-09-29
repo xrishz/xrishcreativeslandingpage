@@ -286,6 +286,9 @@ test("client notes and all four Stream-backed films appear directly on the page"
   })).toMatchObject({ muted: false });
   const angel = page.locator('.cinematic-film video[data-film-src="/films/angel.mp4"]');
   await page.getByRole("button", { name: "Watch Angel from the beginning" }).click();
+  await expect(angel).toHaveAttribute("controls", "");
+  await expect.poll(() => angel.evaluate((node) => (node as HTMLVideoElement).muted)).toBe(false);
+  await expect.poll(() => angel.evaluate((node) => (node as HTMLVideoElement).currentTime), { timeout: 30000 }).toBeGreaterThan(0);
   await expect.poll(() => mirielle.evaluate((node) => (node as HTMLVideoElement).muted)).toBe(true);
   await mirielle.evaluate((node) => {
     const video = node as HTMLVideoElement;
