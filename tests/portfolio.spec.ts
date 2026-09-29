@@ -166,6 +166,34 @@ test("a mirrored Facebook film plays inline on mobile with one site-level tap", 
   await expect(latest.locator(".works-film-stage")).toHaveAttribute("data-started", "true");
 });
 
+test("the latest film stays clear of its title across two-column widths", async ({ page }) => {
+  await page.route("**/api/facebook/latest-video", (route) => route.fulfill({
+    contentType: "application/json",
+    body: JSON.stringify({
+      status: "ready",
+      video: {
+        id: "113391138358438_1043239105382917",
+        title: "PUP Sto. Tomas Campus - 31st Commencement Exercises",
+        permalinkUrl: "https://www.facebook.com/reel/1833990724442309/",
+      },
+    }),
+  }));
+
+  for (const width of [792, 1024, 1440, 2294]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/");
+    const film = page.locator(".latest-facebook-film");
+    await expect(film.locator(".works-film-stage")).toBeVisible();
+    const frame = await film.locator(".latest-facebook-frame").boundingBox();
+    const stage = await film.locator(".works-film-stage").boundingBox();
+    const copy = await film.locator(".latest-facebook-copy").boundingBox();
+    expect(frame && stage && copy).toBeTruthy();
+    expect(frame!.x + frame!.width + 20).toBeLessThan(copy!.x);
+    expect(stage!.x + stage!.width + 20).toBeLessThan(copy!.x);
+    await expect(film.locator(".works-film figcaption")).toBeHidden();
+  }
+});
+
 test("selected stories can be rearranged on desktop while mobile keeps its layout", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
@@ -593,8 +621,8 @@ test("Our Works presents predebut films and preloaded corporate and graduation p
       page.getByRole("heading", { name: heading, exact: true }),
     ).toBeVisible();
   const filmTitles = ["Angel", "Janelle", "Mirielle", "Khatrina"];
-  await expect(page.locator(".works-native-films .cinematic-film")).toHaveCount(6);
-  await expect(page.locator("#debuts .cinematic-film")).toHaveCount(2);
+  await expect(page.locator(".works-native-films .cinematic-film")).toHaveCount(9);
+  await expect(page.locator("#debuts .cinematic-film")).toHaveCount(5);
   await expect(page.locator("#predebuts .cinematic-film")).toHaveCount(4);
   await expect(page.locator(".works-film-preview")).toHaveCount(7);
   await expect(page.getByRole("button", { name: /^Play (?:C&E|18th CE-Logic|Nippon|BNI|PUP)/ })).toHaveCount(7);
@@ -620,6 +648,8 @@ test("Our Works presents predebut films and preloaded corporate and graduation p
   await expect(page.getByText("Nippon Paint Philippines Inc. Paskong Pinoy Christmas Party 2025")).toBeVisible();
   await expect(page.getByText("Angel - Debut SDE")).toBeVisible();
   await expect(page.getByText("Khatrina - Debut SDE")).toBeVisible();
+  for (const title of ["Cherrielle - Debut SDE", "Sky - Debut SDE", "Shamia - Debut SDE"])
+    await expect(page.getByText(title)).toBeVisible();
   await expect(
     page.locator(
       '.works-page a[href*="drive.google.com"], .works-page a[href*="facebook.com/reel"]',
@@ -641,6 +671,19 @@ test("Our Works presents predebut films and preloaded corporate and graduation p
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
   ).toBeTruthy();
+});
+
+test("the new debut film opens its full Stream playback on the first click", async ({ page }) => {
+  test.setTimeout(45000);
+  await page.goto("/works");
+  const sky = page.locator(".cinematic-film-sky-debut-sde");
+  await sky.scrollIntoViewIfNeeded();
+  const poster = sky.locator(".cinematic-poster");
+  await expect.poll(() => poster.evaluate((image) => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  await sky.getByRole("button", { name: "Watch Sky - Debut SDE from the beginning" }).click();
+  const film = sky.locator("video");
+  await expect(film).toHaveAttribute("controls", "");
+  await expect.poll(() => film.evaluate((video) => (video as HTMLVideoElement).currentTime), { timeout: 30000 }).toBeGreaterThan(0);
 });
 
 test("the first visible film play button responds on a fresh page load", async ({ page }) => {

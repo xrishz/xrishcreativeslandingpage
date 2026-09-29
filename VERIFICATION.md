@@ -1,5 +1,11 @@
 # Verification — current screening-room release, 29 September 2026
 
+## Latest film layout and debut films — 29 September 2026
+
+The latest Facebook film now stays inside its left column rather than stretching over its title and description. The duplicate caption below its player is hidden; the complete post title remains in the right column. A browser layout test checked clear separation at 792, 1024, 1440, and 2294 pixels.
+
+Cherrielle, Sky, and Shamia debut SDEs are now in Our Works. Their full films were uploaded to Cloudflare Stream and confirmed Ready; each public playback manifest and selected poster returned HTTP 200. Short local muted previews are available as a playback fallback. The Sky poster loaded and its full Stream film advanced on the first click in Chrome. ESLint, TypeScript, the production build, and all 27 prior Playwright tests passed; the additional Sky playback test also passed, making 28 checks in total for this change set. Publication and live-domain checks are pending for this checkpoint.
+
 ## Media caching and billing check — 29 September 2026
 
 Cloudflare Stream's **55 / 1,000 minutes stored** measures the combined duration of uploaded videos; browser caching does not lower it. Stream delivery is a separate usage metric. Fresh response headers showed `max-age=864000` (10 days) on a Stream video segment and `max-age=172800` (2 days) on a hosted Cloudflare Image. Those provider-managed browser caches already exceed the requested five minutes, so they are left intact. The site does not add a service worker or proxy for Stream manifests, which Cloudflare says should be fetched directly and not independently cached. Browser eviction, private mode, changed URLs, and cache bypass can still cause a new request.
@@ -18,7 +24,7 @@ Commit `82c9642` is published from GitHub `main` to `https://xrishcreatives.com/
 
 At that checkpoint, the automatic Facebook feature returned HTTP 502 with the safe `unavailable` response. Netlify logs showed that a User token was rejected with OAuth error 190/2069032, while the Page-token retry received Graph HTTP 500/code 1 or timed out. Meta's Graph API Explorer confirmed that this post query requires a Page token. The follow-up above records the resolved Page access and live playback. No token values are stored in this document.
 
-Three remaining supplied debut SDE files were blocked by Google Drive's download/view limit during import. Their direct Drive share URLs are not raw video URLs suitable for Cloudflare Stream URL import. They are not presented as playable films until their originals can be obtained and transcoded. The full predebut film remains Coming soon as requested. Right-click and drag deterrents are in place for photographs, but any image delivered to a browser remains retrievable through network tools or screenshots.
+At that earlier checkpoint, three supplied debut SDE files were still blocked by Google Drive's download/view limit. The current checkpoint above records their successful import and publication preparation. Right-click and drag deterrents are in place for photographs, but any image delivered to a browser remains retrievable through network tools or screenshots.
 
 ## Cloudflare media and site-wide refinement — 29 September
 

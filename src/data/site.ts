@@ -310,6 +310,33 @@ export const debutFilms: PreviewFilm[] = [
     poster: "/films/khatrina-debut-sde-poster.jpg",
     streamVideoId: "ed21b04fca4f6e601c8b6cea19054d39",
   },
+  {
+    slug: "cherrielle-debut-sde",
+    title: "Cherrielle - Debut SDE",
+    category: "Same Day Edit",
+    description: "Cherrielle's debut celebration, cut into a film to revisit.",
+    src: "/films/cherrielle-debut-sde-preview.mp4",
+    poster: "https://customer-18nmsvzvjt4m41a5.cloudflarestream.com/b576378f3a513b47e7843138fc617b0c/thumbnails/thumbnail.jpg?time=180s&width=1280",
+    streamVideoId: "b576378f3a513b47e7843138fc617b0c",
+  },
+  {
+    slug: "sky-debut-sde",
+    title: "Sky - Debut SDE",
+    category: "Same Day Edit",
+    description: "A same-day film from Sky's debut celebration.",
+    src: "/films/sky-debut-sde-preview.mp4",
+    poster: "https://customer-18nmsvzvjt4m41a5.cloudflarestream.com/cda06262dc181a4b7a7f719c053b0218/thumbnails/thumbnail.jpg?time=45s&width=1280",
+    streamVideoId: "cda06262dc181a4b7a7f719c053b0218",
+  },
+  {
+    slug: "shamia-debut-sde",
+    title: "Shamia - Debut SDE",
+    category: "Same Day Edit",
+    description: "A same-day film from Shamia's debut celebration.",
+    src: "/films/shamia-debut-sde-preview.mp4",
+    poster: "https://customer-18nmsvzvjt4m41a5.cloudflarestream.com/4627923b8132269434448071791528d7/thumbnails/thumbnail.jpg?time=45s&width=1280",
+    streamVideoId: "4627923b8132269434448071791528d7",
+  },
 ];
 
 export const reactionFilms: PreviewFilm[] = [

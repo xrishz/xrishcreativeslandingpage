@@ -3,7 +3,10 @@ const config: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [75, 85, 90],
-    remotePatterns: [{ protocol: "https", hostname: "imagedelivery.net" }],
+    remotePatterns: [
+      { protocol: "https", hostname: "imagedelivery.net" },
+      { protocol: "https", hostname: "customer-18nmsvzvjt4m41a5.cloudflarestream.com" },
+    ],
   },
   poweredByHeader: false,
   async headers() {
