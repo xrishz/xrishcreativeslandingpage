@@ -25,8 +25,8 @@ export type LatestFacebookVideo = {
 };
 
 const CURATED_FACEBOOK_FILM_IDS = new Set([
-  "1032666439513604", // Mirielle — Pre-debut Film
-  "4579322825726121", // Angel — selected predebut film
+  "1032666439513604", // Mirielle predebut film
+  "4579322825726121", // Angel selected predebut film
 ]);
 
 export const isCuratedFacebookFilm = (video: LatestFacebookVideo) => {
@@ -63,7 +63,7 @@ const attachmentIsVideo = (attachment: FacebookAttachment): boolean => {
 };
 
 const cleanCopy = (value: string | undefined) =>
-  value?.replace(/\s+/g, " ").trim();
+  value?.replace(/\u2014/g, " - ").replace(/\s+/g, " ").trim();
 
 export const safeFacebookImage = (value: string | undefined) => {
   if (!value) return undefined;

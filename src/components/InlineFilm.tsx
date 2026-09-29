@@ -5,8 +5,9 @@ import Image from "next/image";
 import { Play, RotateCcw } from "lucide-react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useStreamVideo } from "@/hooks/useStreamVideo";
+import { useVideoPlayback } from "@/hooks/useVideoPlayback";
 import { hostedImageUrl } from "@/lib/cloudflare-images";
-import { claimVideoSound, VIDEO_SOUND_EVENT } from "@/lib/video-coordination";
+import { claimVideoPlayback, claimVideoSound, releaseVideoPlayback, VIDEO_SOUND_EVENT } from "@/lib/video-coordination";
 
 type InlineFilmProps = {
   streamVideoId: string;
@@ -32,15 +33,25 @@ export function InlineFilm({
   const stage = useRef<HTMLDivElement>(null);
   const previewVideo = useRef<HTMLVideoElement>(null);
   const fullVideo = useRef<HTMLVideoElement>(null);
+  const pausedByDocument = useRef(false);
+  const pausedByViewport = useRef(false);
+  const nearScreen = useRef(false);
   const reduced = useHydratedReducedMotion();
   const [nearViewport, setNearViewport] = useState(priority);
   const hydrated = useSyncExternalStore(subscribeHydration, clientIsHydrated, serverIsHydrated);
   const [started, setStarted] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [revealed, setRevealed] = useState(false);
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const playback = useVideoPlayback();
+  const playbackId = `works-${streamVideoId}`;
+  const inactive = playback.active !== null && playback.active !== playbackId;
+  const settled = playback.active === null && playback.hasPlayed;
   const posterUrl = hostedImageUrl(poster, 1600) ?? poster;
   const onFatalError = useCallback(() => setFailed(true), []);
+
+  useEffect(() => () => releaseVideoPlayback(playbackId), [playbackId]);
 
   // Attach the full Stream source before the visitor presses Play. The short
   // black-and-white preview remains visible while the full film buffers.
@@ -58,12 +69,17 @@ export function InlineFilm({
     if (!element) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
+        nearScreen.current = entry.isIntersecting;
         if (entry.isIntersecting) {
           setNearViewport(true);
-          if (!reduced && !playing) previewVideo.current?.play().catch(() => undefined);
-          if (started) fullVideo.current?.play().catch(() => undefined);
+          if (!document.hidden && !reduced && !started && !inactive) previewVideo.current?.play().catch(() => undefined);
+          if (!document.hidden && started && pausedByViewport.current && !inactive) {
+            pausedByViewport.current = false;
+            fullVideo.current?.play().catch(() => undefined);
+          }
         } else {
           previewVideo.current?.pause();
+          pausedByViewport.current = Boolean(started && fullVideo.current && !fullVideo.current.paused);
           fullVideo.current?.pause();
         }
       },
@@ -71,11 +87,37 @@ export function InlineFilm({
     );
     observer.observe(element);
     return () => observer.disconnect();
-  }, [reduced, started, playing]);
+  }, [reduced, started, inactive]);
 
   useEffect(() => {
-    if (playing || reduced) previewVideo.current?.pause();
-  }, [playing, reduced]);
+    if (inactive) {
+      previewVideo.current?.pause();
+      fullVideo.current?.pause();
+      if (fullVideo.current) fullVideo.current.muted = true;
+      return;
+    }
+    if (!started && nearScreen.current && !document.hidden && !reduced) previewVideo.current?.play().catch(() => undefined);
+  }, [inactive, started, reduced]);
+
+  useEffect(() => {
+    const visibility = () => {
+      if (document.hidden) {
+        pausedByDocument.current = Boolean(started && fullVideo.current && !fullVideo.current.paused);
+        previewVideo.current?.pause();
+        fullVideo.current?.pause();
+      } else if (nearScreen.current) {
+        if (pausedByDocument.current && !inactive) fullVideo.current?.play().catch(() => undefined);
+        else if (!started && !reduced && !inactive) previewVideo.current?.play().catch(() => undefined);
+        pausedByDocument.current = false;
+      }
+    };
+    document.addEventListener("visibilitychange", visibility);
+    return () => document.removeEventListener("visibilitychange", visibility);
+  }, [started, reduced, inactive]);
+
+  useEffect(() => {
+    if (started || reduced) previewVideo.current?.pause();
+  }, [started, reduced]);
 
   useEffect(() => {
     const muteWhenAnotherFilmSpeaks = (event: Event) => {
@@ -95,22 +137,32 @@ export function InlineFilm({
     setNearViewport(true);
     video.currentTime = 0;
     video.muted = false;
-    claimVideoSound(`works-${streamVideoId}`);
+    claimVideoPlayback(playbackId);
     // The source may still be attaching on a very fast click. loadeddata and
     // autoplay both complete the same first-click intent when it is ready.
     video.play().then(() => setPlaying(true)).catch(() => undefined);
   };
 
   const retry = () => {
+    releaseVideoPlayback(playbackId);
     setFailed(false);
     setPlaying(false);
     setStarted(false);
+    setRevealed(false);
     setAttempt((current) => current + 1);
+  };
+
+  const resumeFilm = () => {
+    const video = fullVideo.current;
+    if (!video) return;
+    video.muted = false;
+    claimVideoPlayback(playbackId);
+    video.play().catch(() => undefined);
   };
 
   return (
     <figure className="works-film">
-      <div ref={stage} className="works-film-stage" data-playing={playing} data-started={started}>
+      <div ref={stage} className="works-film-stage" data-cursor="WATCH" data-playing={playing} data-started={started} data-revealed={revealed} data-inactive={inactive} data-settled={settled}>
         <Image
           src={posterUrl}
           alt=""
@@ -144,26 +196,37 @@ export function InlineFilm({
           muted
           playsInline
           preload="auto"
-          controls={started && playing}
+          controls={started && revealed && !inactive}
           controlsList="nodownload noremoteplayback"
           disablePictureInPicture
           disableRemotePlayback
           aria-label={`${title} film`}
           onContextMenu={(event) => event.preventDefault()}
           onLoadedData={() => {
-            if (started) fullVideo.current?.play().then(() => setPlaying(true)).catch(() => undefined);
+            if (started && !inactive && !revealed) fullVideo.current?.play().catch(() => undefined);
           }}
           onCanPlay={() => {
             if (!started) fullVideo.current?.pause();
           }}
           onPlaying={() => {
-            if (started) setPlaying(true);
+            if (started) {
+              if (inactive) { fullVideo.current?.pause(); return; }
+              setPlaying(true);
+              setRevealed(true);
+            }
           }}
+          onPlay={() => { if (started && !inactive) claimVideoPlayback(playbackId); }}
+          onPause={() => { if (started) { setPlaying(false); releaseVideoPlayback(playbackId); } }}
           onError={() => setFailed(true)}
           onVolumeChange={(event) => {
             if (!event.currentTarget.muted) claimVideoSound(`works-${streamVideoId}`);
           }}
         />
+        {hydrated && inactive && started && revealed && (
+          <button type="button" className="cinematic-resume" onClick={resumeFilm} aria-label={`Continue ${title} from where you left off`}>
+            <Play size={16} fill="currentColor" aria-hidden="true" /> Continue film
+          </button>
+        )}
         {hydrated && !started && !failed && (
           <button
             type="button"

@@ -30,6 +30,10 @@ export function CameraCursor() {
             ),
           ),
       );
+      const target = event.target instanceof Element ? event.target : null;
+      const context = target?.closest("[data-cursor]")?.getAttribute("data-cursor")
+        ?? (target?.closest("a[target='_blank']") ? "↗" : "");
+      element.dataset.context = context;
     };
     const leave = () => {
       if (cursor.current) cursor.current.dataset.visible = "false";
@@ -60,6 +64,7 @@ export function CameraCursor() {
     >
       <motion.span className="camera-cursor-mark" style={{ x, y }}>
         <Camera size={17} strokeWidth={1.65} />
+        <span className="camera-cursor-label" />
       </motion.span>
     </div>
   );

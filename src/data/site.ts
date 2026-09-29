@@ -76,21 +76,21 @@ export const driveFilms = {
     },
     {
       id: "1B2JNzDVtbN2yLdbpMlDGV_owS5f2a-ej",
-      title: "CE Logic NatCon",
+      title: "18th CE-Logic National Conference",
       poster: "/films/ce-logic-natcon-poster.jpg",
       preview: "/films/ce-logic-natcon-preview.mp4",
       streamVideoId: "918e874f902cb4dce13b23aec48302a2",
     },
     {
       id: "11ztYxUgP6KjbkIEHMuRmHcvp4RSiIKws",
-      title: "Nippon Paint",
+      title: "Nippon Paint Philippines Inc. Paskong Pinoy Christmas Party 2025",
       poster: "/films/nippon-paint-poster.jpg",
       preview: "/films/nippon-paint-preview.mp4",
       streamVideoId: "f88019a5ad0aa3a911177f1f248a8798",
     },
     {
       id: "14dkonuawsUyhOREORoNLCm7VaX39OJaV",
-      title: "BNI Hinirang — Chartering & Launch",
+      title: "BNI Hinirang - Chartering & Launch",
       poster: "/films/bni-hinirang-poster.jpg",
       preview: "/films/bni-hinirang-preview.mp4",
       streamVideoId: "57cfa170c31e68770b18a501a07dbf3d",
@@ -99,21 +99,21 @@ export const driveFilms = {
   graduation: [
     {
       id: "12034kz466i4nRlzF8TXXJK1FTs42691S",
-      title: "PUP Sto. Tomas — Commencement Exercises",
+      title: "PUP Sto. Tomas Campus - 31st Commencement Exercises",
       poster: "/films/pup-sto-tomas-commencement-poster.jpg",
       preview: "/films/pup-sto-tomas-commencement-preview.mp4",
       streamVideoId: "29dcc83e594acf31837495a7cbc2363d",
     },
     {
       id: "1gsIWbWPwhcIYc_Gw-PVr5SdkgNFiKtaw",
-      title: "PUP 31st Recognition",
+      title: "PUP Sto. Tomas Campus - 31st Recognition Ceremony",
       poster: "/films/pup-31st-recognition-poster.jpg",
       preview: "/films/pup-31st-recognition-preview.mp4",
       streamVideoId: "8d81b4067a726b3894ff79cb63ccc368",
     },
     {
       id: "14wPm5A805qgQQfxkNy4QLBEAd1UaY8QA",
-      title: "PUP 30th Commencement",
+      title: "PUP Sto. Tomas Campus - 30th Commencement Exercises",
       poster: "/films/pup-30th-commencement-poster.jpg",
       preview: "/films/pup-30th-commencement-preview.mp4",
       streamVideoId: "6fbac06f7300792374310d0c3e5c048f",
@@ -294,7 +294,7 @@ export const previewFilms: PreviewFilm[] = [
 export const debutFilms: PreviewFilm[] = [
   {
     slug: "angel-debut-sde",
-    title: "Angel — Debut SDE",
+    title: "Angel - Debut SDE",
     category: "Same Day Edit",
     description: "The celebration, cut while the day was still unfolding.",
     src: "/films/angel-debut-sde-preview.mp4",
@@ -303,7 +303,7 @@ export const debutFilms: PreviewFilm[] = [
   },
   {
     slug: "khatrina-debut-sde",
-    title: "Khatrina — Debut SDE",
+    title: "Khatrina - Debut SDE",
     category: "Same Day Edit",
     description: "A look back at Khatrina's debut, shown on the same day.",
     src: "/films/khatrina-debut-sde-preview.mp4",
@@ -315,7 +315,7 @@ export const debutFilms: PreviewFilm[] = [
 export const reactionFilms: PreviewFilm[] = [
   {
     slug: "cherrielle-reaction",
-    title: "Cherrielle — the first watch",
+    title: "Cherrielle: the first watch",
     category: "Debut",
     description: "Her same-day film, and the moment she saw it with everyone.",
     src: "/films/cherrielle-reaction-preview.mp4",
@@ -324,7 +324,7 @@ export const reactionFilms: PreviewFilm[] = [
   },
   {
     slug: "khatrina-reaction",
-    title: "Khatrina — the first watch",
+    title: "Khatrina: the first watch",
     category: "Debut",
     description: "The film and the reaction it brought back into the room.",
     src: "/films/khatrina-reaction-preview.mp4",
@@ -342,13 +342,13 @@ export type Reel = {
 
 export const reels: Reel[] = [
   {
-    title: "Mirielle — Pre-debut Film",
+    title: "Mirielle - Pre-debut Film",
     category: "Predebut",
     url: "https://www.facebook.com/reel/1032666439513604",
     embeddable: true,
   },
   {
-    title: "Angel — Predebut Film",
+    title: "Angel - Predebut Film",
     category: "Predebut",
     url: "https://www.facebook.com/reel/4579322825726121",
     embeddable: true,

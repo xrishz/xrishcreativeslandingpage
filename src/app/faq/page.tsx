@@ -3,15 +3,16 @@ import { ArrowUpRight } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { FaqList } from "@/components/FaqList";
+import { RevealHeading } from "@/components/EditorialMotion";
 import { faqs } from "@/data/faq";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "FAQs — XRISH CREATIVES",
+  title: "FAQs | XRISH CREATIVES",
   description: "Booking, coverage, delivery and other common questions about working with XRISH CREATIVES.",
   alternates: { canonical: "/faq" },
   openGraph: {
-    title: "FAQs — XRISH CREATIVES",
+    title: "FAQs | XRISH CREATIVES",
     description: "The details to know before your day: booking, coverage and delivery.",
     url: "/faq",
   },
@@ -24,7 +25,7 @@ export default function FaqPage() {
       <main id="main" className="faq-page page-pad">
         <div className="faq-page-intro">
           <span className="faq-eyebrow">BEFORE WE BEGIN</span>
-          <h1>Good questions.<br />Clear answers.</h1>
+          <RevealHeading as="h1" lines={["Good questions.", "Clear answers."]} />
           <p>How we book, what we cover, and what happens after the day.</p>
         </div>
         <FaqList items={faqs} />

@@ -1,8 +1,10 @@
 import { ArrowUpRight, ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { site } from "@/data/site";
+import { FooterReveal } from "./EditorialMotion";
 export function Footer() {
   return (
+    <FooterReveal>
     <footer className="footer page-pad">
       <div className="footer-top">
         <Link href="/" className="wordmark">
@@ -37,8 +39,9 @@ export function Footer() {
       </div>
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} XRISH CREATIVES</span>
-        <span>GOOD DAYS. KEPT FOREVER.</span>
+        <strong>GOOD DAYS.<br />KEPT FOREVER.</strong>
       </div>
     </footer>
+    </FooterReveal>
   );
 }

@@ -3,12 +3,20 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useMotionValueEvent, useScroll } from "motion/react";
 import { site } from "@/data/site";
+import { RollingLabel } from "./RollingLabel";
 
 export function Header() {
   const pathname = usePathname();
   const onHome = pathname === "/";
   const [open, setOpen] = useState(false);
+  const [compact, setCompact] = useState(false);
+  const { scrollY } = useScroll();
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const next = latest > 48;
+    setCompact((current) => current === next ? current : next);
+  });
   const button = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!open) return;
@@ -22,7 +30,7 @@ export function Header() {
     return () => window.removeEventListener("keydown", close);
   }, [open]);
   return (
-    <header className="site-header">
+    <header className="site-header" data-compact={compact}>
       <Link
         href={onHome ? "#top" : "/"}
         className="wordmark"
@@ -50,7 +58,7 @@ export function Header() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        Message Us <ArrowUpRight size={17} aria-hidden="true" />
+        <RollingLabel>Message Us</RollingLabel> <ArrowUpRight size={17} aria-hidden="true" />
       </a>
       <button
         ref={button}

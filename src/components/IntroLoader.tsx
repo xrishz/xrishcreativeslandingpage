@@ -20,7 +20,7 @@ export function IntroLoader() {
       // decorative loader block the portfolio when that happens.
     }
     const timer = window.setTimeout(
-      () => setVisible(false),
+      () => { setVisible(false); window.dispatchEvent(new Event("xrish:intro-complete")); },
       seen ? 0 : prefersReducedMotion ? 350 : 1650,
     );
     return () => window.clearTimeout(timer);

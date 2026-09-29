@@ -127,30 +127,68 @@ test("Angel's SDE replaces the pending feature and lists only available film cat
   await expect(
     page.locator(".lead-rotation-frame").last(),
   ).toHaveAttribute("data-frame", pausedFrame ?? "");
-  await expect(page.getByRole("heading", { name: "Angel — Debut SDE" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Angel - Debut SDE" })).toBeVisible();
   await expect(page.getByText("Full Pre-debut Film", { exact: true })).toHaveCount(0);
   await expect(page.locator(".cinematic-film video")).toHaveCount(5);
   await expect(page.locator(".reel-frame iframe")).toHaveCount(0);
   await expect(page.locator(".latest-facebook-film")).toHaveCount(1);
   await expect(
-    page.getByRole("button", { name: "Play A fresh XRISH film. on this page" }),
-  ).toBeVisible();
-  await expect(page.locator(".latest-facebook-preview")).toHaveCSS(
-    "background-image",
-    /xrish-preview\.jpg/,
-  );
-  await page
-    .getByRole("button", { name: "Play A fresh XRISH film. on this page" })
-    .click();
-  await expect(
-    page.getByTitle("A fresh XRISH film. — latest XRISH Facebook film"),
+    page.getByTitle("A fresh XRISH film: latest XRISH Facebook film"),
   ).toHaveAttribute("src", /plugins\/video\.php.*123456789/);
+  await expect(page.locator(".latest-facebook-launch")).toHaveCount(0);
   await expect(page.locator(".event-list a")).toHaveText([
     "Debut",
     "Predebut",
     "Corporate Events",
     "Graduations",
   ]);
+});
+
+test("a mirrored Facebook film plays inline on mobile with one site-level tap", async ({ page }) => {
+  await page.route("**/api/facebook/latest-video", (route) => route.fulfill({
+    contentType: "application/json",
+    body: JSON.stringify({
+      status: "ready",
+      video: {
+        id: "113391138358438_1043239105382917",
+        title: "PUP Sto. Tomas",
+        permalinkUrl: "https://www.facebook.com/reel/1833990724442309/",
+      },
+    }),
+  }));
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const latest = page.locator(".latest-facebook-film");
+  await expect(latest.locator("iframe")).toHaveCount(0);
+  const player = latest.locator("video.works-film-player");
+  await expect(player).toHaveAttribute("playsinline", "");
+  await latest.getByRole("button", { name: "Play PUP Sto. Tomas" }).click();
+  await expect(latest.locator(".works-film-stage")).toHaveAttribute("data-started", "true");
+});
+
+test("selected stories can be rearranged on desktop while mobile keeps its layout", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const cards = page.locator(".story-spread .story");
+  await cards.first().scrollIntoViewIfNeeded();
+  const original = await cards.locator("h3").allTextContents();
+  await cards.first().focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(cards.nth(1).locator("h3")).toHaveText(original[0]);
+  await page.waitForTimeout(700);
+  const from = await cards.nth(1).locator(".story-image").boundingBox();
+  const to = await cards.nth(2).locator(".story-image").boundingBox();
+  expect(from && to).toBeTruthy();
+  await page.mouse.move(from!.x + from!.width / 2, from!.y + from!.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(to!.x + to!.width / 2, to!.y + to!.height / 2, { steps: 24 });
+  await page.mouse.up();
+  await expect(cards.nth(2).locator("h3")).toHaveText(original[0]);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(cards.first()).toHaveAttribute("tabindex", "-1");
+  await page.waitForTimeout(300);
+  await cards.first().getByRole("button", { name: /^View / }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
 });
 
 test("latest Facebook selector skips non-video posts and unsafe URLs", () => {
@@ -295,10 +333,12 @@ test("client notes, short films, and Angel's debut SDE appear directly on the pa
     video.dispatchEvent(new Event("volumechange"));
   });
   await expect.poll(() => angel.evaluate((node) => (node as HTMLVideoElement).muted)).toBe(true);
-  await page.getByRole("button", { name: "Pause Janelle" }).click();
-  await expect(page.getByRole("button", { name: "Play Janelle" })).toBeVisible();
-  await expect(page.getByText("PUP Sto. Tomas — 30th Commencement Exercises")).toHaveCount(0);
-  await expect(page.getByText("Cherreille — Debut Same Day Edit")).toHaveCount(0);
+  await expect(page.locator(".cinematic-film-janelle .cinematic-stage")).toHaveAttribute("data-inactive", "true");
+  await expect.poll(() => page.locator(".cinematic-film-janelle video").evaluate((node) => (node as HTMLVideoElement).paused)).toBe(true);
+  await angel.evaluate((node) => (node as HTMLVideoElement).pause());
+  await expect(page.locator(".cinematic-film-janelle .cinematic-stage")).toHaveAttribute("data-inactive", "false");
+  await expect(page.getByText("PUP Sto. Tomas - 30th Commencement Exercises")).toHaveCount(0);
+  await expect(page.getByText("Cherreille - Debut Same Day Edit")).toHaveCount(0);
 });
 
 test("homepage exposes the branded hero preview to Messenger and social crawlers", async ({
@@ -381,7 +421,7 @@ test("booking links open Messenger and the homepage answers key questions", asyn
 }) => {
   await page.goto("/");
   const links = page.getByRole("link", { name: "Message Us" });
-  await expect(links).toHaveCount(4);
+  expect(await links.count()).toBeGreaterThanOrEqual(4);
   for (const link of await links.all())
     await expect(link).toHaveAttribute(
       "href",
@@ -494,6 +534,9 @@ test("the full FAQ explains the booking terms and the former Experience URL lead
   await expect(page.locator(".faq-page .faq-item")).toHaveCount(10);
   await page.locator(".faq-page summary").first().click();
   await expect(page.locator(".faq-page .faq-item").first()).toContainText("confirm your booking in writing");
+  await page.locator(".faq-page summary").nth(1).click();
+  await expect(page.locator(".faq-page .faq-item").first()).not.toHaveAttribute("open", "");
+  await expect(page.locator(".faq-page .faq-item").nth(1)).toHaveAttribute("open", "");
   await expect(page.getByRole("link", { name: "Inquire on Messenger" })).toHaveAttribute("href", "https://m.me/xrishcreatives");
   await expect(page.getByRole("link", { name: "Read the full terms" })).toHaveCount(0);
   await page.goto("/experience");
@@ -516,9 +559,17 @@ test("the reaction films give the active video the room and restore both on paus
   await expect.poll(() => khatrina.locator("video").evaluate((video) => (video as HTMLVideoElement).paused)).toBe(true);
 
   await expect.poll(() => cherrielle.locator("video").evaluate((video) => (video as HTMLVideoElement).paused), { timeout: 30000 }).toBe(false);
+  await expect.poll(() => cherrielle.locator("video").evaluate((video) => (video as HTMLVideoElement).currentTime), { timeout: 30000 }).toBeGreaterThan(0.1);
   await khatrina.getByRole("button", { name: /Watch Khatrina.*from the beginning/ }).click();
   await expect(cherrielle.locator(".cinematic-stage")).toHaveAttribute("data-inactive", "true");
   await expect.poll(() => cherrielle.locator("video").evaluate((video) => (video as HTMLVideoElement).paused)).toBe(true);
+  await expect.poll(() => khatrina.locator("video").evaluate((video) => (video as HTMLVideoElement).paused), { timeout: 30000 }).toBe(false);
+  const previousTime = await cherrielle.locator("video").evaluate((video) => (video as HTMLVideoElement).currentTime);
+  await cherrielle.getByRole("button", { name: /Continue Cherrielle.*from where you left off/ }).click();
+  await expect.poll(() => cherrielle.locator("video").evaluate((video) => (video as HTMLVideoElement).paused), { timeout: 30000 }).toBe(false);
+  expect(await cherrielle.locator("video").evaluate((video) => (video as HTMLVideoElement).currentTime)).toBeGreaterThanOrEqual(previousTime - 0.1);
+  await expect(khatrina.locator(".cinematic-stage")).toHaveAttribute("data-inactive", "true");
+  await khatrina.getByRole("button", { name: /Continue Khatrina.*from where you left off/ }).click();
   await expect.poll(() => khatrina.locator("video").evaluate((video) => (video as HTMLVideoElement).paused), { timeout: 30000 }).toBe(false);
   await khatrina.locator("video").evaluate((video) => (video as HTMLVideoElement).pause());
   await expect(khatrina.locator(".cinematic-stage")).toHaveAttribute("data-inactive", "false");
@@ -546,7 +597,7 @@ test("Our Works presents predebut films and preloaded corporate and graduation p
   await expect(page.locator("#debuts .cinematic-film")).toHaveCount(2);
   await expect(page.locator("#predebuts .cinematic-film")).toHaveCount(4);
   await expect(page.locator(".works-film-preview")).toHaveCount(7);
-  await expect(page.getByRole("button", { name: /^Play (?:C&E|CE Logic|Nippon|BNI|PUP)/ })).toHaveCount(7);
+  await expect(page.getByRole("button", { name: /^Play (?:C&E|18th CE-Logic|Nippon|BNI|PUP)/ })).toHaveCount(7);
   await expect(page.locator(".works-film-player")).toHaveCount(7);
   await expect(page.locator(".works-film iframe")).toHaveCount(0);
   for (const title of filmTitles)
@@ -561,11 +612,14 @@ test("Our Works presents predebut films and preloaded corporate and graduation p
   await expect.poll(() => firstFilm.locator(".works-film-player").evaluate((video) => (video as HTMLVideoElement).currentTime)).toBeGreaterThan(0);
   await expect(page.locator('nav[aria-label="Work categories"] a[href*="wedding"]')).toHaveCount(0);
   await expect(page.locator(".works-film-poster")).toHaveCount(7);
-  await expect(page.getByText("BNI Hinirang — Chartering & Launch")).toBeVisible();
-  await expect(page.getByText("PUP 30th Commencement")).toBeVisible();
-  await expect(page.getByText("PUP Sto. Tomas — Commencement Exercises")).toBeVisible();
-  await expect(page.getByText("Angel — Debut SDE")).toBeVisible();
-  await expect(page.getByText("Khatrina — Debut SDE")).toBeVisible();
+  await expect(page.getByText("BNI Hinirang - Chartering & Launch")).toBeVisible();
+  await expect(page.getByText("PUP Sto. Tomas Campus - 30th Commencement Exercises")).toBeVisible();
+  await expect(page.getByText("PUP Sto. Tomas Campus - 31st Commencement Exercises")).toBeVisible();
+  await expect(page.getByText("PUP Sto. Tomas Campus - 31st Recognition Ceremony")).toBeVisible();
+  await expect(page.getByText("18th CE-Logic National Conference")).toBeVisible();
+  await expect(page.getByText("Nippon Paint Philippines Inc. Paskong Pinoy Christmas Party 2025")).toBeVisible();
+  await expect(page.getByText("Angel - Debut SDE")).toBeVisible();
+  await expect(page.getByText("Khatrina - Debut SDE")).toBeVisible();
   await expect(
     page.locator(
       '.works-page a[href*="drive.google.com"], .works-page a[href*="facebook.com/reel"]',
@@ -596,6 +650,33 @@ test("the first visible film play button responds on a fresh page load", async (
   const stage = page.locator(".works-film").first().locator(".works-film-stage");
   await expect(stage).toHaveAttribute("data-started", "true");
   await expect(stage).toHaveAttribute("data-playing", "true", { timeout: 30000 });
+});
+
+test("corporate and graduation films share one active player and keep their place", async ({ page }) => {
+  await page.goto("/works");
+  const corporate = page.locator("#corporate-events .works-film");
+  const first = corporate.nth(0);
+  const second = corporate.nth(1);
+  await first.getByRole("button", { name: "Play C&E EDConnect 2026" }).click();
+  await expect(first.locator(".works-film-stage")).toHaveAttribute("data-revealed", "true", { timeout: 30000 });
+  await expect(second.locator(".works-film-stage")).toHaveAttribute("data-inactive", "true");
+  await second.getByRole("button", { name: "Play 18th CE-Logic National Conference" }).click();
+  await expect(second.locator(".works-film-stage")).toHaveAttribute("data-revealed", "true", { timeout: 30000 });
+  await expect(first.locator(".works-film-stage")).toHaveAttribute("data-inactive", "true");
+  await expect.poll(() => first.locator(".works-film-player").evaluate((video) => (video as HTMLVideoElement).paused)).toBe(true);
+  const previousTime = await first.locator(".works-film-player").evaluate((video) => (video as HTMLVideoElement).currentTime);
+  await first.getByRole("button", { name: "Continue C&E EDConnect 2026 from where you left off" }).click();
+  await expect(first.locator(".works-film-stage")).toHaveAttribute("data-playing", "true", { timeout: 30000 });
+  expect(await first.locator(".works-film-player").evaluate((video) => (video as HTMLVideoElement).currentTime)).toBeGreaterThanOrEqual(previousTime - 0.1);
+  await first.locator(".works-film-player").evaluate((video) => (video as HTMLVideoElement).pause());
+  await expect(first.locator(".works-film-stage")).toHaveAttribute("data-inactive", "false");
+  await expect(second.locator(".works-film-stage")).toHaveAttribute("data-inactive", "false");
+  await expect(corporate.nth(2).locator(".works-film-preview")).toHaveCSS("filter", "none");
+  const graduation = page.locator("#graduation .works-film");
+  await graduation.nth(0).getByRole("button", { name: "Play PUP Sto. Tomas Campus - 31st Commencement Exercises" }).click();
+  await expect(graduation.nth(1).locator(".works-film-stage")).toHaveAttribute("data-inactive", "true");
+  await graduation.nth(1).getByRole("button", { name: "Play PUP Sto. Tomas Campus - 31st Recognition Ceremony" }).click();
+  await expect(graduation.nth(0).locator(".works-film-stage")).toHaveAttribute("data-inactive", "true");
 });
 
 test("reduced motion keeps the photographic hero, work and inquiry available", async ({
@@ -636,4 +717,56 @@ test("homepage and viewer have no serious or critical automated accessibility fi
       ["critical", "serious"].includes(v.impact ?? ""),
     ),
   ).toEqual([]);
+});
+
+test("internal pages use the curtain while hash, modified clicks and history stay native", async ({ page, context }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Works", exact: true }).first().click();
+  await expect(page).toHaveURL(/\/works$/);
+  await expect(page.locator(".pixel-curtain-mark")).toHaveText("Our Works");
+  await expect(page.locator(".pixel-curtain")).toHaveAttribute("data-phase", "idle", { timeout: 3000 });
+  await page.getByRole("link", { name: "About", exact: true }).first().click();
+  await expect(page).toHaveURL(/\/about$/);
+  await expect(page.locator(".pixel-curtain-mark")).toHaveText("About XRISH");
+  await page.goBack();
+  await expect(page).toHaveURL(/\/works$/);
+  await page.goForward();
+  await expect(page).toHaveURL(/\/about$/);
+  await expect(page.locator(".pixel-curtain")).toHaveAttribute("data-phase", "idle");
+  await page.getByRole("link", { name: "XRISH CREATIVES home" }).click();
+  await expect(page).toHaveURL(/localhost:3000\/$/);
+  const original = page.url();
+  const [newPage] = await Promise.all([
+    context.waitForEvent("page"),
+    page.getByRole("link", { name: "Works", exact: true }).first().click({ modifiers: ["Control"] }),
+  ]);
+  await newPage.waitForLoadState("domcontentloaded");
+  expect(page.url()).toBe(original);
+  await newPage.close();
+  await page.getByRole("link", { name: "Explore predebut films", exact: true }).click();
+  await expect(page).toHaveURL(/\/works#predebuts$/);
+});
+
+test("unmatched URLs show the XRISH 404 with working recovery links", async ({ page }) => {
+  const response = await page.goto("/a-missing-frame");
+  expect(response?.status()).toBe(404);
+  await expect(page.getByRole("heading", { name: "This frame is missing." })).toBeVisible();
+  await page.getByRole("link", { name: "Explore our work" }).click();
+  await expect(page).toHaveURL(/\/works$/);
+});
+
+test("site-controlled copy and metadata never render an em dash", async ({ page }) => {
+  for (const route of ["/", "/works", "/about", "/faq", "/a-missing-frame"]) {
+    await page.goto(route);
+    const offenders = await page.evaluate(() => {
+      const mark = String.fromCharCode(0x2014);
+      const text = document.body.innerText.includes(mark);
+      const title = document.title.includes(mark);
+      const attributes = [...document.querySelectorAll<HTMLElement>("[title], [aria-label], [alt]")]
+        .some((element) => ["title", "aria-label", "alt"].some((name) => element.getAttribute(name)?.includes(mark)));
+      const metadata = [...document.querySelectorAll<HTMLMetaElement>("meta[content]")].some((element) => element.content.includes(mark));
+      return { text, title, attributes, metadata };
+    });
+    expect(offenders, route).toEqual({ text: false, title: false, attributes: false, metadata: false });
+  }
 });

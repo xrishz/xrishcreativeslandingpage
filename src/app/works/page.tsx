@@ -4,15 +4,16 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CinematicFilm } from "@/components/CinematicFilm";
 import { InlineFilm } from "@/components/InlineFilm";
+import { RevealHeading } from "@/components/EditorialMotion";
 import { debutFilms, driveFilms, previewFilms, site, streamCustomerCode } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "Our Works — XRISH CREATIVES",
+  title: "Our Works | XRISH CREATIVES",
   description:
     "Explore XRISH CREATIVES event coverage across debuts, predebuts, corporate events and graduation.",
   alternates: { canonical: "/works" },
   openGraph: {
-    title: "Our Works — XRISH CREATIVES",
+    title: "Our Works | XRISH CREATIVES",
     description:
       "Photography and films from debuts, predebuts, corporate events and graduation.",
     url: "/works",
@@ -28,10 +29,7 @@ export default function WorksPage() {
       <Header />
       <main id="main" className="works-page">
         <section className="works-hero page-pad" aria-labelledby="works-title">
-          <h1 id="works-title">
-            <span>OUR</span>
-            <span>WORKS</span>
-          </h1>
+          <RevealHeading as="h1" id="works-title" lines={["OUR", "WORKS"]} />
           <nav className="works-index" aria-label="Work categories">
             {[
               ["DEBUTS", "#debuts"],
@@ -51,7 +49,7 @@ export default function WorksPage() {
         <section id="debuts" className="works-video-category page-pad">
           <div className="works-heading">
             <span>01</span>
-            <h2>DEBUTS</h2>
+            <RevealHeading lines={["DEBUTS"]} />
             <p>
               Portraits, celebration, and a shoot that feels fun and chill,
               parang laro lang.
@@ -70,7 +68,7 @@ export default function WorksPage() {
         >
           <div className="works-heading">
             <span>02</span>
-            <h2>PREDEBUTS</h2>
+            <RevealHeading lines={["PREDEBUTS"]} />
             <p>A day to explore locations and make the portraits your own.</p>
           </div>
           <div className="works-native-films">
@@ -83,7 +81,7 @@ export default function WorksPage() {
         <section id="corporate-events" className="works-film-section">
           <div className="works-heading page-pad">
             <span>03</span>
-            <h2>CORPORATE EVENTS</h2>
+            <RevealHeading lines={["CORPORATE EVENTS"]} />
             <p>Event coverage for teams, launches, and milestones.</p>
           </div>
           <div className="works-film-list page-pad" aria-label="Corporate films">
@@ -107,7 +105,7 @@ export default function WorksPage() {
         >
           <div className="works-heading page-pad">
             <span>04</span>
-            <h2>GRADUATION</h2>
+            <RevealHeading lines={["GRADUATION"]} />
             <p>Milestones, family, and the feeling of finally making it.</p>
           </div>
           <div

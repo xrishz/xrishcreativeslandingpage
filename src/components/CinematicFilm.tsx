@@ -7,15 +7,14 @@ import { motion } from "motion/react";
 import { streamCustomerCode, type PreviewFilm } from "@/data/site";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useStreamVideo } from "@/hooks/useStreamVideo";
-import { claimVideoSound, VIDEO_SOUND_EVENT } from "@/lib/video-coordination";
+import { useVideoPlayback } from "@/hooks/useVideoPlayback";
+import { claimVideoPlayback, claimVideoSound, releaseVideoPlayback, VIDEO_SOUND_EVENT } from "@/lib/video-coordination";
 import { hostedImageUrl } from "@/lib/cloudflare-images";
 
 type CinematicFilmProps = {
   film: PreviewFilm;
   priority?: boolean;
   posterPriority?: boolean;
-  inactive?: boolean;
-  onViewingChange?: (slug: string, playing: boolean) => void;
 };
 
 const subscribeHydration = () => () => undefined;
@@ -26,8 +25,6 @@ export function CinematicFilm({
   film,
   priority = false,
   posterPriority = false,
-  inactive = false,
-  onViewingChange,
 }: CinematicFilmProps) {
   const video = useRef<HTMLVideoElement>(null);
   const root = useRef<HTMLElement>(null);
@@ -38,11 +35,19 @@ export function CinematicFilm({
   const [paused, setPaused] = useState(false);
   const [viewing, setViewing] = useState(false);
   const [readyFrame, setReadyFrame] = useState(false);
+  const playback = useVideoPlayback();
+  const playbackId = `film-${film.slug}`;
+  const inactive = playback.active !== null && playback.active !== playbackId;
   const manuallyPaused = useRef(false);
   const pausedByViewport = useRef(false);
+  const pausedByDocument = useRef(false);
+  const inViewport = useRef(false);
   const userActivated = useRef(false);
+  const resumeRequested = useRef(false);
   const posterUrl = hostedImageUrl(film.poster, 1600) ?? film.poster;
   useStreamVideo(video, film.streamVideoId, streamCustomerCode, film.src, ready);
+
+  useEffect(() => () => releaseVideoPlayback(playbackId), [playbackId]);
 
   useEffect(() => {
     if (!reduced) return;
@@ -68,6 +73,7 @@ export function CinematicFilm({
     if (!element) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
+        inViewport.current = entry.isIntersecting;
         const player = video.current;
         if (!player || reduced) return;
         if (!entry.isIntersecting) {
@@ -77,7 +83,7 @@ export function CinematicFilm({
           }
           return;
         }
-        if (pausedByViewport.current && !manuallyPaused.current && !inactive) {
+        if (pausedByViewport.current && !document.hidden && !manuallyPaused.current && !inactive) {
           pausedByViewport.current = false;
           player.play().catch(() => undefined);
         }
@@ -89,16 +95,42 @@ export function CinematicFilm({
   }, [reduced, inactive]);
 
   useEffect(() => {
+    const visibility = () => {
+      const player = video.current;
+      if (!player || reduced) return;
+      if (document.hidden) {
+        pausedByDocument.current = !player.paused;
+        if (pausedByDocument.current) player.pause();
+      } else if (pausedByDocument.current && inViewport.current && !manuallyPaused.current && !inactive) {
+        pausedByDocument.current = false;
+        player.play().catch(() => undefined);
+      }
+    };
+    document.addEventListener("visibilitychange", visibility);
+    return () => document.removeEventListener("visibilitychange", visibility);
+  }, [reduced, inactive]);
+
+  useEffect(() => {
     if (!inactive) return;
     const element = video.current;
     if (!element) return;
     element.pause();
     element.muted = true;
-    manuallyPaused.current = false;
-    userActivated.current = false;
     setMuted(true);
-    setViewing(false);
   }, [inactive]);
+
+  useEffect(() => {
+    if (inactive || !resumeRequested.current) return;
+    resumeRequested.current = false;
+    const element = video.current;
+    if (!element) return;
+    element.muted = false;
+    setMuted(false);
+    manuallyPaused.current = false;
+    claimVideoSound(`film-${film.slug}`);
+    userActivated.current = true;
+    element.play().catch(() => setPaused(true));
+  }, [inactive, film.slug]);
 
   useEffect(() => {
     const muteWhenAnotherFilmSpeaks = (event: Event) => {
@@ -115,9 +147,9 @@ export function CinematicFilm({
 
   useEffect(() => {
     const element = video.current;
-    if (!element || !ready || reduced || inactive) return;
+    if (!element || !ready || reduced || inactive || manuallyPaused.current || viewing) return;
     element.play().then(() => setPaused(false)).catch(() => setPaused(true));
-  }, [ready, reduced, inactive]);
+  }, [ready, reduced, inactive, viewing]);
 
   const togglePlayback = () => {
     const element = video.current;
@@ -125,7 +157,7 @@ export function CinematicFilm({
     if (element.paused) {
       manuallyPaused.current = false;
       userActivated.current = true;
-      onViewingChange?.(film.slug, true);
+      claimVideoPlayback(playbackId);
       element.play().then(() => setPaused(false)).catch(() => setPaused(true));
     } else {
       manuallyPaused.current = true;
@@ -143,9 +175,13 @@ export function CinematicFilm({
     userActivated.current = true;
     setMuted(false);
     setViewing(true);
-    onViewingChange?.(film.slug, true);
-    claimVideoSound(`film-${film.slug}`);
+    claimVideoPlayback(playbackId);
     element.play().then(() => setPaused(false)).catch(() => setPaused(true));
+  };
+
+  const resumeFilm = () => {
+    resumeRequested.current = true;
+    claimVideoPlayback(playbackId);
   };
 
   return (
@@ -157,7 +193,7 @@ export function CinematicFilm({
       viewport={{ once: true, amount: 0.18 }}
       transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="cinematic-stage" data-ready-frame={readyFrame} data-inactive={inactive}>
+      <div className="cinematic-stage" data-cursor="WATCH" data-ready-frame={readyFrame} data-inactive={inactive}>
         <Image
           src={posterUrl}
           alt=""
@@ -180,16 +216,16 @@ export function CinematicFilm({
           loop
           playsInline
           preload={priority ? "auto" : "metadata"}
-          controls={viewing}
+          controls={viewing && !inactive}
           controlsList="nodownload noremoteplayback"
           disablePictureInPicture
           disableRemotePlayback
           draggable={false}
-          aria-label={`${film.title} — ${film.category}`}
+          aria-label={`${film.title}: ${film.category}`}
           onContextMenu={(event) => event.preventDefault()}
           onLoadedData={() => {
             setReadyFrame(true);
-            if (viewing && !inactive) video.current?.play().then(() => setPaused(false)).catch(() => setPaused(true));
+            if (viewing && !inactive && !manuallyPaused.current) video.current?.play().then(() => setPaused(false)).catch(() => setPaused(true));
           }}
           onPlaying={() => {
             setReadyFrame(true);
@@ -201,11 +237,11 @@ export function CinematicFilm({
               return;
             }
             setPaused(false);
-            if (viewing || userActivated.current) onViewingChange?.(film.slug, true);
+            if (viewing || userActivated.current) claimVideoPlayback(playbackId);
           }}
           onPause={() => {
             setPaused(true);
-            if (viewing || userActivated.current) onViewingChange?.(film.slug, false);
+            if (viewing || userActivated.current) releaseVideoPlayback(playbackId);
             userActivated.current = false;
           }}
           onVolumeChange={(event) => {
@@ -215,6 +251,11 @@ export function CinematicFilm({
           }}
         />
         <div className="cinematic-scrim" aria-hidden="true" />
+        {hydrated && inactive && viewing && (
+          <button className="cinematic-resume" type="button" onClick={resumeFilm} aria-label={`Continue ${film.title} from where you left off`}>
+            <Play size={16} fill="currentColor" aria-hidden="true" /> Continue film
+          </button>
+        )}
         {hydrated && !viewing && <div className="cinematic-controls">
           <button
             type="button"

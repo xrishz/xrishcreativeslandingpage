@@ -15,6 +15,10 @@ import Link from "next/link";
 import {
   AnimatePresence,
   motion,
+  Reorder,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
 } from "motion/react";
 import {
   stories,
@@ -39,15 +43,25 @@ import { useRotatingHeroFilm } from "@/hooks/useRotatingHeroFilm";
 import { useStreamVideo } from "@/hooks/useStreamVideo";
 import { claimVideoSound, VIDEO_SOUND_EVENT } from "@/lib/video-coordination";
 import { hostedImageUrl } from "@/lib/cloudflare-images";
+import { ImageReveal, RevealHeading } from "./EditorialMotion";
+import { RollingLabel } from "./RollingLabel";
+
+type SelectedStory = { story: Story; source?: { left: number; top: number; width: number; height: number }; initialIndex: number };
 
 export function Portfolio() {
-  const [selected, setSelected] = useState<Story>();
+  const [selected, setSelected] = useState<SelectedStory>();
+  const [storyOrder, setStoryOrder] = useState(() => stories.slice(1).map((story) => story.slug));
+  const [canReorder, setCanReorder] = useState(false);
+  const lastStoryDragEnd = useRef(0);
+  const storyDragging = useRef(false);
   const [leadPhotoIndex, setLeadPhotoIndex] = useState(0);
   const [leadPaused, setLeadPaused] = useState(false);
   const [leadHovered, setLeadHovered] = useState(false);
   const [leadFocused, setLeadFocused] = useState(false);
   const [heroMuted, setHeroMuted] = useState(true);
   const [heroPaused, setHeroPaused] = useState(false);
+  const [heroEntered, setHeroEntered] = useState(false);
+  const [activeCoverage, setActiveCoverage] = useState(0);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [stripPaused, setStripPaused] = useState(false);
   const strip = useRef<HTMLDivElement>(null);
@@ -60,11 +74,51 @@ export function Portfolio() {
   const testimonialUnlockTimer = useRef<number | undefined>(undefined);
   const heroVideo = useRef<HTMLVideoElement>(null);
   const heroRoot = useRef<HTMLElement>(null);
+  const coverageRoot = useRef<HTMLElement>(null);
   const heroManuallyPaused = useRef(false);
   const reduced = useHydratedReducedMotion();
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRoot, offset: ["start start", "end start"] });
+  const heroCopyY = useTransform(heroScroll, [0, 1], [0, -22]);
+  const { scrollYProgress: coverageScroll } = useScroll({ target: coverageRoot, offset: ["start end", "end start"] });
+  useMotionValueEvent(coverageScroll, "change", (value) => {
+    const next = Math.min(eventTypes.length - 1, Math.max(0, Math.floor(value * eventTypes.length)));
+    setActiveCoverage((current) => current === next ? current : next);
+  });
+  useEffect(() => {
+    const enter = () => setHeroEntered(true);
+    window.addEventListener("xrish:intro-complete", enter);
+    const fallback = window.setTimeout(enter, 2400);
+    return () => { window.removeEventListener("xrish:intro-complete", enter); window.clearTimeout(fallback); };
+  }, []);
   const heroFilm = useRotatingHeroFilm();
   useStreamVideo(heroVideo, heroFilm.streamVideoId, streamCustomerCode, heroFilm.src, true);
   const heroAppearsPaused = reduced || heroPaused;
+  useEffect(() => {
+    const media = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 701px)");
+    const update = () => setCanReorder(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+  const arrangedStories = storyOrder.map((slug) => stories.find((story) => story.slug === slug)).filter((story): story is Story => Boolean(story));
+  const moveStory = (slug: string, direction: number) => {
+    setStoryOrder((current) => {
+      const from = current.indexOf(slug);
+      const to = Math.max(0, Math.min(current.length - 1, from + direction));
+      if (from === to) return current;
+      const next = [...current];
+      [next[from], next[to]] = [next[to], next[from]];
+      return next;
+    });
+  };
+  const openStory = (story: Story, source: HTMLElement | null, frameSrc = story.cover.image.src) => {
+    const rect = source?.getBoundingClientRect();
+    setSelected({
+      story,
+      source: rect ? { left: rect.left, top: rect.top, width: rect.width, height: rect.height } : undefined,
+      initialIndex: Math.max(0, story.gallery.findIndex((frame) => frame.image.src === frameSrc)),
+    });
+  };
   const showTestimonial = (index: number) => {
     const next = (index + testimonials.length) % testimonials.length;
     setTestimonialIndex(next);
@@ -173,14 +227,23 @@ export function Portfolio() {
   useEffect(() => {
     const root = heroRoot.current;
     if (!root) return;
+    let inView = true;
     const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
       const video = heroVideo.current;
       if (!video || reduced) return;
       if (!entry.isIntersecting) video.pause();
-      else if (!heroManuallyPaused.current) video.play().catch(() => undefined);
+      else if (!document.hidden && !heroManuallyPaused.current) video.play().catch(() => undefined);
     }, { threshold: 0.05 });
+    const visibility = () => {
+      const video = heroVideo.current;
+      if (!video || reduced) return;
+      if (document.hidden) video.pause();
+      else if (inView && !heroManuallyPaused.current) video.play().catch(() => undefined);
+    };
     observer.observe(root);
-    return () => observer.disconnect();
+    document.addEventListener("visibilitychange", visibility);
+    return () => { observer.disconnect(); document.removeEventListener("visibilitychange", visibility); };
   }, [reduced]);
   const leadLandscapes = stories[0].gallery.filter(
     (frame) => frame.image.width > frame.image.height,
@@ -250,31 +313,39 @@ export function Portfolio() {
           />
           <div className="hero-film-blend" />
         </div>
-        <div className="hero-copy">
+        <motion.div className="hero-copy" style={reduced ? undefined : { y: heroCopyY }}>
           <h1 id="hero-heading">
+            <span className="editorial-mask">
             <motion.span
               initial={reduced ? false : { y: "105%" }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.85, delay: 1.25, ease: [0.16, 1, 0.3, 1] }}
+              animate={heroEntered ? { y: 0 } : { y: "105%" }}
+              transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
             >
               XRISH
             </motion.span>
+            </span>
+            <span className="editorial-mask">
             <motion.span
               initial={reduced ? false : { y: "105%" }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.85, delay: 1.34, ease: [0.16, 1, 0.3, 1] }}
+              animate={heroEntered ? { y: 0 } : { y: "105%" }}
+              transition={{ duration: 0.85, delay: .1, ease: [0.16, 1, 0.3, 1] }}
             >
               CREATIVES
             </motion.span>
+            </span>
           </h1>
-          <p>
+          <motion.p
+            initial={reduced ? false : { opacity: 0, y: 14 }}
+            animate={heroEntered ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+            transition={{ duration: .7, delay: .23, ease: [0.16, 1, 0.3, 1] }}
+          >
             Photo and film for the days
             <br />that gather everyone you love.
-          </p>
-          <Link href="/works" className="text-link">
-            Explore our work <ArrowDown size={18} aria-hidden="true" />
-          </Link>
-        </div>
+          </motion.p>
+          <motion.div className="hero-action" initial={reduced ? false : { opacity: 0, y: 12 }} animate={heroEntered ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} transition={{ duration: .65, delay: .37, ease: [0.16, 1, 0.3, 1] }}>
+            <Link href="/works" className="text-link"><RollingLabel>Explore our work</RollingLabel> <ArrowDown size={18} aria-hidden="true" /></Link>
+          </motion.div>
+        </motion.div>
         <div className="hero-bottom">
           <span>
             PHOTOGRAPHY + FILMS
@@ -340,9 +411,7 @@ export function Portfolio() {
         aria-labelledby="work-heading"
       >
         <div className="section-heading page-pad">
-          <h2 id="work-heading">
-            Selected stories<span className="heading-period">.</span>
-          </h2>
+          <RevealHeading id="work-heading" lines={[<>Selected stories<span className="heading-period">.</span></>]} />
           <p>
             A few moments.
             <br />A lot of feeling.
@@ -360,7 +429,8 @@ export function Portfolio() {
         >
           <button
             className="story-image lead-image"
-            onClick={() => setSelected(stories[0])}
+            data-cursor="VIEW"
+            onClick={(event) => openStory(stories[0], event.currentTarget, leadPhoto.image.src)}
             aria-label={`View ${stories[0].title}`}
           >
             <AnimatePresence initial={false}>
@@ -417,25 +487,54 @@ export function Portfolio() {
             </div>
             <button
               className="icon-button"
-              onClick={() => setSelected(stories[0])}
+              onClick={(event) => openStory(stories[0], event.currentTarget.closest(".lead-story")?.querySelector(".story-image") as HTMLElement | null, leadPhoto.image.src)}
               aria-label={`Open ${stories[0].title}`}
             >
               <ArrowUpRight />
             </button>
           </div>
         </article>
-        <div className="story-spread page-pad">
-          {stories.slice(1).map((story, index) => (
-            <article key={story.slug} className={`story story-${index}`}>
+        <Reorder.Group as="div" role="group" values={storyOrder} onReorder={setStoryOrder} className="story-spread page-pad" aria-label="Selected stories. On desktop, drag or use left and right arrow keys to rearrange.">
+          {arrangedStories.map((story, index) => (
+            <Reorder.Item
+              as="article"
+              key={story.slug}
+              value={story.slug}
+              className={`story story-${index}`}
+              dragListener={canReorder && !reduced}
+              whileDrag={{ scale: 1.012, zIndex: 5 }}
+              transition={{ type: "spring", stiffness: 340, damping: 34 }}
+              tabIndex={canReorder ? 0 : -1}
+              aria-label={canReorder ? `${story.title}. Use left or right arrow keys to change its position.` : story.title}
+              onKeyDown={(event) => {
+                if (!canReorder) return;
+                if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+                  event.preventDefault();
+                  moveStory(story.slug, event.key === "ArrowLeft" ? -1 : 1);
+                }
+              }}
+              onDragStart={() => { storyDragging.current = true; }}
+              onDragEnd={() => { lastStoryDragEnd.current = performance.now(); storyDragging.current = false; }}
+            >
               <button
                 className="story-image"
-                onClick={() => setSelected(story)}
+                data-cursor="VIEW"
+                onClick={(event) => {
+                  if (storyDragging.current || performance.now() - lastStoryDragEnd.current <= 250) return;
+                  const alternate = event.currentTarget.querySelector<HTMLElement>(".story-alternate-photo");
+                  const alternateVisible = alternate && Number.parseFloat(getComputedStyle(alternate).opacity) > 0.5;
+                  openStory(story, event.currentTarget, alternateVisible ? story.gallery[4].image.src : story.cover.image.src);
+                }}
                 aria-label={`View ${story.title}`}
               >
-                <Photo
+                <ImageReveal><Photo
                   frame={story.cover}
                   sizes="(max-width: 700px) 100vw, 50vw"
-                />
+                />{story.slug === "cherrielle-in-color" && (
+                  <span className="story-alternate-photo" aria-hidden="true">
+                    <Photo frame={{ ...story.gallery[4], alt: "" }} sizes="(max-width: 700px) 100vw, 50vw" />
+                  </span>
+                )}</ImageReveal>
                 <span className="image-view">
                   <Plus size={20} /> View story
                 </span>
@@ -447,15 +546,15 @@ export function Portfolio() {
                 </div>
                 <button
                   className="icon-button"
-                  onClick={() => setSelected(story)}
+                  onClick={(event) => { if (!storyDragging.current && performance.now() - lastStoryDragEnd.current > 250) openStory(story, event.currentTarget.closest(".story")?.querySelector(".story-image") as HTMLElement | null); }}
                   aria-label={`Open ${story.title}`}
                 >
                   <ArrowUpRight />
                 </button>
               </div>
-            </article>
+            </Reorder.Item>
           ))}
-        </div>
+        </Reorder.Group>
       </section>
 
       <section
@@ -464,16 +563,7 @@ export function Portfolio() {
         aria-labelledby="films-heading"
       >
         <div className="film-top page-pad">
-          <motion.h2
-            id="films-heading"
-            initial={reduced ? false : { y: 70, filter: "blur(8px)" }}
-            whileInView={{ y: 0, filter: "blur(0px)" }}
-            viewport={{ once: true, amount: 0.45 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          >
-            The moments
-            <br />still move.
-          </motion.h2>
+          <RevealHeading id="films-heading" lines={["The moments", "still move."]} />
           <p>
             The glance before the pose. The laughter between takes. The energy
             of the room, kept in motion.
@@ -494,7 +584,7 @@ export function Portfolio() {
               <h3 id="film-story-heading">Good frames come from having fun.</h3>
               <p>
                 Between takes, we played around, laughed with the debutant, and
-                let the shoot feel easy. Nothing too serious or strict—just a
+                let the shoot feel easy. Nothing too serious or strict, just a
                 good time together, with room for the real moments to find
                 their way into the film.
               </p>
@@ -539,6 +629,7 @@ export function Portfolio() {
         <div
           ref={strip}
           className="photo-strip"
+          data-cursor="DRAG"
           tabIndex={0}
           role="region"
           aria-roledescription="carousel"
@@ -612,14 +703,11 @@ export function Portfolio() {
 
       <section
         className="coverage-section page-pad"
+        ref={coverageRoot}
         aria-labelledby="coverage-heading"
       >
         <div className="coverage-intro">
-          <h2 id="coverage-heading">
-            Whatever
-            <br />
-            you’re celebrating.
-          </h2>
+          <RevealHeading id="coverage-heading" lines={["Whatever", "you’re celebrating."]} />
           <p>
             Big milestones. Small gatherings.
             <br />
@@ -638,14 +726,14 @@ export function Portfolio() {
             className="coverage-image"
             aria-label="Explore predebut films"
           >
-            <Photo frame={heroPortrait} sizes="(max-width: 700px) 90vw, 40vw" />
+            <ImageReveal><Photo frame={heroPortrait} sizes="(max-width: 700px) 90vw, 40vw" /></ImageReveal>
             <span>
               Explore the films <ArrowUpRight size={18} aria-hidden="true" />
             </span>
           </Link>
         </div>
         <div className="event-list">
-          {eventTypes.map((type) => {
+          {eventTypes.map((type, index) => {
             const href = `/works#${
                   {
                     Debut: "debuts",
@@ -658,6 +746,7 @@ export function Portfolio() {
             <a
               key={type}
               href={href}
+              data-active={index === activeCoverage}
               aria-label={`Explore ${type} films`}
             >
               <span>{type}</span>
@@ -675,11 +764,7 @@ export function Portfolio() {
         <div className="testimonials-heading">
           <div>
             <span className="section-eyebrow">NOTES FROM OUR CLIENTS</span>
-            <h2 id="testimonials-heading">
-              Kind words.
-              <br />
-              Kept close.
-            </h2>
+            <RevealHeading id="testimonials-heading" lines={["Kind words.", "Kept close."]} />
           </div>
           <p>What it felt like, in their own words.</p>
         </div>
@@ -764,11 +849,7 @@ export function Portfolio() {
         aria-labelledby="about-heading"
       >
         <div className="about-title">
-          <h2 id="about-heading">
-            Small team.
-            <br />
-            Big days.
-          </h2>
+          <RevealHeading id="about-heading" lines={["Small team.", "Big days."]} />
           <span>THIS IS XRISH CREATIVES.</span>
         </div>
         <div className="about-copy">
@@ -782,14 +863,14 @@ export function Portfolio() {
             day into something you can come back to.
           </p>
           <Link className="text-link" href="/about">
-            Meet the team <ArrowUpRight size={18} aria-hidden="true" />
+            <RollingLabel>Meet the team</RollingLabel> <ArrowUpRight size={18} aria-hidden="true" />
           </Link>
         </div>
         <div className="about-image">
-          <Photo
+          <ImageReveal><Photo
             frame={{ ...contactSheet[5], position: "50% 35%" }}
             sizes="100vw"
-          />
+          /></ImageReveal>
           <span>THE WAY WE SEE IT.</span>
         </div>
       </section>
@@ -798,13 +879,13 @@ export function Portfolio() {
         <div className="faq-preview-heading">
           <div>
             <span className="faq-eyebrow">GOOD TO KNOW</span>
-            <h2 id="faq-preview-title">Before the day begins.</h2>
+            <RevealHeading id="faq-preview-title" lines={["Before the day begins."]} />
           </div>
           <p>From your first message to the finished photographs and films.</p>
         </div>
         <FaqList items={faqs.slice(0, 3)} />
         <Link href="/faq" className="text-link faq-more">
-          See all FAQs <ArrowUpRight size={18} aria-hidden="true" />
+          <RollingLabel>See all FAQs</RollingLabel> <ArrowUpRight size={18} aria-hidden="true" />
         </Link>
       </section>
 
@@ -822,18 +903,14 @@ export function Portfolio() {
             We’ll take it from there.
           </p>
         </div>
-        <h2 id="contact-heading">
-          LET’S MAKE
-          <br />
-          IT A MEMORY.
-        </h2>
+        <RevealHeading id="contact-heading" lines={["LET’S MAKE", "IT A MEMORY."]} />
         <a
           className="contact-action"
           href={site.messenger}
           target="_blank"
           rel="noopener noreferrer"
         >
-          Message Us <ArrowUpRight aria-hidden="true" />
+          <RollingLabel>Message Us</RollingLabel> <ArrowUpRight aria-hidden="true" />
         </a>
         <div className="contact-note">
           <span>Debut. Predebut. Weddings. Corporate Events. Graduations.</span>
@@ -844,8 +921,10 @@ export function Portfolio() {
       </section>
       {selected && (
         <Viewer
-          key={selected.slug}
-          story={selected}
+          key={selected.story.slug}
+          story={selected.story}
+          source={selected.source}
+          initialIndex={selected.initialIndex}
           close={() => setSelected(undefined)}
         />
       )}

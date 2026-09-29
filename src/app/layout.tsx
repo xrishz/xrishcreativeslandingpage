@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Instrument_Sans } from "next/font/google";
 import { site } from "@/data/site";
 import { CameraCursor } from "@/components/CameraCursor";
+import { MotionSystem } from "@/components/MotionSystem";
 import "./globals.css";
 
 const instrument = Instrument_Sans({
@@ -13,11 +14,11 @@ export const metadata: Metadata = {
   ...(site.url
     ? { metadataBase: new URL(site.url), alternates: { canonical: "/" } }
     : {}),
-  title: "XRISH CREATIVES — Event Photography & Films",
+  title: "XRISH CREATIVES | Event Photography & Films",
   description:
     "Photo and film coverage for celebrations worth seeing again. Explore XRISH CREATIVES: debut, predebut, weddings, corporate events and graduations in Laguna, Philippines.",
   openGraph: {
-    title: "XRISH CREATIVES — Event Photography & Films",
+    title: "XRISH CREATIVES | Event Photography & Films",
     description:
       "Photography + films for celebrations worth seeing again. Based in Laguna, Philippines.",
     type: "website",
@@ -52,7 +53,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <CameraCursor />
-        {children}
+        <MotionSystem>{children}</MotionSystem>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

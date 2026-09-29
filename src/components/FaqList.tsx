@@ -23,11 +23,11 @@ export function FaqList({ items }: { items: Faq[] }) {
   return (
     <div className="faq-list">
       {items.map((item, index) => (
-        <details className="faq-item" key={item.question}>
+        <details className="faq-item" name="xrish-faq" key={item.question}>
           <summary>
             <span className="faq-number">{String(index + 1).padStart(2, "0")}</span>
             <span>{item.question}</span>
-            <span className="faq-toggle" aria-hidden="true">+</span>
+            <span className="faq-toggle" aria-hidden="true"><span /><span /></span>
           </summary>
           <p>{linkedAnswer(item.answer)}</p>
         </details>

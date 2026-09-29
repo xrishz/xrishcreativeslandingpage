@@ -4,15 +4,16 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Photo } from "@/components/Media";
 import { ReactionFilms } from "@/components/ReactionFilms";
+import { ImageReveal, RevealHeading } from "@/components/EditorialMotion";
 import { experiencePhotos, reactionFilms, site } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "About — XRISH CREATIVES",
+  title: "About | XRISH CREATIVES",
   description:
     "Meet the Laguna-based photo and video team behind XRISH CREATIVES and see how our event coverage feels.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "About — XRISH CREATIVES",
+    title: "About | XRISH CREATIVES",
     description:
       "Meet the team and see the moments behind an XRISH shoot.",
     url: "/about",
@@ -28,10 +29,7 @@ export default function AboutPage() {
           className="experience-hero page-pad"
           aria-labelledby="about-page-title"
         >
-          <h1 id="about-page-title">
-            <span>ABOUT</span>
-            <span>XRISH</span>
-          </h1>
+          <RevealHeading as="h1" id="about-page-title" lines={["ABOUT", "XRISH"]} />
           <div className="experience-intro">
             <p>
               We’re a photo and video team based in Laguna, Philippines, led
@@ -57,12 +55,12 @@ export default function AboutPage() {
           aria-label="The XRISH way"
         >
           <figure className="experience-lead-photo">
-            <Photo
+            <ImageReveal><Photo
               frame={experiencePhotos.lead}
               sizes="100vw"
               priority
               className="experience-photo"
-            />
+            /></ImageReveal>
             <figcaption>
               <span>EVENT COVERAGE</span>
               <span>LAGUNA, PHILIPPINES</span>
@@ -71,23 +69,23 @@ export default function AboutPage() {
 
           <div className="experience-pair page-pad">
             <figure className="experience-candid">
-              <Photo
+              <ImageReveal><Photo
                 frame={experiencePhotos.candid}
                 sizes="(max-width: 700px) 82vw, 43vw"
                 className="experience-photo"
-              />
+              /></ImageReveal>
               <figcaption>
                 Debut coverage feels fun and chill, parang laro lang.
               </figcaption>
             </figure>
             <div className="experience-heart">
-              <h2>Made with heart and passion.</h2>
+              <RevealHeading lines={["Made with heart", "and passion."]} />
               <figure className="experience-detail">
-                <Photo
+                <ImageReveal><Photo
                   frame={experiencePhotos.detail}
                   sizes="(max-width: 700px) 68vw, 28vw"
                   className="experience-photo"
-                />
+                /></ImageReveal>
               </figure>
             </div>
           </div>
@@ -96,7 +94,7 @@ export default function AboutPage() {
         <section className="experience-reactions page-pad" aria-labelledby="reactions-title">
           <div className="experience-reactions-intro">
             <span>THE FIRST WATCH</span>
-            <h2 id="reactions-title">Then they see it.</h2>
+            <RevealHeading id="reactions-title" lines={["Then they see it."]} />
             <p>That moment when the same-day edit plays back in the room.</p>
           </div>
           <ReactionFilms films={reactionFilms} />

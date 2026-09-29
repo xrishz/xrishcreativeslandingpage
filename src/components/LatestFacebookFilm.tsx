@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Play, RotateCcw } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { LatestFacebookVideo } from "@/lib/facebook";
 import { driveFilms, site, streamCustomerCode } from "@/data/site";
 import { InlineFilm } from "@/components/InlineFilm";
@@ -15,6 +15,12 @@ const facebookPlayer = (url: string) =>
   "https://www.facebook.com/plugins/video.php?height=314&href=" +
   encodeURIComponent(url) +
   "&show_text=false&width=560&t=0";
+
+// When our newest Facebook post is also in the Stream library, use our own
+// inline player. Facebook's cross-origin mobile player controls fullscreen.
+const hostedFacebookPosts: Record<string, (typeof driveFilms.graduation)[number]> = {
+  "113391138358438_1043239105382917": driveFilms.graduation[0],
+};
 
 const formatDate = (value: string | undefined) => {
   if (!value) return undefined;
@@ -30,10 +36,6 @@ const formatDate = (value: string | undefined) => {
 
 export function LatestFacebookFilm() {
   const [result, setResult] = useState<LatestResponse>();
-  const [playerActive, setPlayerActive] = useState(false);
-  const [playerLoaded, setPlayerLoaded] = useState(false);
-  const [playerFailed, setPlayerFailed] = useState(false);
-  const [playerAttempt, setPlayerAttempt] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -54,19 +56,12 @@ export function LatestFacebookFilm() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!playerActive || playerLoaded) return;
-    const timer = window.setTimeout(() => setPlayerFailed(true), 15000);
-    return () => window.clearTimeout(timer);
-  }, [playerActive, playerLoaded, playerAttempt]);
-
-  const retryPlayer = () => {
-    setPlayerLoaded(false);
-    setPlayerFailed(false);
-    setPlayerAttempt((current) => current + 1);
-  };
-
-  const video = result?.video;
+  const video = result?.video ? {
+    ...result.video,
+    title: result.video.title.replace(/\u2014/g, " - "),
+    excerpt: result.video.excerpt?.replace(/\u2014/g, " - "),
+  } : null;
+  const hostedFilm = video ? hostedFacebookPosts[video.id] : undefined;
   return (
     <section className="latest-facebook page-pad" aria-labelledby="latest-facebook-title">
       <div className="latest-facebook-intro">
@@ -77,57 +72,22 @@ export function LatestFacebookFilm() {
       {video ? (
         <article className="latest-facebook-film">
           <div className="latest-facebook-frame">
-            {!playerActive ? (
-              <button
-                type="button"
-                className="latest-facebook-launch"
-                onClick={() => setPlayerActive(true)}
-                aria-label={`Play ${video.title} on this page`}
-              >
-                {video.previewUrl && (
-                  <span
-                    className="latest-facebook-preview"
-                    style={{ backgroundImage: `url(${JSON.stringify(video.previewUrl)})` }}
-                    aria-hidden="true"
-                  />
-                )}
-                <span className="latest-facebook-label">Latest Facebook film</span>
-                <span className="latest-facebook-play">
-                  <Play size={22} fill="currentColor" aria-hidden="true" />
-                  Play film
-                </span>
-              </button>
+            {hostedFilm ? (
+              <InlineFilm
+                streamVideoId={hostedFilm.streamVideoId}
+                customerCode={streamCustomerCode}
+                title={video.title}
+                poster={hostedFilm.poster}
+                preview={hostedFilm.preview}
+              />
             ) : (
-              <>
-                <iframe
-                  key={playerAttempt}
-                  title={`${video.title} — latest XRISH Facebook film`}
-                  src={facebookPlayer(video.permalinkUrl)}
-                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                  allowFullScreen
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  onLoad={() => {
-                    setPlayerLoaded(true);
-                    setPlayerFailed(false);
-                  }}
-                />
-                {!playerLoaded && !playerFailed && (
-                  <div className="latest-facebook-player-state" role="status">
-                    Loading film…
-                  </div>
-                )}
-                {playerFailed && (
-                  <div
-                    className="latest-facebook-player-state latest-facebook-player-error"
-                    role="alert"
-                  >
-                    <span>The player took too long to load.</span>
-                    <button type="button" onClick={retryPlayer}>
-                      <RotateCcw size={16} aria-hidden="true" /> Try again
-                    </button>
-                  </div>
-                )}
-              </>
+              <iframe
+                title={`${video.title.replace(/[.!?]+$/, "")}: latest XRISH Facebook film`}
+                src={facebookPlayer(video.permalinkUrl)}
+                allow="autoplay; fullscreen; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                allowFullScreen
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
             )}
           </div>
           <div className="latest-facebook-copy">
