@@ -1,5 +1,13 @@
 # Verification — current screening-room release, 29 September 2026
 
+## Live release checkpoint — 29 September 2026
+
+Commit `82c9642` is published from GitHub `main` to `https://xrishcreatives.com/` through Netlify. The preceding media release added two Cloudflare Stream debut films (Angel and Khatrina) and two reaction films on The XRISH Experience (Cherrielle and Khatrina), with muted short previews and hosted posters. Corporate and graduation long films use a moving black-and-white preview that switches to color playback on the first click. The production browser check covered 1440px desktop and 390px mobile: the tested C&E corporate and PUP graduation films played on the first click, both reaction-film posters loaded, and neither viewport had horizontal overflow. Local ESLint, TypeScript, production build, and all **18 Playwright tests passed**.
+
+The automatic Facebook feature is **not currently returning a film**. A fresh request to `/api/facebook/latest-video` returned HTTP 502 with the safe `unavailable` response. Netlify logs show that a User token is rejected with OAuth error 190/2069032, while the Page-token retry receives Graph HTTP 500/code 1 or times out. Meta's Graph API Explorer confirms that this post query requires a Page token. The XRISH Website app is in development; its `pages_read_engagement` permission is ready for testing, and the Required actions view lists no action. The site displays the distinct, playable PUP Sto. Tomas fallback and Page link while this Meta integration is unavailable. No token values are stored in this document.
+
+Three remaining supplied debut SDE files were blocked by Google Drive's download/view limit during import. Their direct Drive share URLs are not raw video URLs suitable for Cloudflare Stream URL import. They are not presented as playable films until their originals can be obtained and transcoded. The full predebut film remains Coming soon as requested. Right-click and drag deterrents are in place for photographs, but any image delivered to a browser remains retrievable through network tools or screenshots.
+
 ## Cloudflare media and site-wide refinement — 29 September
 
 This release adds Cloudflare Images delivery for 26 portfolio photographs and 11 film posters, Cloudflare Stream playback for four short films and seven corporate/graduation films, a new PUP Sto. Tomas commencement film, moving grayscale preview loops for the long films, and a compact, clearer Our Works entry. The local original assets remain under the ignored `ASSETS/` folder; optimized local copies provide a backup. The full predebut film remains Coming soon until the owner provides it.
