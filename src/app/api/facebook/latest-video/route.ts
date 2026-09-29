@@ -34,17 +34,18 @@ async function graphError(response: Response) {
 async function resolvePageAccessToken(
   graphVersion: string,
   pageId: string,
-  systemUserToken: string,
+  sourceToken: string,
 ) {
-  const url = new URL(`https://graph.facebook.com/${graphVersion}/me/accounts`);
+  const url = new URL(
+    `https://graph.facebook.com/${graphVersion}/${encodeURIComponent(pageId)}`,
+  );
   url.searchParams.set("fields", "id,access_token");
-  url.searchParams.set("limit", "100");
 
   let response: Response;
   try {
     response = await fetch(url, {
       cache: "no-store",
-      headers: graphHeaders(systemUserToken),
+      headers: graphHeaders(sourceToken),
       signal: AbortSignal.timeout(8000),
     });
   } catch (error) {
@@ -62,9 +63,10 @@ async function resolvePageAccessToken(
   }
 
   const payload = (await response.json()) as {
-    data?: Array<{ id?: string; access_token?: string }>;
+    id?: string;
+    access_token?: string;
   };
-  return payload.data?.find((page) => page.id === pageId)?.access_token;
+  return payload.id === pageId ? payload.access_token : undefined;
 }
 
 function fetchPagePosts(url: URL, accessToken: string) {
