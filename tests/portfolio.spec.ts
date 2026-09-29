@@ -81,7 +81,7 @@ test("the decorative loader clears when session storage is unavailable", async (
   await context.close();
 });
 
-test("full-film placeholder remains pending and lists only available film categories", async ({
+test("Angel's SDE replaces the pending feature and lists only available film categories", async ({
   page,
 }) => {
   await page.goto("/");
@@ -127,11 +127,9 @@ test("full-film placeholder remains pending and lists only available film catego
   await expect(
     page.locator(".lead-rotation-frame").last(),
   ).toHaveAttribute("data-frame", pausedFrame ?? "");
-  await expect(
-    page.getByRole("heading", { name: "Full Pre-debut Film" }),
-  ).toBeVisible();
-  await expect(page.getByText("Coming soon.", { exact: true })).toBeVisible();
-  await expect(page.locator(".cinematic-film video")).toHaveCount(4);
+  await expect(page.getByRole("heading", { name: "Angel — Debut SDE" })).toBeVisible();
+  await expect(page.getByText("Full Pre-debut Film", { exact: true })).toHaveCount(0);
+  await expect(page.locator(".cinematic-film video")).toHaveCount(5);
   await expect(page.locator(".reel-frame iframe")).toHaveCount(0);
   await expect(page.locator(".latest-facebook-film")).toHaveCount(1);
   await expect(
@@ -246,7 +244,7 @@ test("Stream playback URLs accept only valid public identifiers", () => {
   ).toBeUndefined();
 });
 
-test("client notes and all four Stream-backed films appear directly on the page", async ({
+test("client notes, short films, and Angel's debut SDE appear directly on the page", async ({
   page,
 }) => {
   await page.goto("/");
@@ -267,9 +265,10 @@ test("client notes and all four Stream-backed films appear directly on the page"
   await expect(page.locator(".reel-card")).toHaveCount(0);
   await expect(page.locator(".reel-feature")).toHaveCount(0);
   await expect(page.locator(".reel-frame iframe")).toHaveCount(0);
-  await expect(page.locator(".cinematic-film video")).toHaveCount(4);
+  await expect(page.locator(".cinematic-film video")).toHaveCount(5);
   for (const film of ["mirielle", "angel", "janelle", "khatrina"])
     await expect(page.locator(`.cinematic-film video[data-film-src="/films/${film}.mp4"]`)).toHaveCount(1);
+  await expect(page.locator('.film-feature-sde video[data-film-src="/films/angel-debut-sde-preview.mp4"]')).toHaveCount(1);
   const mirielle = page.locator('.cinematic-film video[data-film-src="/films/mirielle.mp4"]');
   await expect(mirielle).toHaveAttribute("controlslist", /nodownload/);
   await expect(mirielle).toHaveAttribute("disablepictureinpicture", "");
@@ -480,6 +479,27 @@ test("The XRISH Experience presents Event Coverage and limits the casual shoot l
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
   ).toBeTruthy();
+});
+
+test("the reaction films give the active video the room and restore both on pause", async ({ page }) => {
+  await page.goto("/experience");
+  const films = page.locator(".experience-reactions-films .cinematic-film");
+  const cherrielle = films.nth(0);
+  const khatrina = films.nth(1);
+
+  await cherrielle.getByRole("button", { name: /Watch Cherrielle.*from the beginning/ }).click();
+  await expect(khatrina.locator(".cinematic-stage")).toHaveAttribute("data-inactive", "true");
+  await expect.poll(() => khatrina.locator("video").evaluate((video) => (video as HTMLVideoElement).paused)).toBe(true);
+  await expect(khatrina.locator(".cinematic-stage")).toHaveCSS("filter", "grayscale(1)");
+
+  await expect.poll(() => cherrielle.locator("video").evaluate((video) => (video as HTMLVideoElement).paused), { timeout: 30000 }).toBe(false);
+  await khatrina.getByRole("button", { name: /Watch Khatrina.*from the beginning/ }).click();
+  await expect(cherrielle.locator(".cinematic-stage")).toHaveAttribute("data-inactive", "true");
+  await expect.poll(() => cherrielle.locator("video").evaluate((video) => (video as HTMLVideoElement).paused)).toBe(true);
+  await expect.poll(() => khatrina.locator("video").evaluate((video) => (video as HTMLVideoElement).paused), { timeout: 30000 }).toBe(false);
+  await khatrina.locator("video").evaluate((video) => (video as HTMLVideoElement).pause());
+  await expect(khatrina.locator(".cinematic-stage")).toHaveAttribute("data-inactive", "false");
+  await expect(cherrielle.locator(".cinematic-stage")).toHaveAttribute("data-inactive", "false");
 });
 
 test("Our Works presents predebut films and preloaded corporate and graduation players", async ({

@@ -732,18 +732,11 @@ section {
   position: relative;
   z-index: 1;
 }
-.latest-facebook-launch > span:first-child {
+.latest-facebook-label {
   color: #b9bab2;
   font-size: 10px;
   letter-spacing: 0.09em;
   text-transform: uppercase;
-}
-.latest-facebook-launch strong {
-  max-width: 18ch;
-  font-size: clamp(25px, 3.2vw, 48px);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.035em;
 }
 .latest-facebook-play {
   display: inline-flex;
@@ -2622,6 +2615,15 @@ section {
 }
 .experience-reactions .cinematic-stage {
   aspect-ratio: 9 / 16;
+  transition: filter 400ms var(--ease);
+}
+.experience-reactions .cinematic-stage[data-inactive="true"] {
+  filter: grayscale(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .experience-reactions .cinematic-stage {
+    transition: none;
+  }
 }
 .experience-contact {
   padding-top: clamp(95px, 10vw, 160px);
@@ -2911,6 +2913,13 @@ section {
   color: #c9c8c0;
   font-size: 12px;
   line-height: 1.55;
+}
+.film-feature-sde {
+  padding-bottom: clamp(80px, 9vw, 145px);
+}
+.film-feature-sde .cinematic-film {
+  max-width: 1440px;
+  margin-inline: auto;
 }
 .works-native-films {
   display: grid;

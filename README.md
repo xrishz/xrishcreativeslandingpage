@@ -19,9 +19,9 @@ Open http://localhost:3000. For a production build, run `npm run build` and `npm
 
 - Next.js App Router, React 19, TypeScript, Tailwind CSS 4, Motion, and an editorial paper/ink design system. The camera cursor appears only for fine-pointer devices; touch uses native input.
 - The homepage leads with a rotating film hero and portfolio photographs. Our Works has Debuts, Predebuts, Corporate Events, and Graduation chapters; The XRISH Experience presents the team's real story. Weddings remain a service, but there is no wedding film chapter until approved footage exists.
-- Four approved short films (Mirielle, Angel, Janelle, and Khatrina) use Cloudflare Stream adaptive playback, with local H.264/AAC files retained as a fallback. The hero changes on each refresh when session storage is available. The full predebut film remains an honest Coming soon placeholder.
+- Four approved short films (Mirielle, Angel, Janelle, and Khatrina) use Cloudflare Stream adaptive playback, with local H.264/AAC files retained as a fallback. The hero changes on each refresh when session storage is available. Angel's debut SDE also plays in the main film section.
 - Four corporate and three graduation films use Cloudflare Stream players. Their small, muted looping previews are grayscale until the visitor selects Play; the full player then appears in color with sound controls. The Google Drive links are retained only as source references, never as public players.
-- The separate latest-Facebook feature reads recent XRISH Page posts through a server-side Meta route, excludes the selected Mirielle and Angel reels, and presents only a candidate whose public embed reports playable video data. When none qualifies or the API is unavailable, it shows a compact link to the Page. This fetch is request-driven and cached; it is not a push notification to an already-open tab.
+- The separate latest-Facebook feature reads recent XRISH Page posts through a server-side Meta route, excludes the selected Mirielle and Angel reels, and presents only a candidate whose public embed reports playable video data. When none qualifies or the API is unavailable, it shows a recent graduation film and a link to the Page. This fetch is request-driven and cached; it is not a push notification to an already-open tab.
 - Three named testimonials come from owner-provided screenshots. No awards, ratings, booking availability, event dates, or client facts were invented. All Message Us actions lead to Facebook.
 - Keyboard navigation, focus-managed photo viewer, visible focus, reduced-motion behavior, mobile navigation, image fallback, and video loading/error states are implemented.
 
@@ -35,11 +35,10 @@ Cloudflare Stream customer and video IDs are public playback references in `src/
 
 ## Configuration
 
-The public origin is `https://xrishcreatives.com`. Set `NEXT_PUBLIC_SITE_URL` to that value in hosting, and change it if the primary domain changes. The optional full-predebut placeholder can become a Stream film after an approved full video is uploaded:
+The public origin is `https://xrishcreatives.com`. Set `NEXT_PUBLIC_SITE_URL` to that value in hosting, and change it if the primary domain changes. The public Stream customer code is:
 
 ```sh
 NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE=18nmsvzvjt4m41a5
-NEXT_PUBLIC_PREDEBUT_STREAM_VIDEO_ID=
 ```
 
 The Meta integration uses server-only values:

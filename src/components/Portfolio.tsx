@@ -21,14 +21,12 @@ import {
   contactSheet,
   eventTypes,
   heroPortrait,
-  films,
+  debutFilms,
   previewFilms,
   testimonials,
-  streamPlayerUrl,
   site,
   streamCustomerCode,
   type Story,
-  type Film,
 } from "@/data/site";
 import { Photo } from "./Media";
 import { Viewer } from "./Viewer";
@@ -42,7 +40,6 @@ import { hostedImageUrl } from "@/lib/cloudflare-images";
 
 export function Portfolio() {
   const [selected, setSelected] = useState<Story>();
-  const [selectedFilm, setSelectedFilm] = useState<Film>();
   const [leadPhotoIndex, setLeadPhotoIndex] = useState(0);
   const [leadPaused, setLeadPaused] = useState(false);
   const [leadHovered, setLeadHovered] = useState(false);
@@ -492,11 +489,11 @@ export function Portfolio() {
               aria-labelledby="film-story-heading"
             >
               <span>Behind the film</span>
-              <h3 id="film-story-heading">A good frame can start with a joke.</h3>
+              <h3 id="film-story-heading">Good frames come from having fun.</h3>
               <p>
-                Between takes, we played around, traded jokes, and let the shoot
-                feel easy. Nothing too serious or strict—just our team and the
-                debutant enjoying the afternoon while the real moments found
+                Between takes, we played around, laughed with the debutant, and
+                let the shoot feel easy. Nothing too serious or strict—just a
+                good time together, with room for the real moments to find
                 their way into the film.
               </p>
               <p>
@@ -510,47 +507,9 @@ export function Portfolio() {
           ))}
         </div>
         <LatestFacebookFilm />
-        {films.map((film) => (
-          <article key={film.slug} className="film-feature page-pad">
-            <div className="film-photo">
-              <Photo frame={film.poster} sizes="100vw" />
-              <div className="film-scrim" />
-              <div className="film-caption">
-                <h3>{film.title}</h3>
-                {streamPlayerUrl(film) ? (
-                  <button
-                    className="film-link"
-                    onClick={() => setSelectedFilm(film)}
-                  >
-                    <span className="play-circle">
-                      <Play size={26} aria-hidden="true" />
-                    </span>
-                    <span>
-                      Watch full film
-                      {film.duration ? ` · ${film.duration}` : ""}
-                    </span>
-                  </button>
-                ) : (
-                  <div className="film-coming-soon">
-                    <p>Coming soon.</p>
-                    <span>A story before the celebration.</span>
-                  </div>
-                )}
-                <a
-                  className="film-link"
-                  href={site.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span className="play-circle">
-                    <ArrowUpRight size={28} aria-hidden="true" />
-                  </span>
-                  <span>More from XRISH on Facebook</span>
-                </a>
-              </div>
-            </div>
-          </article>
-        ))}
+        <div className="film-feature film-feature-sde page-pad">
+          <CinematicFilm film={debutFilms[0]} />
+        </div>
         <div className="film-foot page-pad">
           <span>EVENT FILMS, MADE TO BE FELT.</span>
           <span>PHOTOGRAPHY / CINEMATOGRAPHY</span>
@@ -873,13 +832,6 @@ export function Portfolio() {
           key={selected.slug}
           story={selected}
           close={() => setSelected(undefined)}
-        />
-      )}
-      {selectedFilm && (
-        <Viewer
-          key={selectedFilm.slug}
-          film={selectedFilm}
-          close={() => setSelectedFilm(undefined)}
         />
       )}
     </>

@@ -385,16 +385,3 @@ export type Film = {
   customerCode?: string;
   duration?: string;
 };
-export const films: Film[] = [
-  {
-    slug: "full-predebut-film",
-    title: "Full Pre-debut Film",
-    provider: "cloudflare-stream",
-    poster: frame(
-      "stn06964",
-      "A portrait beneath golden lights and flowers, used as the upcoming film poster",
-    ),
-    videoId: process.env.NEXT_PUBLIC_PREDEBUT_STREAM_VIDEO_ID,
-    customerCode: process.env.NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE || streamCustomerCode,
-  },
-];

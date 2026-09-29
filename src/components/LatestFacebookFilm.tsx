@@ -91,8 +91,7 @@ export function LatestFacebookFilm() {
                     aria-hidden="true"
                   />
                 )}
-                <span>Latest Facebook film</span>
-                <strong>{video.title}</strong>
+                <span className="latest-facebook-label">Latest Facebook film</span>
                 <span className="latest-facebook-play">
                   <Play size={22} fill="currentColor" aria-hidden="true" />
                   Play film

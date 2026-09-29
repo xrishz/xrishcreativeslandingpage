@@ -14,13 +14,21 @@ type CinematicFilmProps = {
   film: PreviewFilm;
   priority?: boolean;
   posterPriority?: boolean;
+  inactive?: boolean;
+  onViewingChange?: (slug: string, playing: boolean) => void;
 };
 
 const subscribeHydration = () => () => undefined;
 const clientIsHydrated = () => true;
 const serverIsHydrated = () => false;
 
-export function CinematicFilm({ film, priority = false, posterPriority = false }: CinematicFilmProps) {
+export function CinematicFilm({
+  film,
+  priority = false,
+  posterPriority = false,
+  inactive = false,
+  onViewingChange,
+}: CinematicFilmProps) {
   const video = useRef<HTMLVideoElement>(null);
   const root = useRef<HTMLElement>(null);
   const reduced = useHydratedReducedMotion();
@@ -32,6 +40,7 @@ export function CinematicFilm({ film, priority = false, posterPriority = false }
   const [readyFrame, setReadyFrame] = useState(false);
   const manuallyPaused = useRef(false);
   const pausedByViewport = useRef(false);
+  const userActivated = useRef(false);
   const posterUrl = hostedImageUrl(film.poster, 1600) ?? film.poster;
   useStreamVideo(video, film.streamVideoId, streamCustomerCode, film.src, ready);
 
@@ -68,7 +77,7 @@ export function CinematicFilm({ film, priority = false, posterPriority = false }
           }
           return;
         }
-        if (pausedByViewport.current && !manuallyPaused.current) {
+        if (pausedByViewport.current && !manuallyPaused.current && !inactive) {
           pausedByViewport.current = false;
           player.play().catch(() => undefined);
         }
@@ -77,7 +86,19 @@ export function CinematicFilm({ film, priority = false, posterPriority = false }
     );
     observer.observe(element);
     return () => observer.disconnect();
-  }, [reduced]);
+  }, [reduced, inactive]);
+
+  useEffect(() => {
+    if (!inactive) return;
+    const element = video.current;
+    if (!element) return;
+    element.pause();
+    element.muted = true;
+    manuallyPaused.current = false;
+    userActivated.current = false;
+    setMuted(true);
+    setViewing(false);
+  }, [inactive]);
 
   useEffect(() => {
     const muteWhenAnotherFilmSpeaks = (event: Event) => {
@@ -94,15 +115,17 @@ export function CinematicFilm({ film, priority = false, posterPriority = false }
 
   useEffect(() => {
     const element = video.current;
-    if (!element || !ready || reduced) return;
+    if (!element || !ready || reduced || inactive) return;
     element.play().then(() => setPaused(false)).catch(() => setPaused(true));
-  }, [ready, reduced]);
+  }, [ready, reduced, inactive]);
 
   const togglePlayback = () => {
     const element = video.current;
     if (!element) return;
     if (element.paused) {
       manuallyPaused.current = false;
+      userActivated.current = true;
+      onViewingChange?.(film.slug, true);
       element.play().then(() => setPaused(false)).catch(() => setPaused(true));
     } else {
       manuallyPaused.current = true;
@@ -117,8 +140,10 @@ export function CinematicFilm({ film, priority = false, posterPriority = false }
     element.currentTime = 0;
     element.muted = false;
     manuallyPaused.current = false;
+    userActivated.current = true;
     setMuted(false);
     setViewing(true);
+    onViewingChange?.(film.slug, true);
     claimVideoSound(`film-${film.slug}`);
     element.play().then(() => setPaused(false)).catch(() => setPaused(true));
   };
@@ -132,7 +157,7 @@ export function CinematicFilm({ film, priority = false, posterPriority = false }
       viewport={{ once: true, amount: 0.18 }}
       transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="cinematic-stage" data-ready-frame={readyFrame}>
+      <div className="cinematic-stage" data-ready-frame={readyFrame} data-inactive={inactive}>
         <Image
           src={posterUrl}
           alt=""
@@ -167,8 +192,15 @@ export function CinematicFilm({ film, priority = false, posterPriority = false }
             if (viewing) video.current?.play().then(() => setPaused(false)).catch(() => setPaused(true));
           }}
           onPlaying={() => setReadyFrame(true)}
-          onPlay={() => setPaused(false)}
-          onPause={() => setPaused(true)}
+          onPlay={() => {
+            setPaused(false);
+            if (viewing || userActivated.current) onViewingChange?.(film.slug, true);
+          }}
+          onPause={() => {
+            setPaused(true);
+            if (viewing || userActivated.current) onViewingChange?.(film.slug, false);
+            userActivated.current = false;
+          }}
           onVolumeChange={(event) => {
             const element = event.currentTarget;
             setMuted(element.muted);

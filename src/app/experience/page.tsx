@@ -3,7 +3,7 @@ import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Photo } from "@/components/Media";
-import { CinematicFilm } from "@/components/CinematicFilm";
+import { ReactionFilms } from "@/components/ReactionFilms";
 import { experiencePhotos, reactionFilms, site } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -99,11 +99,7 @@ export default function ExperiencePage() {
             <h2 id="reactions-title">Then they see it.</h2>
             <p>That moment when the same-day edit plays back in the room.</p>
           </div>
-          <div className="experience-reactions-films">
-            {reactionFilms.map((film) => (
-              <CinematicFilm key={film.slug} film={film} posterPriority />
-            ))}
-          </div>
+          <ReactionFilms films={reactionFilms} />
         </section>
 
         <section
